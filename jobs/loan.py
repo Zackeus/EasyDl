@@ -190,4 +190,3 @@ def loan_push():
                 # 更新推送次数
                 loan_file.push_times += 1
                 loan_file.dao_update()
-                print('123')
