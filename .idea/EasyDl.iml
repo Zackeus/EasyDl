@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="Flask">
+    <option name="enabled" value="true" />
+  </component>
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/views" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utils" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utils/file" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/loan" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/jobs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/config" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/sys" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/schema" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/schema/sys" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/views/sys" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/views/view_utils" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/migrations" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/templates" />
+        <option value="$MODULE_DIR$/templates/errors" />
+      </list>
+    </option>
+  </component>
+  <component name="TestRunnerService">
+    <option name="projectConfiguration" value="pytest" />
+    <option name="PROJECT_TEST_RUNNER" value="pytest" />
+  </component>
+</module>
