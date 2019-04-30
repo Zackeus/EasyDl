@@ -21,7 +21,6 @@ from enum import Enum, unique
 from utils.file.file import FileUtil
 from utils.object_util import is_not_empty
 from utils.assert_util import Assert
-from utils.errors import MyError
 
 
 def file_to_base64(file):
@@ -120,54 +119,6 @@ def hash_code(hash_cls, hexadecimal=True, b64=False):
     hash_str = hash_cls.hexdigest() if hexadecimal else hash_cls.digest()
     hash_str = base64.b64encode(hash_str).decode(Unicode.UTF_8.value) if b64 else hash_str
     return hash_str
-
-
-class MyAES:
-    """
-    AES对称加密算法
-    """
-
-    @staticmethod
-    def add_to_16(value):
-        """
-        str不是16的倍数那就补足为16的倍数
-        :param value:
-        :return:
-        """
-        while len(value) % 16 != 0:
-            value += '\0'
-        # 返回bytes
-        return str.encode(value)
-
-    @staticmethod
-    def encode_data(key, data):
-        """
-        加密
-        :param key:
-        :param data:
-        :return:
-        """
-        # 初始化加密器
-        aes = AES.new(key=MyAES.add_to_16(key), mode=AES.MODE_ECB)
-        # 先进行aes加密
-        encode_aes = aes.encrypt(MyAES.add_to_16(data))
-        # 用base64转成字符串形式
-        return str(base64.encodebytes(encode_aes), encoding=Unicode.UTF_8.value)
-
-    @staticmethod
-    def decode_data(key, data):
-        """
-        解密
-        :param key:密钥
-        :param data:密文
-        :return:
-        """
-        aes = AES.new(key=MyAES.add_to_16(key), mode=AES.MODE_ECB)
-        # 优先逆向解密base64成bytes
-        base64_decode = base64.decodebytes(data.encode(encoding=Unicode.UTF_8.value))
-        # 执行解密密并转码返回str
-        return str(aes.decrypt(base64_decode), encoding=Unicode.UTF_8.value).replace('\0', '')
-
 
 @unique
 class Unicode(Enum):

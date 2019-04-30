@@ -121,37 +121,37 @@ class BaseConfig(object):
     # 贷后图片分类接口地址
     POST_LOAN_URL = OBJECT_DICT.get('PostLoanUrl', {})
 
-    JOBS = [
-        # {
-        #     'id': 'pre_loan',
-        #     'func': 'jobs.loan:loan_sort',
-        #     'args': ('PRE_LOAN_URL', 'pre_loan'),
-        #     'trigger': 'cron',
-        #     # 'second': '0/10',
-        #     'minute': '0/5',
-        #     'hour': '8-20',
-        #     'max_instances': 1
-        # },
-        # {
-        #     'id': 'post_loan',
-        #     'func': 'jobs.loan:loan_sort',
-        #     'args': ('POST_LOAN_URL', 'H'),
-        #     'trigger': 'cron',
-        #     'second': '0/10',
-        #     # 'minute': '0/5',
-        #     # 'hour': '8-20',
-        #     'max_instances': 1
-        # },
-        {
-            'id': 'loan_push',
-            'func': 'jobs.loan:loan_push',
-            'trigger': 'cron',
-            'second': '0/10',
-            # 'minute': '0/5',
-            # 'hour': '8-20',
-            'max_instances': 1
-        }
-    ]
+    # JOBS = [
+    #     # {
+    #     #     'id': 'pre_loan',
+    #     #     'func': 'jobs.loan:loan_sort',
+    #     #     'args': ('PRE_LOAN_URL', 'pre_loan'),
+    #     #     'trigger': 'cron',
+    #     #     # 'second': '0/10',
+    #     #     'minute': '0/5',
+    #     #     'hour': '8-20',
+    #     #     'max_instances': 1
+    #     # },
+    #     # {
+    #     #     'id': 'post_loan',
+    #     #     'func': 'jobs.loan:loan_sort',
+    #     #     'args': ('POST_LOAN_URL', 'H'),
+    #     #     'trigger': 'cron',
+    #     #     'second': '0/10',
+    #     #     # 'minute': '0/5',
+    #     #     # 'hour': '8-20',
+    #     #     'max_instances': 1
+    #     # },
+    #     {
+    #         'id': 'loan_push',
+    #         'func': 'jobs.loan:loan_push',
+    #         'trigger': 'cron',
+    #         'second': '0/10',
+    #         # 'minute': '0/5',
+    #         # 'hour': '8-20',
+    #         'max_instances': 1
+    #     }
+    # ]
 
 
 class DevelopmentConfig(BaseConfig):
