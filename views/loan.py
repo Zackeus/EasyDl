@@ -156,8 +156,9 @@ if __name__ == '__main__':
                 'fileBase64': file_to_base64('D:/AIData/1.png')
             }
         ],
+        'createBy': '17037',
         'remarks': '备注信息...........',
-        'push_url': 'http://127.0.0.1:5000/loan/push_info'
+        'pushUrl': 'http://127.0.0.1:5000/loan/push_info'
     }
 
     # data = {

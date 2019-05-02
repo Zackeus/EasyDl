@@ -21,6 +21,8 @@ class BasicModel(db.Model):
     __abstract__ = True
 
     id = db.Column(db.String(length=64), name='ID', primary_key=True, default=IdGen.uuid(), comment='主键ID')
+    create_by = db.Column(db.String(length=64), name='CREATE_BY', comment='创建者')
+    update_by = db.Column(db.String(length=64), name='UPDATE_BY', comment='更新者')
     create_date = db.Column(db.DateTime, name='CREATE_DATE', default=datetime.utcnow, comment='创建日期')
     update_date = db.Column(db.DateTime, name='UPDATE_DATE', default=datetime.utcnow, comment='更新日期')
     remarks = db.Column(db.Text, name='REMARKS', comment='备注')
@@ -64,6 +66,8 @@ class BaseSchema(Schema):
     __model__ = None
 
     id = fields.Str(required=True, validate=validate.Length(min=1, max=64))
+    create_by = fields.Str(validate=validate.Length(max=64), load_from='createBy')
+    update_by = fields.Str(validate=validate.Length(max=64), load_from='updateBy')
     create_date = fields.DateTime()
     update_date = fields.DateTime()
     remarks = fields.Str()
@@ -92,7 +96,7 @@ class BaseSchema(Schema):
         return new_data
 
     def only_create(self):
-        return 'remarks',
+        return 'create_by', 'remarks',
 
     def only_delete(self):
         return 'id',

@@ -168,7 +168,8 @@ class LoanFileModel(BasicModel):
         """
         return self.query.filter(LoanFileModel.is_handle == True,
                                  LoanFileModel.is_push == False,
-                                 LoanFileModel.push_times < 5).\
+                                 LoanFileModel.push_times < 5,
+                                 LoanFileModel.push_url.isnot(None)).\
             order_by(LoanFileModel.create_date.asc()).all()
 
 
