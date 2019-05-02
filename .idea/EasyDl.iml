@@ -17,6 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/schema/sys" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/views/sys" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/views/view_utils" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utils/sys" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/migrations" />
     </content>
     <orderEntry type="inheritedJdk" />

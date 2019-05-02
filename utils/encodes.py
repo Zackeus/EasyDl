@@ -7,7 +7,6 @@
 # @Time : 2019/3/26 9:57
 
 
-import random
 import os
 import base64
 import cv2
@@ -120,6 +119,7 @@ def hash_code(hash_cls, hexadecimal=True, b64=False):
     hash_str = base64.b64encode(hash_str).decode(Unicode.UTF_8.value) if b64 else hash_str
     return hash_str
 
+
 @unique
 class Unicode(Enum):
     GBK = 'GBK'
@@ -129,8 +129,6 @@ class Unicode(Enum):
 
 class AESUtil(object):
 
-    __source = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz123456789'
-
     def __init__(self, key):
         """
 
@@ -138,20 +136,6 @@ class AESUtil(object):
         """
         Assert.is_true(is_not_empty(key), 'AES 秘钥不能为空')
         self.key = key
-
-    @classmethod
-    def get_key(cls, n):
-        """
-        获取密钥 n 密钥长度
-        :return:
-        """
-        c_length = int(n)
-
-        length = len(cls.__source) - 1
-        result = ''
-        for i in range(c_length):
-            result += cls.__source[random.randint(0, length)]
-        return result
 
     def _pkcs7_padding(self, text):
         """
@@ -236,11 +220,10 @@ if __name__ == '__main__':
     # decode_str = aes.decrypt(aes_str)
     # print(decode_str)
 
-    # base_str = file_to_base64('D:/贷前资料/05121ff8230511e997a8a164741611fd/png/1.png')
-    # print(type(base_str))
-    # base64_to_file(base_str, 'D:/贷前资料/test.png')
+    base_str = file_to_base64('D:/贷前资料/05121ff8230511e997a8a164741611fd/png/1.png')
+    print(type(base_str))
+    base64_to_file(base_str, 'D:/贷前资料/test.png')
 
-    print(AESUtil.get_key(16))
 
 
 

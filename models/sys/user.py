@@ -70,6 +70,15 @@ class User(DataEntity):
         self.role = role
         self.role_list = role_list
 
+    def validate_password(self, plain_password):
+        """
+        验证密码
+        :param plain_password: 明文密码
+        :return:
+        """
+        from utils.sys.system import validate_password as check_password_hash
+        return check_password_hash(plain_password, self.password)
+
     @result_mapper(module_name='models.sys.user', schema_cls='UserSchema')
     def dao_get_by_login_name(self, login_name):
         sql = "SELECT a.id, a.id AS 'current_user.id', a.company_id AS 'company.id', a.office_id AS 'office.id', " \
