@@ -48,7 +48,6 @@ def loan_sort(urls_key, type_name):
 
         if is_empty(loan_files):
             # 无处理数据，直接结束
-            print('无处理数据******************************')
             return
 
         for loan_file in loan_files:
@@ -158,7 +157,6 @@ def loan_push():
 
         if is_empty(loan_files):
             # 无数据推送
-            print('无推送数据***************************************')
             return
 
         for loan_file in loan_files:
