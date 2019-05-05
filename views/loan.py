@@ -10,7 +10,6 @@ import json
 import requests
 from flask import Blueprint, current_app, request
 
-from extensions import csrf
 from models.file import FileModel, FileSchema
 from models.loan.loan_file import LoanFileModel, LoanFileSchema
 from models.loan.loan_type import LoanTypeModel, LoanTypeSchema

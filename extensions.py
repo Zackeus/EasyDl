@@ -18,7 +18,7 @@ from flask_migrate import Migrate
 from flask_apscheduler import APScheduler as BaseAPScheduler
 from apscheduler.events import JobExecutionEvent, EVENT_JOB_ERROR
 from flask_caching import Cache as BaseCache
-from flask_wtf import CSRFProtect
+from flask_wtf import CSRFProtect as BaseCSRFProtect
 from flask_login import LoginManager, AnonymousUserMixin
 from flask_session import Session
 
@@ -121,6 +121,23 @@ def init_log(project_name, lever, log_dir_name='logs'):
         '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
     handler.setFormatter(logging_format)
     return handler
+
+
+class CSRFProtect(BaseCSRFProtect):
+    """
+    CSRF 扩展
+    """
+
+    def exempt_views(self, views):
+        """
+        标记要从CSRF保护中排除的视图或蓝图
+        :param views:
+        :return:
+        """
+        Assert.is_true(isinstance(views, tuple) or isinstance(views, list),
+                       'the parameters "views" must be lists or tuples.')
+        for view in views:
+            self.exempt(view)
 
 
 class Guest(AnonymousUserMixin):

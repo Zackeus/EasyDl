@@ -87,7 +87,7 @@ def register_extensions(app):
     session.init_app(app)
 
     csrf.init_app(app)
-    csrf.exempt(loan_bp)
+    csrf.exempt_views((loan_bp, test_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':
