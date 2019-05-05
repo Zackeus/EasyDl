@@ -1,5 +1,4 @@
 import os
-import requests
 from settings import Env, config
 from flask import Flask as BasicFlask, current_app
 from flask_wtf.csrf import CSRFError
@@ -7,10 +6,11 @@ from flask_wtf.csrf import CSRFError
 from views.loan import loan_bp
 from views.test import test_bp
 from views.sys.user import user_bp
-from extensions import db, moment, migrate, init_log, scheduler, cache
+from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.response import MyResponse, render_info
 from utils.object_util import is_empty
 from utils.str_util import EncodingFormat
+from utils.request import codes
 from models.basic import BasicModel
 from models.loan.loan_file import LoanFileModel
 from models.loan.loan_type import LoanTypeModel
@@ -83,6 +83,11 @@ def register_extensions(app):
     moment.init_app(app)
     migrate.init_app(app=app, db=db)
     cache.init_app(app)
+    login_manager.init_app(app)
+    session.init_app(app)
+
+    csrf.init_app(app)
+    csrf.exempt(loan_bp)
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':
@@ -99,7 +104,7 @@ def register_errors(app):
     :param app:
     :return:
     """
-    @app.errorhandler(requests.codes.bad)
+    @app.errorhandler(codes.bad)
     def bad_request(e):
         """
         400
@@ -108,14 +113,14 @@ def register_errors(app):
         """
         return render_info(
             info=MyResponse(
-                code=requests.codes.bad,
+                code=codes.bad,
                 msg='无效的请求'
             ),
             template='errors/400.html',
-            status=requests.codes.bad
+            status=codes.bad
         )
 
-    @app.errorhandler(requests.codes.not_found)
+    @app.errorhandler(codes.not_found)
     def page_not_found(e):
         """
         404
@@ -124,14 +129,14 @@ def register_errors(app):
         """
         return render_info(
             info=MyResponse(
-                code=requests.codes.not_found,
+                code=codes.not_found,
                 msg='资源不存在'
             ),
             template='errors/404.html',
-            status=requests.codes.not_found
+            status=codes.not_found
         )
 
-    @app.errorhandler(requests.codes.not_allowed)
+    @app.errorhandler(codes.not_allowed)
     def not_allowed(e):
         """
         405
@@ -140,22 +145,30 @@ def register_errors(app):
         """
         return render_info(
             info=MyResponse(
-                code=requests.codes.not_allowed,
+                code=codes.not_allowed,
                 msg='无效的请求头或方法'
             ),
             template='errors/405.html',
-            status=requests.codes.not_allowed
+            status=codes.not_allowed
         )
 
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
+        """
+        CSRF验证失败
+        :param e:
+        :return:
+        """
         return render_info(
-            info=MyResponse.init_error(e),
+            info=MyResponse(
+                code=codes.bad,
+                msg=e.description if e.description else repr(e)
+            ),
             template='errors/400.html',
-            status=requests.codes.bad
+            status=codes.bad
         )
 
-    @app.errorhandler(requests.codes.unprocessable)
+    @app.errorhandler(codes.unprocessable)
     def handle_validation_error(e):
         """
         422 参数校验错误
@@ -164,11 +177,11 @@ def register_errors(app):
         """
         return render_info(
             info=MyResponse(
-                code=requests.codes.unprocessable,
+                code=codes.unprocessable,
                 msg=e.exc.messages if e.exc else repr(e)
             ),
             template='errors/422.html',
-            status=requests.codes.unprocessable
+            status=codes.unprocessable
         )
 
     @app.errorhandler(Exception)

@@ -11,13 +11,17 @@ import os
 import logging
 import time
 from functools import wraps
+from contextlib import contextmanager
 from flask_sqlalchemy import SQLAlchemy as BaseSQLAlchemy
 from flask_moment import Moment
 from flask_migrate import Migrate
 from flask_apscheduler import APScheduler as BaseAPScheduler
-from flask_caching import Cache as BaseCache
 from apscheduler.events import JobExecutionEvent, EVENT_JOB_ERROR
-from contextlib import contextmanager
+from flask_caching import Cache as BaseCache
+from flask_wtf import CSRFProtect
+from flask_login import LoginManager, AnonymousUserMixin
+from flask_session import Session
+
 
 from utils.file.file import FileUtil
 from utils.assert_util import Assert
@@ -119,11 +123,36 @@ def init_log(project_name, lever, log_dir_name='logs'):
     return handler
 
 
+class Guest(AnonymousUserMixin):
+    """
+    访客类
+    """
+
+    def can(self, permission_name):
+        return False
+
+    @property
+    def is_admin(self):
+        return False
+
+
 db = SQLAlchemy()
 moment = Moment()
 migrate = Migrate()
 scheduler = APScheduler()
 cache = Cache()
+login_manager = LoginManager()
+csrf = CSRFProtect()
+session = Session()
+
+# 自定义未登录跳转路径
+login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'warning'
+# login_manager.refresh_view = 'auth.re_authenticate'
+# login_manager.needs_refresh_message_category = 'warning'
+# 防止恶意用户篡改 cookies, 当发现 cookies 被篡改时, 该用户的 session 对象会被立即删除, 导致强制重新登录
+login_manager.session_protection = 'strong'
+login_manager.anonymous_user = Guest
 
 # flask db init
 # flask db migrate -m ""

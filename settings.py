@@ -47,9 +47,21 @@ class Env(Enum):
 class BaseConfig(object):
     """ 基本配置类 """
 
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev key')
+    # 客户端的cookie的名称
+    SESSION_COOKIE_NAME = 'session_token'
+    # 保存到session中的值的前缀
+    SESSION_KEY_PREFIX = 'session:'
+    SECRET_KEY = os.getenv('SECRET_KEY', 'EA2yCN6eBn4mDfA5')
+    # 为cookie设置签名来保护数据不被更改
+    SESSION_USE_SIGNER = True
     # 设置 session 有效时长
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(hours=3)
+    # session类型为memcached
+    SESSION_TYPE = 'filesystem'
+    # session 文件路径
+    SESSION_FILE_DIR = os.path.join(base_dir, 'sessions')
+    # session 文件存储大小
+    SESSION_FILE_THRESHOLD = 5000
 
     # 关闭 JSON ascii编码，使其支持中文
     JSON_AS_ASCII = False
@@ -74,7 +86,7 @@ class BaseConfig(object):
     CACHE_DEFAULT_TIMEOUT = 60 * 60 * 24 * 3
 
     # 开启CSRFProtect
-    # CKEDITOR_ENABLE_CSRF = True
+    CKEDITOR_ENABLE_CSRF = True
     # CKEDITOR_FILE_UPLOADER = 'admin.upload_image'
 
     # 定时任务
@@ -121,37 +133,37 @@ class BaseConfig(object):
     # 贷后图片分类接口地址
     POST_LOAN_URL = OBJECT_DICT.get('PostLoanUrl', {})
 
-    JOBS = [
-        # {
-        #     'id': 'pre_loan',
-        #     'func': 'jobs.loan:loan_sort',
-        #     'args': ('PRE_LOAN_URL', 'pre_loan'),
-        #     'trigger': 'cron',
-        #     # 'second': '0/10',
-        #     'minute': '0/5',
-        #     'hour': '8-20',
-        #     'max_instances': 1
-        # },
-        {
-            'id': 'post_loan',
-            'func': 'jobs.loan:loan_sort',
-            'args': ('POST_LOAN_URL', 'H'),
-            'trigger': 'cron',
-            'second': '0/10',
-            # 'minute': '0/5',
-            # 'hour': '8-20',
-            'max_instances': 1
-        },
-        {
-            'id': 'loan_push',
-            'func': 'jobs.loan:loan_push',
-            'trigger': 'cron',
-            'second': '0/10',
-            # 'minute': '0/5',
-            # 'hour': '8-20',
-            'max_instances': 1
-        }
-    ]
+    # JOBS = [
+    #     # {
+    #     #     'id': 'pre_loan',
+    #     #     'func': 'jobs.loan:loan_sort',
+    #     #     'args': ('PRE_LOAN_URL', 'pre_loan'),
+    #     #     'trigger': 'cron',
+    #     #     # 'second': '0/10',
+    #     #     'minute': '0/5',
+    #     #     'hour': '8-20',
+    #     #     'max_instances': 1
+    #     # },
+    #     {
+    #         'id': 'post_loan',
+    #         'func': 'jobs.loan:loan_sort',
+    #         'args': ('POST_LOAN_URL', 'H'),
+    #         'trigger': 'cron',
+    #         'second': '0/10',
+    #         # 'minute': '0/5',
+    #         # 'hour': '8-20',
+    #         'max_instances': 1
+    #     },
+    #     {
+    #         'id': 'loan_push',
+    #         'func': 'jobs.loan:loan_push',
+    #         'trigger': 'cron',
+    #         'second': '0/10',
+    #         # 'minute': '0/5',
+    #         # 'hour': '8-20',
+    #         'max_instances': 1
+    #     }
+    # ]
 
 
 class DevelopmentConfig(BaseConfig):
@@ -169,7 +181,7 @@ class DevelopmentConfig(BaseConfig):
     }
 
     # 关闭CSRF保护
-    WTF_CSRF_ENABLED = False
+    # WTF_CSRF_ENABLED = False
 
 
 class TestingConfig(BaseConfig):
@@ -179,7 +191,7 @@ class TestingConfig(BaseConfig):
     LOGGER_LEVER = logging.DEBUG
 
     TESTING = True
-    WTF_CSRF_ENABLED = False
+    # WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL')
     SQLALCHEMY_BINDS = {
         'YFC_UCL_PRD': 'oracle://YFC_UCL_PRD:yulon2016@10.5.60.132:1521/credit',
@@ -204,3 +216,4 @@ config = {
     Env.TESTING.value: TestingConfig,
     Env.PRODUCTION.value: ProductionConfig
 }
+
