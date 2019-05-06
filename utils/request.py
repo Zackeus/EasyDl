@@ -48,6 +48,7 @@ _codes = {
 
     # 系统代号
     0: ('success', ),
+    1: ('login_fail', ),
 
     # Informational.
     100: ('continue',),

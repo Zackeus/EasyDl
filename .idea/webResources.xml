@@ -6,7 +6,30 @@
         <entryData>
           <resourceRoots>
             <path value="file://$PROJECT_DIR$/static" />
-            <path value="file://$PROJECT_DIR$/static/image" />
+            <path value="file://$PROJECT_DIR$/static/images" />
+            <path value="file://$PROJECT_DIR$/static/css" />
+            <path value="file://$PROJECT_DIR$/static/css/timer" />
+            <path value="file://$PROJECT_DIR$/static/css/timer/bootstrap" />
+            <path value="file://$PROJECT_DIR$/static/layui" />
+            <path value="file://$PROJECT_DIR$/static/layui/css" />
+            <path value="file://$PROJECT_DIR$/static/layui/lay" />
+            <path value="file://$PROJECT_DIR$/static/layui/images/face" />
+            <path value="file://$PROJECT_DIR$/static/layui/images" />
+            <path value="file://$PROJECT_DIR$/static/layui/font" />
+            <path value="file://$PROJECT_DIR$/static/layui/css/tree" />
+            <path value="file://$PROJECT_DIR$/static/layui/css/modules/layer/default" />
+            <path value="file://$PROJECT_DIR$/static/layui/css/modules/layer" />
+            <path value="file://$PROJECT_DIR$/static/layui/css/modules/laydate/default" />
+            <path value="file://$PROJECT_DIR$/static/layui/css/modules/laydate" />
+            <path value="file://$PROJECT_DIR$/static/layui/css/modules" />
+            <path value="file://$PROJECT_DIR$/static/layui/css/icon" />
+            <path value="file://$PROJECT_DIR$/static/layui/lay/custom" />
+            <path value="file://$PROJECT_DIR$/static/layui/lay/echarts" />
+            <path value="file://$PROJECT_DIR$/static/layui/lay/modules" />
+            <path value="file://$PROJECT_DIR$/static/layui/lay/tree" />
+            <path value="file://$PROJECT_DIR$/static/images/loan" />
+            <path value="file://$PROJECT_DIR$/static/images/timer" />
+            <path value="file://$PROJECT_DIR$/static/js" />
           </resourceRoots>
         </entryData>
       </entry>

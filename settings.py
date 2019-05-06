@@ -127,7 +127,7 @@ class BaseConfig(object):
     # 贷款资料分割图片文件夹
     LOAN_DIR_IMG = 'IMG'
     # 贷款资料图片分类测试图片
-    TEST_LOAN_IMAGE = os.path.join(base_static, 'image', '2.png')
+    TEST_LOAN_IMAGE = os.path.join(base_static, 'images', 'loan', '2.png')
     # 贷前图片分类接口地址
     PRE_LOAN_URL = OBJECT_DICT.get('PreLoanUrl', {})
     # 贷后图片分类接口地址

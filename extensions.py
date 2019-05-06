@@ -163,13 +163,26 @@ csrf = CSRFProtect()
 session = Session()
 
 # 自定义未登录跳转路径
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'user.login'
 login_manager.login_message_category = 'warning'
 # login_manager.refresh_view = 'auth.re_authenticate'
 # login_manager.needs_refresh_message_category = 'warning'
 # 防止恶意用户篡改 cookies, 当发现 cookies 被篡改时, 该用户的 session 对象会被立即删除, 导致强制重新登录
 login_manager.session_protection = 'strong'
 login_manager.anonymous_user = Guest
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """
+    用户加载函数
+    :param user_id:
+    :return:
+    """
+    from models.sys.user import User
+    user = User().dao_get(user_id)
+    return user
+
 
 # flask db init
 # flask db migrate -m ""

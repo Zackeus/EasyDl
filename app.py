@@ -6,6 +6,7 @@ from flask_wtf.csrf import CSRFError
 from views.loan import loan_bp
 from views.test import test_bp
 from views.sys.user import user_bp
+from views.sys.area import area_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.response import MyResponse, render_info
 from utils.object_util import is_empty
@@ -70,6 +71,7 @@ def register_blueprints(app):
     """
     app.register_blueprint(blueprint=loan_bp, url_prefix='/loan')
     app.register_blueprint(blueprint=user_bp, url_prefix='/user')
+    app.register_blueprint(blueprint=area_bp, url_prefix='/sys')
     app.register_blueprint(blueprint=test_bp, url_prefix='/test')
 
 

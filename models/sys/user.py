@@ -7,16 +7,18 @@
 # @Time : 2019/4/16 11:07
 
 
+from flask_login import UserMixin
 from datetime import datetime
 from flask import current_app
 from marshmallow import fields, validate
 
 from utils.decorators import result_mapper
-from extensions import db
+from extensions import db, cache
 from models.basic import DataEntity, DataEntitySchema
+from utils import validates as MyValidates
 
 
-class User(DataEntity):
+class User(DataEntity, UserMixin):
 
     def __init__(self, id=None, current_user=None, company=None, office=None, login_name=None,
                  password=None, no=None, name=None, email=None, phone=None, mobile=None,
@@ -79,6 +81,43 @@ class User(DataEntity):
         from utils.sys.system import validate_password as check_password_hash
         return check_password_hash(plain_password, self.password)
 
+    @cache.memoize(timeout=60 * 60 * 2)
+    @result_mapper(module_name='models.sys.user', schema_cls='UserSchema')
+    def dao_get(self, id):
+        sql = "SELECT a.id, a.id AS 'current_user.id', a.company_id AS 'company.id', a.office_id AS 'office.id', " \
+              "a.login_name, a.login_name AS 'current_user.login_name', a.password, " \
+              "a.password AS 'current_user.password', a.no, a.no AS 'current_user.no', " \
+              "a.name, a.name AS 'current_user.name', " \
+              "a.email, a.phone, a.phone AS 'current_user.phone', " \
+              "a.mobile, a.mobile AS 'current_user.mobile', a.user_type, a.login_ip, a.login_date, " \
+              "a.remarks, a.login_flag, a.photo, a.create_by AS 'create_by.id', a.create_date, " \
+              "a.update_by AS 'update_by.id', a.update_date, a.del_flag, c.name AS 'company.name', " \
+              "c.parent_id AS 'company.parent.id', c.parent_ids AS 'company.parent_ids', " \
+              "ca.id AS 'company.area.id', ca.name AS 'company.area.name', " \
+              "ca.parent_id AS 'company.area.parent.id', ca.parent_ids AS 'company.area.parent_ids', " \
+              "o.name AS 'office.name', o.parent_id AS 'office.parent.id', o.parent_ids AS 'office.parent_ids', " \
+              "oa.id AS 'office.area.id', oa.name AS 'office.area.name', " \
+              "oa.parent_id AS 'office.area.parent.id', oa.parent_ids AS 'office.area.parent_ids', " \
+              "cu.id AS 'company.primary_person.id', cu.name AS 'company.primary_person.name', " \
+              "cu2.id AS 'company.deputy_person.id', cu2.name AS 'company.deputy_person.name', " \
+              "ou.id AS 'office.primary_person.id', ou.name AS 'office.primary_person.name', " \
+              "ou2.id AS 'office.deputy_person.id', ou2.name AS 'office.deputy_person.name'" \
+              "FROM [jeesite-yfc].[dbo].[sys_user] a " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_office] c ON c.id = a.company_id " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_area] ca ON ca.id = c.area_id " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_office] o ON o.id = a.office_id " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_area] oa ON oa.id = o.area_id " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_user] cu ON cu.id = c.primary_person " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_user] cu2 ON cu2.id = c.deputy_person " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_user] ou ON ou.id = o.primary_person " \
+              "LEFT JOIN [jeesite-yfc].[dbo].[sys_user] ou2 ON ou2.id = o.deputy_person " \
+              "WHERE a.id = :id AND a.del_flag = :del_flag "
+        with db.auto_commit_db() as s:
+            res = s.execute(sql,
+                            params={'id': id, 'del_flag': self.del_flag},
+                            bind=db.get_engine(current_app, bind='JEESITE-YFC'))
+            return res._metadata.keys, res.cursor.fetchone()
+
     @result_mapper(module_name='models.sys.user', schema_cls='UserSchema')
     def dao_get_by_login_name(self, login_name):
         sql = "SELECT a.id, a.id AS 'current_user.id', a.company_id AS 'company.id', a.office_id AS 'office.id', " \
@@ -122,8 +161,11 @@ class UserSchema(DataEntitySchema):
     """
     __model__ = User
 
-    login_name = fields.Str(required=True, validate=validate.Length(min=1, max=100), load_from='loginName')
-    password = fields.Str(required=True, validate=validate.Length(min=1, max=100))
+    login_name = fields.Str(required=True,
+                            validate=MyValidates.MyLength(min=1, max=100, not_empty=False),
+                            load_from='loginName')
+
+    password = fields.Str(required=True, validate=MyValidates.MyLength(min=1, max=100, not_empty=False))
     no = fields.Str(validate=validate.Length(max=100))
     name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     email = fields.Str(validate=validate.Length(max=200))
@@ -155,6 +197,10 @@ class UserSchema(DataEntitySchema):
 
     def partial_db(self):
         return 'new_password',
+
+    # noinspection PyMethodMayBeStatic
+    def only_login(self):
+        return 'login_name', 'password'
 
 
 

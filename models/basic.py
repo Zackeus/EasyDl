@@ -147,6 +147,18 @@ class DataEntity(object):
             hashlib.md5(self.__class__.__name__.encode(encoding=Unicode.UTF_8.value)).hexdigest()
         )
 
+    def dao_create(self, id=None):
+        pass
+
+    def dao_delete(self):
+        pass
+
+    def dao_get(self, id):
+        pass
+
+    def dao_update(self):
+        pass
+
 
 class DataEntitySchema(Schema):
     """
