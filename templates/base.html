@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html style="overflow-x:auto;overflow-y:auto;height:100%;">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=8,IE=9,IE=10,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{% block title %}{% endblock title %} - Powered By Zackues</title>
+
+    <script type="text/javascript">
+        let ctx = "{{ request.host_url }}",
+            ctxStatic = "{{ request.host_url }}static";
+    </script>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='layui/css/layui.css') }}"/>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='layui/layui.js') }}"></script>
+
+    {% block head %}{% endblock head %}
+
+</head>
+<body class={% block bodyClass %}{% endblock bodyClass %} >
+    {% block body %}{% endblock body %}
+
+    {% block footer %}{% endblock footer %}
+</body>
+</html>
