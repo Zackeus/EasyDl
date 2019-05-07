@@ -12,6 +12,7 @@ import logging
 import time
 from functools import wraps
 from contextlib import contextmanager
+from flask import Blueprint
 from flask_sqlalchemy import SQLAlchemy as BaseSQLAlchemy
 from flask_moment import Moment
 from flask_migrate import Migrate
@@ -19,7 +20,7 @@ from flask_apscheduler import APScheduler as BaseAPScheduler
 from apscheduler.events import JobExecutionEvent, EVENT_JOB_ERROR
 from flask_caching import Cache as BaseCache
 from flask_wtf import CSRFProtect as BaseCSRFProtect
-from flask_login import LoginManager, AnonymousUserMixin
+from flask_login import LoginManager as BaseLoginManager, AnonymousUserMixin
 from flask_session import Session
 
 
@@ -138,6 +139,58 @@ class CSRFProtect(BaseCSRFProtect):
                        'the parameters "views" must be lists or tuples.')
         for view in views:
             self.exempt(view)
+
+
+class LoginManager(BaseLoginManager):
+    """
+    扩展 LoginManager
+    """
+
+    def __init__(self, app=None, add_context_processor=True):
+        super(self.__class__, self).__init__(app, add_context_processor)
+        self._exempt_views = set()
+        self._exempt_blueprints = set()
+
+    def init_app(self, app, add_context_processor=True):
+        from utils.decorators import login_required
+        super().init_app(app, add_context_processor)
+
+        @app.before_request
+        @login_required
+        def login_protect():
+            """
+            登录保护
+            :return:
+            """
+            pass
+
+    def exempt_view(self, view):
+        """
+        标记要从LoginManager保护中排除的视图或蓝图
+        :param view:
+        :return:
+        """
+        if isinstance(view, Blueprint):
+            self._exempt_blueprints.add(view.name)
+            return view
+
+        if isinstance(view, (str,)):
+            view_location = view
+        else:
+            view_location = '%s.%s' % (view.__module__, view.__name__)
+        self._exempt_views.add(view_location)
+        return view
+
+    def exempt_views(self, views):
+        """
+        标记要从LoginManager保护中排除的视图或蓝图
+        :param views:
+        :return:
+        """
+        Assert.is_true(isinstance(views, tuple) or isinstance(views, list),
+                       'the parameters "views" must be lists or tuples.')
+        for view in views:
+            self.exempt_view(view)
 
 
 class Guest(AnonymousUserMixin):

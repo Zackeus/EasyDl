@@ -9,6 +9,8 @@
 
 from functools import wraps
 from marshmallow.compat import basestring
+from flask import current_app
+from flask_login import config, utils
 
 from utils.str_util import Dict
 from utils.object_util import is_not_empty, create_instance
@@ -49,4 +51,34 @@ def result_mapper(schema_cls, module_name=None, *s, **ks):
             return entity
         return decorated_function
     return decorator
+
+
+def login_required(func):
+    """
+    登录保护扩展
+    :param func:
+    :return:
+    """
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+
+        if not utils.request.endpoint:
+            return func(*args, **kwargs)
+
+        view = current_app.view_functions.get(utils.request.endpoint)
+        dest = '%s.%s' % (view.__module__, view.__name__)
+
+        if utils.request.method in config.EXEMPT_METHODS:
+            return func(*args, **kwargs)
+        elif current_app.login_manager._login_disabled:
+            return func(*args, **kwargs)
+        elif utils.request.blueprint in current_app.login_manager._exempt_blueprints:
+            return func(*args, **kwargs)
+        elif dest in current_app.login_manager._exempt_views:
+            return func(*args, **kwargs)
+        elif not utils.current_user.is_authenticated:
+            # 用户未通过登录验证
+            return current_app.login_manager.unauthorized()
+        return func(*args, **kwargs)
+    return decorated_view
 

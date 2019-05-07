@@ -7,6 +7,7 @@
 # @Time : 2019/3/21 10:02
 
 
+import redis
 import logging
 import datetime
 import os
@@ -47,21 +48,20 @@ class Env(Enum):
 class BaseConfig(object):
     """ 基本配置类 """
 
+    # 项目名
+    PROJECT_NAME = 'EasyDl'
+
     # 客户端的cookie的名称
     SESSION_COOKIE_NAME = 'session_token'
     # 保存到session中的值的前缀
-    SESSION_KEY_PREFIX = 'session:'
+    SESSION_KEY_PREFIX = '{0}-session:'.format(os.getenv('PROJECT_NAME', PROJECT_NAME))
     SECRET_KEY = os.getenv('SECRET_KEY', 'EA2yCN6eBn4mDfA5')
     # 为cookie设置签名来保护数据不被更改
     SESSION_USE_SIGNER = True
     # 设置 session 有效时长
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(hours=3)
-    # session类型为memcached
-    SESSION_TYPE = 'filesystem'
-    # session 文件路径
-    SESSION_FILE_DIR = os.path.join(base_dir, 'sessions')
-    # session 文件存储大小
-    SESSION_FILE_THRESHOLD = 5000
+    SESSION_TYPE = 'redis'
+    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379')
 
     # 关闭 JSON ascii编码，使其支持中文
     JSON_AS_ASCII = False
@@ -81,7 +81,17 @@ class BaseConfig(object):
     SQLALCHEMY_MAX_OVERFLOW = 5
 
     # 缓存类型
-    CACHE_TYPE = 'simple'
+    CACHE_TYPE = 'redis'
+    # 缓存的前缀
+    CACHE_KEY_PREFIX = '{0}-cache:'.format(os.getenv('PROJECT_NAME', PROJECT_NAME))
+    # redis 度武器主机
+    CACHE_REDIS_HOST = '127.0.0.1'
+    # redis 服务器端口
+    CACHE_REDIS_PORT = 6379
+    # redis 的 db 库
+    CACHE_REDIS_DB = 0
+    # redis 服务器密码
+    # CACHE_REDIS_PASSWORD = '123456'
     # 默认缓存时间 单位秒
     CACHE_DEFAULT_TIMEOUT = 60 * 60 * 24 * 3
 
@@ -106,9 +116,6 @@ class BaseConfig(object):
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', 'syr391592723')
     # 默认的发信人
     MAIL_DEFAULT_SENDER = ('YuLon', os.getenv('MAIL_USERNAME', 'loan_yulon_finance@163.com'))
-
-    # 项目名
-    PROJECT_NAME = 'EasyDl'
 
     # 序列化对象字典
     OBJECT_DICT = init_object_dict()

@@ -5,3 +5,6 @@
 # @File : __init__.py.py 
 # @Software: PyCharm
 # @Time : 2019/4/30 15:38
+
+
+from .system import (entrypt_password, validate_password)

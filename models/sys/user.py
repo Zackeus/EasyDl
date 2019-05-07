@@ -78,8 +78,8 @@ class User(DataEntity, UserMixin):
         :param plain_password: 明文密码
         :return:
         """
-        from utils.sys.system import validate_password as check_password_hash
-        return check_password_hash(plain_password, self.password)
+        from utils import sys
+        return sys.validate_password(plain_password, self.password)
 
     @cache.memoize(timeout=60 * 60 * 2)
     @result_mapper(module_name='models.sys.user', schema_cls='UserSchema')

@@ -8,17 +8,11 @@
 
 
 from flask import Blueprint, render_template
-from flask_login import login_required
 
 from utils.request import Method
+from utils.decorators import login_required
 
 area_bp = Blueprint('sys', __name__)
-
-
-@area_bp.before_request
-@login_required
-def login_protect():
-    pass
 
 
 @area_bp.route('/index', methods=[Method.GET.value])

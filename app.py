@@ -85,7 +85,10 @@ def register_extensions(app):
     moment.init_app(app)
     migrate.init_app(app=app, db=db)
     cache.init_app(app)
+
     login_manager.init_app(app)
+    login_manager.exempt_views((loan_bp, test_bp, user_bp))
+
     session.init_app(app)
 
     csrf.init_app(app)
