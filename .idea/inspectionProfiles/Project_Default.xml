@@ -16,6 +16,23 @@
       </option>
       <option name="myCustomValuesEnabled" value="true" />
     </inspection_tool>
+    <inspection_tool class="PyArgumentEqualDefaultInspection" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="PyAugmentAssignmentInspection" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="PyBehaveInspection" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="PyClassicStyleClassInspection" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="PyCompatibilityInspection" enabled="false" level="TYPO" enabled_by_default="false">
+      <option name="ourVersions">
+        <value>
+          <list size="2">
+            <item index="0" class="java.lang.String" itemvalue="2.7" />
+            <item index="1" class="java.lang.String" itemvalue="3.7" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyMandatoryEncodingInspection" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="PyMissingOrEmptyDocstringInspection" enabled="false" level="TYPO" enabled_by_default="false" />
+    <inspection_tool class="PyMissingTypeHintsInspection" enabled="false" level="TYPO" enabled_by_default="false" />
     <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoredErrors">
         <list>
@@ -30,7 +47,6 @@
         </list>
       </option>
     </inspection_tool>
-    <inspection_tool class="PyProtectedMemberInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="PyShadowingBuiltinsInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoredNames">
         <list>
@@ -39,7 +55,7 @@
         </list>
       </option>
     </inspection_tool>
-    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="false" level="WARNING" enabled_by_default="false">
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredIdentifiers">
         <list>
           <option value="settings.init_object_dict" />

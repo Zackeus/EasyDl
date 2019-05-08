@@ -24,4 +24,13 @@ def index():
     return render_template(template_name_or_list='sys/index.html')
 
 
+@area_bp.route('/main', methods=[Method.GET.value])
+def main():
+    """
+    子页面
+    :return:
+    """
+    return render_template(template_name_or_list='sys/main.html')
+
+
 

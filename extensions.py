@@ -150,6 +150,8 @@ class LoginManager(BaseLoginManager):
         super(self.__class__, self).__init__(app, add_context_processor)
         self._exempt_views = set()
         self._exempt_blueprints = set()
+        # 添加静态文件路由过滤
+        self._exempt_views.add('flask.helpers.send_static_file')
 
     def init_app(self, app, add_context_processor=True):
         from utils.decorators import login_required

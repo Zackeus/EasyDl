@@ -59,6 +59,8 @@ def login_required(func):
     :param func:
     :return:
     """
+
+    # noinspection PyProtectedMember
     @wraps(func)
     def decorated_view(*args, **kwargs):
 

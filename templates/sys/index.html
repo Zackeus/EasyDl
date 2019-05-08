@@ -77,7 +77,7 @@
                                 </a>
                             </dd>
 							<dd>
-                                <a href="${ctx}/sys/user/logout" class="signOut">
+                                <a href="{{ url_for('user.logout') }}" class="signOut">
                                     <i class="seraph icon-tuichu"></i>
                                     <cite>退出</cite>
                                 </a>
@@ -145,7 +145,7 @@
 				</ul>
 				<div class="layui-tab-content clildFrame">
 					<div class="layui-tab-item layui-show">
-						<iframe src="${ctx}/sys/area/main"></iframe>
+						<iframe src="{{ url_for('sys.main') }}"></iframe>
 					</div>
 				</div>
 			</div>

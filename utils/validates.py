@@ -7,12 +7,11 @@
 # @Time : 2019/3/25 15:49
 
 
+import utils
 import requests
 from webargs.flaskparser import FlaskParser
-from utils.request import Headers
 from werkzeug.exceptions import MethodNotAllowed
 from marshmallow.validate import Length, ValidationError
-from utils.object_util import is_empty
 from enum import Enum, unique
 
 
@@ -51,7 +50,7 @@ class Parser(FlaskParser):
         schema_kwargs = schema_kwargs or {}
 
         def factory(request):
-            if consumes and request.headers.get(Headers.CONTENT_TYPE.value, '') != consumes:
+            if consumes and request.headers.get(utils.Headers.CONTENT_TYPE.value, '') != consumes:
                 # 请求头校验
                 raise MethodNotAllowed(description='不支持的请求头')
             return schema_cls(
@@ -87,7 +86,7 @@ class MyLength(Length):
     def __call__(self, value):
         super().__call__(value)
 
-        if not self.not_empty and is_empty(value):
+        if not self.not_empty and utils.is_empty(value):
             raise ValidationError(self.message_not_empty)
 
         return value

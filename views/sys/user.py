@@ -13,7 +13,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from utils.request import Method, ContentType, codes
 from utils.validates import validated
 from models.sys.user import User, UserSchema
-from utils.response import render_info, MyResponse
+from utils.response import render_info, MyResponse, redirect_back
 from object_util import is_not_empty
 from utils.assert_util import Assert
 
@@ -47,4 +47,15 @@ def login_validate(user):
         login_user(real_user, False)
         return render_info(MyResponse(msg='登录成功'))
     return render_info(MyResponse(code=codes.login_fail, msg='用户名或密码不正确'))
+
+
+@user_bp.route('/logout', methods=[Method.GET.value])
+def logout():
+    """
+    用户登出
+    :return:
+    """
+    logout_user()
+    return redirect_back()
+
 
