@@ -8,14 +8,11 @@
 
 
 from flask import Blueprint, render_template, redirect, url_for
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import current_user, login_user, logout_user
 
-from utils.request import Method, ContentType, codes
-from utils.validates import validated
+from utils import Method, ContentType, codes, validated, render_info, MyResponse, redirect_back, \
+    is_not_empty, Assert
 from models.sys.user import User, UserSchema
-from utils.response import render_info, MyResponse, redirect_back
-from object_util import is_not_empty
-from utils.assert_util import Assert
 
 
 user_bp = Blueprint('user', __name__)

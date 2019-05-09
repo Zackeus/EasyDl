@@ -23,13 +23,8 @@ from flask_wtf import CSRFProtect as BaseCSRFProtect
 from flask_login import LoginManager as BaseLoginManager, AnonymousUserMixin
 from flask_session import Session
 
-
-from utils.file.file import FileUtil
-from utils.assert_util import Assert
-from utils.object_util import is_not_empty
-from utils.encodes import Unicode
-from utils.response import MyResponse
-from utils.msg import WXMsg
+from utils import Assert, is_not_empty, Unicode, MyResponse, WXMsg
+from utils.file import FileUtil
 
 
 class SQLAlchemy(BaseSQLAlchemy):

@@ -12,8 +12,7 @@ from marshmallow import fields, Schema, post_load
 from flask import request, jsonify, render_template, redirect, url_for
 from jinja2.exceptions import TemplateNotFound
 
-from utils.request import codes, Headers, ContentType
-from utils import validates as MyValidates
+from utils import codes, Headers, ContentType, validates as MyValidates
 
 
 class MyResponse(object):

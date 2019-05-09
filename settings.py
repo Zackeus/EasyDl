@@ -61,7 +61,6 @@ class BaseConfig(object):
     # 设置 session 有效时长
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(hours=3)
     SESSION_TYPE = 'redis'
-    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379')
 
     # 关闭 JSON ascii编码，使其支持中文
     JSON_AS_ASCII = False
@@ -84,14 +83,10 @@ class BaseConfig(object):
     CACHE_TYPE = 'redis'
     # 缓存的前缀
     CACHE_KEY_PREFIX = '{0}-cache:'.format(os.getenv('PROJECT_NAME', PROJECT_NAME))
-    # redis 度武器主机
-    CACHE_REDIS_HOST = '127.0.0.1'
     # redis 服务器端口
     CACHE_REDIS_PORT = 6379
     # redis 的 db 库
     CACHE_REDIS_DB = 0
-    # redis 服务器密码
-    # CACHE_REDIS_PASSWORD = '123456'
     # 默认缓存时间 单位秒
     CACHE_DEFAULT_TIMEOUT = 60 * 60 * 24 * 3
 
@@ -176,6 +171,8 @@ class BaseConfig(object):
 class DevelopmentConfig(BaseConfig):
     """ 开发配置类 """
 
+    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379')
+
     # 日志级别
     LOGGER_LEVER = logging.DEBUG
 
@@ -186,6 +183,9 @@ class DevelopmentConfig(BaseConfig):
         'YFC_UCL_PRD': 'oracle://YFC_UCL_PRD:yulon2016@10.5.60.132:1521/credit',
         'JEESITE-YFC': 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.80:1433/jeesite-yfc'
     }
+
+    # redis 度武器主机
+    CACHE_REDIS_HOST = '127.0.0.1'
 
     # 关闭CSRF保护
     # WTF_CSRF_ENABLED = False
@@ -209,6 +209,8 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     """ 生产配置类 """
 
+    SESSION_REDIS = redis.Redis(host='10.5.60.77', port='6379', password='syr391592723*')
+
     # 日志级别
     LOGGER_LEVER = logging.WARNING
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL')
@@ -216,6 +218,11 @@ class ProductionConfig(BaseConfig):
         'YFC_UCL_PRD': 'oracle://YFC_UCL_PRD:yulon2016@10.5.60.132:1521/credit',
         'JEESITE-YFC': 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.80:1433/jeesite-yfc'
     }
+
+    # redis 度武器主机
+    CACHE_REDIS_HOST = '10.5.60.77'
+    # redis 服务器密码
+    CACHE_REDIS_PASSWORD = 'syr391592723*'
 
 
 config = {
