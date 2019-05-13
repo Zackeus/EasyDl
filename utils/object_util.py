@@ -7,6 +7,27 @@
 # @Time : 2019/3/28 13:27
 
 
+class BaseObject(object):
+    """
+    实体基类
+    """
+
+    def gat_attrs(self):
+        return ', '.join('{}={}'.format(k, getattr(self, k)) for k in self.__dict__.keys())
+
+    def __str__(self):
+        return '[{}:{}]'.format(self.__class__.__name__, self.gat_attrs())
+
+    def __repr__(self):
+        import hashlib
+        from utils.encodes import Unicode
+
+        return '{0}({1})'.format(
+            self.__class__.__name__,
+            hashlib.md5(self.__class__.__name__.encode(encoding=Unicode.UTF_8.value)).hexdigest()
+        )
+
+
 def is_empty(o):
     """
     判断对象是否为空

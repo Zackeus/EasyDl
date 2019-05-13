@@ -18,7 +18,7 @@ from .encodes import (file_to_base64, base64_to_file, base64_to_cv_np, cv_np_to_
 from .errors import (MyError, ConstError, )
 from .idgen import (IdGen, )
 from .msg import (WXMsg, WXMsgSchema, )
-from .object_util import (is_not_empty, is_empty, create_instance, )
+from .object_util import (is_not_empty, is_empty, create_instance, BaseObject, )
 from .request import (Method, Headers, ContentType, codes, )
 from .response import (MyResponse, MyResponseSchema, render_info, is_safe_url, redirect_back, )
 from .SMB import (SMB, )

@@ -1,13 +1,17 @@
 <component name="ProjectDictionaryState">
   <dictionary name="zhou.zhang">
     <words>
+      <w>acodec</w>
       <w>agentid</w>
       <w>baidu</w>
+      <w>bluray</w>
       <w>ckeditor</w>
       <w>creat</w>
       <w>curdir</w>
       <w>dest</w>
       <w>entrypt</w>
+      <w>ffmpeg</w>
+      <w>ffprobe</w>
       <w>flle</w>
       <w>interations</w>
       <w>jeesite</w>
@@ -17,6 +21,7 @@
       <w>opencv</w>
       <w>partyid</w>
       <w>resized</w>
+      <w>smpte</w>
       <w>smtp</w>
       <w>sqlalchemy</w>
       <w>starttls</w>

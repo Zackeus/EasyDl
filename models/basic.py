@@ -7,14 +7,13 @@
 # @Time : 2019/3/26 8:46
 
 
-from utils.idgen import IdGen
-from utils.str_util import EncodingFormat
+from utils import IdGen, EncodingFormat, BaseObject
 from datetime import datetime
 from extensions import db
 from marshmallow import fields, validate, Schema, post_load, post_dump
 
 
-class BasicModel(db.Model):
+class BasicModel(db.Model, BaseObject):
     """
     模型基类
     """
@@ -26,21 +25,6 @@ class BasicModel(db.Model):
     create_date = db.Column(db.DateTime, name='CREATE_DATE', default=datetime.utcnow, comment='创建日期')
     update_date = db.Column(db.DateTime, name='UPDATE_DATE', default=datetime.utcnow, comment='更新日期')
     remarks = db.Column(db.Text, name='REMARKS', comment='备注')
-
-    def gat_attrs(self):
-        return ', '.join('{}={}'.format(k, getattr(self, k)) for k in self.__dict__.keys())
-
-    def __str__(self):
-        return '[{}:{}]'.format(self.__class__.__name__, self.gat_attrs())
-
-    def __repr__(self):
-        import hashlib
-        from utils.encodes import Unicode
-
-        return '{0}({1})'.format(
-            self.__class__.__name__,
-            hashlib.md5(self.__class__.__name__.encode(encoding=Unicode.UTF_8.value)).hexdigest()
-        )
 
     def dao_create(self, id=None):
         self.id = id if id else IdGen.uuid()
@@ -108,7 +92,7 @@ class BaseSchema(Schema):
         pass
 
 
-class DataEntity(object):
+class DataEntity(BaseObject):
 
     def __init__(self, id, current_user, del_flag='0', is_new_record=False, remarks=None,
                  create_by=None, update_by=None, create_date=datetime.utcnow(), update_date=None):
@@ -131,21 +115,6 @@ class DataEntity(object):
 
         self.del_flag = del_flag
         self.is_new_record = is_new_record
-
-    def gat_attrs(self):
-        return ', '.join('{}={}'.format(k, getattr(self, k)) for k in self.__dict__.keys())
-
-    def __str__(self):
-        return '[{}:{}]'.format(self.__class__.__name__, self.gat_attrs())
-
-    def __repr__(self):
-        import hashlib
-        from utils.encodes import Unicode
-
-        return '{0}({1})'.format(
-            self.__class__.__name__,
-            hashlib.md5(self.__class__.__name__.encode(encoding=Unicode.UTF_8.value)).hexdigest()
-        )
 
     def dao_create(self, id=None):
         pass

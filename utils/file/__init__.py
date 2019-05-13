@@ -10,3 +10,4 @@
 from .file import (FileUtil, FileFormat, )
 from .img import (ImgUtil, )
 from .pdf import (PDFUtil, )
+from .media import (AudioFormat, AudioCodecs, Audio, )

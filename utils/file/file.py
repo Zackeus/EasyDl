@@ -150,13 +150,15 @@ class FileUtil:
         return dir_path
 
     @staticmethod
-    def get_path_name_ext(file_path):
+    def get_path_name_ext(file_path, is_strict=True):
         """
         解析文件路径，文件名，文件扩展
+        :param bool is_strict: 是否严格检测文件是否存在
         :param file_path:
         :return:
         """
-        Assert.is_true(os.path.isfile(file_path), '文件不存在, path: {0}'.format(file_path))
+        if is_strict:
+            Assert.is_true(os.path.isfile(file_path), '文件不存在, path: {0}'.format(file_path))
         (path, file_name) = os.path.split(file_path)
         (name, ext) = os.path.splitext(file_name)
         return path, name, ext.strip(os.curdir)
@@ -315,6 +317,11 @@ class FileFormat(Enum):
     PNG = 'PNG'
     JPG = 'JPG'
     PDF = 'PDF'
+
+    PCM = 'PCM'
+    MP3 = 'MP3'
+    WAV = 'WAV'
+    V3 = 'V3'
 
 
 if __name__ == '__main__':
