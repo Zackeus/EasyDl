@@ -115,13 +115,6 @@ class BaseConfig(object):
     # 序列化对象字典
     OBJECT_DICT = init_object_dict()
 
-    # 微信信息配置
-    from utils.msg import WXMsg
-    WX_MSG = OBJECT_DICT.get(WXMsg.__name__, {})
-    # 百度云账号信息
-    from utils.baidu import BaiduCloud
-    BAIDU_CLOUD = OBJECT_DICT.get(BaiduCloud.__name__, {})
-
     # 贷款路径秘钥
     LOAN_PATH_KEY = os.getenv('LOAN_PATH_KEY', 'xatmTsm7GAmFcRet')
     # 贷款资料存放目录
@@ -135,37 +128,37 @@ class BaseConfig(object):
     # 贷后图片分类接口地址
     POST_LOAN_URL = OBJECT_DICT.get('PostLoanUrl', {})
 
-    # JOBS = [
-    #     # {
-    #     #     'id': 'pre_loan',
-    #     #     'func': 'jobs.loan:loan_sort',
-    #     #     'args': ('PRE_LOAN_URL', 'pre_loan'),
-    #     #     'trigger': 'cron',
-    #     #     # 'second': '0/10',
-    #     #     'minute': '0/5',
-    #     #     'hour': '8-20',
-    #     #     'max_instances': 1
-    #     # },
-    #     {
-    #         'id': 'post_loan',
-    #         'func': 'jobs.loan:loan_sort',
-    #         'args': ('POST_LOAN_URL', 'H'),
-    #         'trigger': 'cron',
-    #         # 'second': '0/10',
-    #         'minute': '0/5',
-    #         'hour': '8-20',
-    #         'max_instances': 1
-    #     },
-    #     {
-    #         'id': 'loan_push',
-    #         'func': 'jobs.loan:loan_push',
-    #         'trigger': 'cron',
-    #         # 'second': '0/10',
-    #         'minute': '0/5',
-    #         'hour': '8-20',
-    #         'max_instances': 1
-    #     }
-    # ]
+    JOBS = [
+        # {
+        #     'id': 'pre_loan',
+        #     'func': 'jobs.loan:loan_sort',
+        #     'args': ('PRE_LOAN_URL', 'pre_loan'),
+        #     'trigger': 'cron',
+        #     # 'second': '0/10',
+        #     'minute': '0/5',
+        #     'hour': '8-20',
+        #     'max_instances': 1
+        # },
+        {
+            'id': 'post_loan',
+            'func': 'jobs.loan:loan_sort',
+            'args': ('POST_LOAN_URL', 'H'),
+            'trigger': 'cron',
+            'second': '0/10',
+            # 'minute': '0/5',
+            # 'hour': '8-20',
+            'max_instances': 1
+        },
+        {
+            'id': 'loan_push',
+            'func': 'jobs.loan:loan_push',
+            'trigger': 'cron',
+            'second': '0/10',
+            # 'minute': '0/5',
+            # 'hour': '8-20',
+            'max_instances': 1
+        }
+    ]
 
 
 class DevelopmentConfig(BaseConfig):

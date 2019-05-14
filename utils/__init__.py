@@ -8,8 +8,9 @@
 
 
 from .assert_util import (Assert, )
-from .baidu import (BaiduCloud, Token, Results, CategoryInfo, )
 from .config_util import (ConfigUtils, )
+from .baidu_cloud.baidu import (BaiduCloud, Token, )
+from .baidu_cloud.image import (Image, )
 from .date import (in_time_zones, get_before_dawn, get_end_dawn, )
 from .decorators import (result_mapper, login_required, )
 from .digests import (get_key, get_salt, digest, )

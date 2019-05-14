@@ -8,16 +8,19 @@
 
 
 import requests
+from marshmallow import Schema, fields, validate
+
 from utils.request import ContentType
 from utils.encodes import Unicode
 from utils.errors import MyError
-from marshmallow import Schema, fields, validate
+from utils.decorators import auto_wired
 
 
 class WXMsg(object):
 
     __PREFIX = '【裕隆汽车金融】'
 
+    @auto_wired('utils.msg.WXMsg')
     def __init__(self, url, request_sys,  msg_content, agent_id, receiver_party_id, receiver_user_id,
                  request_user='', receiver_name='', receiver_company='裕隆汽车金融(中国)有限公司',
                  receiver_role='', send_datetime='', repeat_times=1, repeat_interval=60, application_number='',

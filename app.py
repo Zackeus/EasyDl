@@ -3,7 +3,7 @@ from settings import Env, config
 from flask import Flask as BasicFlask, current_app
 from flask_wtf.csrf import CSRFError
 
-from utils import EncodingFormat, is_empty, render_info, MyResponse
+from utils import is_empty, render_info, MyResponse
 from views.loan import loan_bp
 from views.test import test_bp
 from views.sys.user import user_bp
@@ -21,14 +21,13 @@ from models.file import FileModel
 
 class Flask(BasicFlask):
 
-    def get_object_dict(self, o_name):
+    def get_object_dict(self, o_key):
         """
         根据对象名查询配置参数信息
-        :param o_name:
+        :param o_key:
         :return:
         """
-        o_name = EncodingFormat.hump_to_pep8(o_name).upper()
-        return self.config.get(o_name, {})
+        return self.config.get('OBJECT_DICT', {}).get(o_key, {})
 
 
 def create_app(config_name=None):

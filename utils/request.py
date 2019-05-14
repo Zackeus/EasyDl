@@ -49,6 +49,8 @@ _codes = {
     # 系统代号
     0: ('success', ),
     1: ('login_fail', ),
+    # 请求总量超限额
+    17: ('request_limit_reached',),
 
     # Informational.
     100: ('continue',),
@@ -126,6 +128,7 @@ _codes = {
     509: ('bandwidth_limit_exceeded', 'bandwidth'),
     510: ('not_extended',),
     511: ('network_authentication_required', 'network_auth', 'network_authentication'),
+
 }
 
 codes = LookupDict(name='status_codes')

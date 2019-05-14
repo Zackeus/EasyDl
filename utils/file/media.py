@@ -13,8 +13,8 @@ from enum import Enum, unique
 from marshmallow import Schema, fields, post_load
 
 from utils.file.file import FileUtil, FileFormat
-from assert_util import Assert
-from object_util import is_not_empty, is_empty, BaseObject
+from utils.assert_util import Assert
+from utils.object_util import is_not_empty, is_empty, BaseObject
 
 
 @unique

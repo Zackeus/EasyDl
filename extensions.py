@@ -70,11 +70,11 @@ class APScheduler(BaseAPScheduler):
         try:
             self.app.logger.exception(event.exception)
         finally:
-            # 发送异常报警信息
-            WXMsg(
-                msg_content=self._ERROR_MSG.format(job_id=event.job_id, msg=res.msg),
-                **self.app.get_object_dict(WXMsg.__name__)
-            ).send_wx()
+            with self.app.app_context():
+                # 发送异常报警信息
+                WXMsg(
+                    msg_content=self._ERROR_MSG.format(job_id=event.job_id, msg=res.msg)
+                ).send_wx()
 
 
 class Cache(BaseCache):

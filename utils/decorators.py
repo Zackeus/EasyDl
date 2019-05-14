@@ -84,3 +84,30 @@ def login_required(func):
         return func(*args, **kwargs)
     return decorated_view
 
+
+def auto_wired(key):
+    """
+    参数自动装配
+    :param str key:
+    :return:
+    """
+    def decorator(func):
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            args_tuple = args[1:]
+            if is_not_empty(args_tuple):
+                return func(*args, **kwargs)
+
+            try:
+                kwargs_dict = current_app.get_object_dict(key)
+                kwargs_dict.update(kwargs)
+                return func(*args, **kwargs_dict)
+            except RuntimeError:
+                # 未创建 flask 上下文，直接返回原参数
+                return func(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
+
+

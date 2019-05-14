@@ -8,7 +8,7 @@
 
 
 import os
-from flask import Blueprint
+from flask import Blueprint, make_response, send_from_directory
 from utils.file.file import FileUtil
 from extensions import db
 
@@ -47,3 +47,13 @@ def data(date):
             FileUtil.copy_file(file, os.path.join(data_dir, file_type))
     print('OVER *******************************')
     return date
+
+
+@test_bp.route('/download')
+def download_file():
+    file_name = '8k.pcm'
+    # 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)
+    response = make_response(send_from_directory('D:/AIData', file_name, as_attachment=True))
+    response.headers["Content-Disposition"] = "attachment; filename={}".\
+        format(file_name.encode().decode('latin-1'))
+    return response

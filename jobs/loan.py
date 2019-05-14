@@ -15,7 +15,7 @@ from models.loan.img_detail import ImgDetailModel
 from models.loan.img_type import ImgTypeModel
 from models.file import FileModel
 from utils.errors import MyError
-from utils.baidu import BaiduCloud
+from utils.baidu_cloud.image import Image
 from utils.file.img import ImgUtil
 from utils.object_util import is_empty, is_not_empty
 from utils.str_util import abb_str
@@ -31,24 +31,23 @@ def loan_sort(urls_key, type_name):
     :return:
     """
     with scheduler.app.app_context():
-        baidu = BaiduCloud(**current_app.get_object_dict(BaiduCloud.__name__))
-        baidu.init_token()
-
-        # 分类请求地址
-        urls = current_app.config.get(urls_key)
-        img_path = current_app.config.get('TEST_LOAN_IMAGE')
-        url = get_easy_dl_url(
-            baidu=baidu,
-            urls=urls,
-            img_path=img_path
-        )
-
         # 获取待处理贷款流水
         loan_files = LoanFileModel().dao_get_todo(type_name=type_name, limit=10)
 
         if is_empty(loan_files):
             # 无处理数据，直接结束
             return
+
+        baidu = Image()
+
+        # 分类请求地址
+        urls = current_app.get_object_dict(urls_key)
+        img_path = current_app.config.get('TEST_LOAN_IMAGE')
+        url = get_easy_dl_url(
+            baidu=baidu,
+            urls=urls,
+            img_path=img_path
+        )
 
         for loan_file in loan_files:
             # 根据贷款流水获取待处理图片明细
@@ -79,11 +78,11 @@ def process_img(baidu, url, img_detail, img_file, urls, img_path):
     try:
         with db.auto_commit_db():
             img_base64 = ImgUtil.img_compress(img_file.file_path)
-            class_info = baidu.img_class(url=url, image_bs64=img_base64)
+            class_info = baidu.to_class(url=url, image_bs64=img_base64)
 
             # 分类失败
             if is_not_empty(class_info.error_code):
-                if class_info.error_code == 17:
+                if class_info.error_code == codes.request_limit_reached:
                     # 调用次数限制, 换取新地址
                     url = get_easy_dl_url(baidu, urls, img_path)
                     process_img(baidu, url, img_detail, img_file, urls, img_path)
@@ -109,7 +108,7 @@ def process_img(baidu, url, img_detail, img_file, urls, img_path):
         return url
     except Exception as e:
         # 判断是否地址池枯竭
-        if isinstance(e, MyError) and e.code == '600':
+        if isinstance(e, MyError) and e.code == str(codes.request_limit_reached):
             raise e
         else:
             from utils.response import MyResponse
@@ -135,11 +134,11 @@ def get_easy_dl_url(baidu, urls, img_path):
     """
     for _, url in urls.items():
         png_base64 = ImgUtil.img_compress(img_path)
-        res = baidu.img_class(url, png_base64)
+        res = baidu.to_class(url, png_base64)
         if is_not_empty(res.error_code):
             continue
         return url
-    raise MyError(code=600, msg='地址池枯竭')
+    raise MyError(code=codes.request_limit_reached, msg='地址池枯竭')
 
 
 def loan_push():
@@ -182,8 +181,7 @@ def loan_push():
                 # 发送微信错误报警信息
                 err_res = MyResponse.init_error(e)
                 WXMsg(
-                    msg_content='【贷款文件推送】【{id}】：{msg}'.format(id=loan_file.id, msg=err_res.msg),
-                    **current_app.get_object_dict(WXMsg.__name__)
+                    msg_content='【贷款文件推送】【{id}】：{msg}'.format(id=loan_file.id, msg=err_res.msg)
                 ).send_wx()
             finally:
                 # 更新推送次数
