@@ -144,18 +144,18 @@ class BaseConfig(object):
             'func': 'jobs.loan:loan_sort',
             'args': ('POST_LOAN_URL', 'H'),
             'trigger': 'cron',
-            'second': '0/10',
-            # 'minute': '0/5',
-            # 'hour': '8-20',
+            # 'second': '0/10',
+            'minute': '0/5',
+            'hour': '8-20',
             'max_instances': 1
         },
         {
             'id': 'loan_push',
             'func': 'jobs.loan:loan_push',
             'trigger': 'cron',
-            'second': '0/10',
-            # 'minute': '0/5',
-            # 'hour': '8-20',
+            # 'second': '0/10',
+            'minute': '0/5',
+            'hour': '8-20',
             'max_instances': 1
         }
     ]
