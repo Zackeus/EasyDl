@@ -40,6 +40,7 @@ class Image(BaseObject):
             raise MyError('缺失鉴权 Token 参数.')
         self.token = baidu_cloud.token
 
+    @auto_wired('utils.baidu_cloud.image.Image.to_class')
     def to_class(self, url, image_bs64, top_num=5):
         """
         图片分类

@@ -14,19 +14,16 @@ from models.loan.loan_file import LoanFileModel, LoanFileSchema
 from models.loan.img_detail import ImgDetailModel
 from models.loan.img_type import ImgTypeModel
 from models.file import FileModel
-from utils.errors import MyError
-from utils.baidu_cloud.image import Image
-from utils.file.img import ImgUtil
-from utils.object_util import is_empty, is_not_empty
-from utils.str_util import abb_str
-from utils.assert_util import Assert
-from utils.request import codes
+
+from utils import MyError, is_empty, is_not_empty, abb_str, Assert, codes, split_list, MyThread
+from utils.baidu_cloud import Image
+from utils.file import ImgUtil
 
 
-def loan_sort(urls_key, type_name):
+def loan_sort(qps, type_name):
     """
     文件图片文档处理
-    :param urls_key: 接口地址键值
+    :param qps: 并发数
     :param type_name: 贷款类型
     :return:
     """
@@ -40,23 +37,27 @@ def loan_sort(urls_key, type_name):
 
         baidu = Image()
 
-        # 分类请求地址
-        urls = current_app.get_object_dict(urls_key)
-        img_path = current_app.config.get('TEST_LOAN_IMAGE')
-        url = get_easy_dl_url(
-            baidu=baidu,
-            urls=urls,
-            img_path=img_path
-        )
-
         for loan_file in loan_files:
             # 根据贷款流水获取待处理图片明细
             img_details = ImgDetailModel().dao_get_todo_by_loan_file(loan_file)
+            # 根据 qps 数进行列表切割
+            img_details = split_list(img_details, qps)
 
-            for img_detail in img_details:
-                img_file = FileModel().dao_get(img_detail.file_id)  # type: FileModel
+            # 线程组
+            threads = []
 
-                url = process_img(baidu, url, img_detail, img_file, urls, img_path)
+            for img_split_details in img_details:
+                t = MyThread(target=process_img, args=(scheduler.app, baidu, img_split_details))
+                threads.append(t)
+
+            for i in range(len(threads)):
+                threads[i].setDaemon(True)
+                threads[i].start()
+
+            for i in range(len(threads)):
+                threads[i].join()
+                if threads[i].exception:
+                    raise threads[i].exception
 
             with db.auto_commit_db():
                 # 更新处理状态
@@ -64,81 +65,57 @@ def loan_sort(urls_key, type_name):
                 loan_file.dao_update()
 
 
-def process_img(baidu, url, img_detail, img_file, urls, img_path):
-    """
-    图片处理
-    :param baidu: 百度云实体对象
-    :param url: 百度云图片分类接口地址
-    :param img_detail: 待处理图片明细
-    :param img_file: 图片模型类
-    :param img_path: 测试图片路径
-    :param urls: 代理地址
-    :return:
-    """
-    try:
-        with db.auto_commit_db():
-            img_base64 = ImgUtil.img_compress(img_file.file_path)
-            class_info = baidu.to_class(url=url, image_bs64=img_base64)
+def process_img(app, baidu, img_split_details):
+    with app.app_context():
+        for img_detail in img_split_details:
+            try:
+                img_file = FileModel().dao_get(img_detail.file_id)  # type: FileModel
 
-            # 分类失败
-            if is_not_empty(class_info.error_code):
-                if class_info.error_code == codes.request_limit_reached:
-                    # 调用次数限制, 换取新地址
-                    url = get_easy_dl_url(baidu, urls, img_path)
-                    process_img(baidu, url, img_detail, img_file, urls, img_path)
+                with db.auto_commit_db():
+                    img_base64 = ImgUtil.img_compress(img_file.file_path)
+                    class_info = baidu.to_class(image_bs64=img_base64)
+
+                    if img_detail.id == 'ca5377767b9811e980585800e36a34d8':
+                        raise MyError(code=codes.request_limit_reached, msg='调用次数限制')
+
+                    # 分类失败
+                    if is_not_empty(class_info.error_code):
+                        if class_info.error_code == codes.request_limit_reached:
+                            # 调用次数限制
+                            raise MyError(code=codes.request_limit_reached, msg=class_info.error_msg)
+                        else:
+                            raise MyError(code=class_info.error_code, msg=class_info.error_msg)
+
+                    type_code = '[default]'
+                    # 判断置信度 大于0.5位准确
+                    if class_info.results[0].score > 0.5:
+                        type_code = class_info.results[0].name
+
+                    img_type = ImgTypeModel().dao_get_by_code(type_code)  # type: ImgTypeModel
+                    if is_empty(img_type):
+                        raise MyError(code=requests.codes.server_error, msg='无效的图片类别代号: {0}'.format(type_code))
+
+                    if img_type.is_ocr:
+                        # 需要OCR识别 后期扩展
+                        pass
+
+                    img_detail.img_type_id = img_type.id
+                    img_detail.is_handle = True
+                    img_detail.dao_update(nested=True)
+            except Exception as e:
+                # 判断是否地址池枯竭
+                if isinstance(e, MyError) and e.code == str(codes.request_limit_reached):
+                    raise e
                 else:
-                    raise MyError(code=class_info.error_code, msg=class_info.error_msg)
+                    from utils.response import MyResponse
+                    # 实例化异常信息
+                    res = MyResponse.init_error(e)
 
-            type_code = '[default]'
-            # 判断置信度 大于0.5位准确
-            if class_info.results[0].score > 0.5:
-                type_code = class_info.results[0].name
-
-            img_type = ImgTypeModel().dao_get_by_code(type_code)  # type: ImgTypeModel
-            if is_empty(img_type):
-                raise MyError(code=requests.codes.server_error, msg='无效的图片类别代号: {0}'.format(type_code))
-
-            if img_type.is_ocr:
-                # 需要OCR识别 后期扩展
-                pass
-
-            img_detail.img_type_id = img_type.id
-            img_detail.is_handle = True
-            img_detail.dao_update(nested=True)
-        return url
-    except Exception as e:
-        # 判断是否地址池枯竭
-        if isinstance(e, MyError) and e.code == str(codes.request_limit_reached):
-            raise e
-        else:
-            from utils.response import MyResponse
-            # 实例化异常信息
-            res = MyResponse.init_error(e)
-
-            with db.auto_commit_db():
-                img_detail.is_handle = True
-                img_detail.err_code = res.code if res.code else str(requests.codes.server_error)
-                img_detail.err_msg = abb_str(res.msg, 100)
-                img_detail.dao_update(nested=True)
-            return url
-
-
-def get_easy_dl_url(baidu, urls, img_path):
-    """
-    获取有效的模型分类地址
-    :type urls: dict
-    :param urls:
-    :param baidu: 百度云工具类对象
-    :param img_path: 测试图片地址
-    :return:
-    """
-    for _, url in urls.items():
-        png_base64 = ImgUtil.img_compress(img_path)
-        res = baidu.to_class(url, png_base64)
-        if is_not_empty(res.error_code):
-            continue
-        return url
-    raise MyError(code=codes.request_limit_reached, msg='地址池枯竭')
+                    with db.auto_commit_db():
+                        img_detail.is_handle = True
+                        img_detail.err_code = res.code if res.code else str(requests.codes.server_error)
+                        img_detail.err_msg = abb_str(res.msg, 100)
+                        img_detail.dao_update(nested=True)
 
 
 def loan_push():

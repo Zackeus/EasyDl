@@ -121,12 +121,6 @@ class BaseConfig(object):
     LOAN_DIR = 'D:/'
     # 贷款资料分割图片文件夹
     LOAN_DIR_IMG = 'IMG'
-    # 贷款资料图片分类测试图片
-    TEST_LOAN_IMAGE = os.path.join(base_static, 'images', 'loan', '2.png')
-    # 贷前图片分类接口地址
-    PRE_LOAN_URL = OBJECT_DICT.get('PreLoanUrl', {})
-    # 贷后图片分类接口地址
-    POST_LOAN_URL = OBJECT_DICT.get('PostLoanUrl', {})
 
     JOBS = [
         # {
@@ -142,20 +136,20 @@ class BaseConfig(object):
         {
             'id': 'post_loan',
             'func': 'jobs.loan:loan_sort',
-            'args': ('POST_LOAN_URL', 'H'),
+            'args': (8, 'H', ),
             'trigger': 'cron',
-            'second': '0/10',
-            # 'minute': '0/5',
-            # 'hour': '8-20',
+            # 'second': '0/10',
+            'minute': '0/5',
+            'hour': '8-20',
             'max_instances': 1
         },
         {
             'id': 'loan_push',
             'func': 'jobs.loan:loan_push',
             'trigger': 'cron',
-            'second': '0/10',
-            # 'minute': '0/5',
-            # 'hour': '8-20',
+            # 'second': '0/10',
+            'minute': '0/5',
+            'hour': '8-20',
             'max_instances': 1
         }
     ]

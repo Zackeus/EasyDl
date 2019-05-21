@@ -15,13 +15,10 @@ from models.loan.loan_file import LoanFileModel, LoanFileSchema
 from models.loan.loan_type import LoanTypeModel, LoanTypeSchema
 from models.loan.flow_type import FlowTypeModel, FlowTypeSchema
 from models.loan.img_type import ImgTypeModel, ImgTypeSchema
-from utils.request import Method, ContentType
-from utils.response import render_info, MyResponse
-from utils.validates import validated, Locations
-from utils.encodes import file_to_base64
-from utils.assert_util import Assert
-from utils.object_util import is_not_empty
-from utils.file.file import FileUtil
+
+from utils import Method, ContentType, render_info, MyResponse, validated, Locations, file_to_base64, \
+    Assert, is_not_empty
+from utils.file import FileUtil
 
 
 loan_bp = Blueprint('loan', __name__)
