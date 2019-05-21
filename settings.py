@@ -122,37 +122,37 @@ class BaseConfig(object):
     # 贷款资料分割图片文件夹
     LOAN_DIR_IMG = 'IMG'
 
-    JOBS = [
-        # {
-        #     'id': 'pre_loan',
-        #     'func': 'jobs.loan:loan_sort',
-        #     'args': ('PRE_LOAN_URL', 'pre_loan'),
-        #     'trigger': 'cron',
-        #     # 'second': '0/10',
-        #     'minute': '0/5',
-        #     'hour': '8-20',
-        #     'max_instances': 1
-        # },
-        {
-            'id': 'post_loan',
-            'func': 'jobs.loan:loan_sort',
-            'args': (8, 'H', ),
-            'trigger': 'cron',
-            # 'second': '0/10',
-            'minute': '0/5',
-            'hour': '8-20',
-            'max_instances': 1
-        },
-        {
-            'id': 'loan_push',
-            'func': 'jobs.loan:loan_push',
-            'trigger': 'cron',
-            # 'second': '0/10',
-            'minute': '0/5',
-            'hour': '8-20',
-            'max_instances': 1
-        }
-    ]
+    # JOBS = [
+    #     # {
+    #     #     'id': 'pre_loan',
+    #     #     'func': 'jobs.loan:loan_sort',
+    #     #     'args': ('PRE_LOAN_URL', 'pre_loan'),
+    #     #     'trigger': 'cron',
+    #     #     # 'second': '0/10',
+    #     #     'minute': '0/5',
+    #     #     'hour': '8-20',
+    #     #     'max_instances': 1
+    #     # },
+    #     {
+    #         'id': 'post_loan',
+    #         'func': 'jobs.loan:loan_sort',
+    #         'args': (8, 'H', ),
+    #         'trigger': 'cron',
+    #         # 'second': '0/10',
+    #         'minute': '0/5',
+    #         'hour': '8-20',
+    #         'max_instances': 1
+    #     },
+    #     {
+    #         'id': 'loan_push',
+    #         'func': 'jobs.loan:loan_push',
+    #         'trigger': 'cron',
+    #         # 'second': '0/10',
+    #         'minute': '0/5',
+    #         'hour': '8-20',
+    #         'max_instances': 1
+    #     }
+    # ]
 
 
 class DevelopmentConfig(BaseConfig):

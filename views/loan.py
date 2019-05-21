@@ -155,7 +155,7 @@ if __name__ == '__main__':
         ],
         'createBy': '17037',
         'remarks': '备注信息...........',
-        'pushUrl': 'http://127.0.0.1:5000/loan/push_info'
+        # 'pushUrl': 'http://127.0.0.1:5000/loan/push_info'
     }
 
     # data = {
