@@ -19,6 +19,7 @@
       <sourceFolder url="file://$MODULE_DIR$/views/view_utils" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/sys" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/baidu_cloud" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utils/xunfei_cloud" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/migrations" />
     </content>
     <orderEntry type="inheritedJdk" />

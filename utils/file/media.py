@@ -73,10 +73,11 @@ class Audio(BaseObject):
     __FORMAT = [FileFormat.PCM.value, FileFormat.MP3.value, FileFormat.WAV.value,
                 FileFormat.V3.value]
 
-    def __init__(self, codec_type, codec_name, codec_long_name, format_name, format_long_name,
+    def __init__(self, file_name, codec_type, codec_name, codec_long_name, format_name, format_long_name,
                  sample_rate, channels, duration, size):
         """
         音频文件
+        :param str file_name: 文件名称（带后缀）
         :param str codec_type: 编码类型
         :param str codec_name: 编码名称
         :param str codec_long_name: 编码全名
@@ -85,8 +86,9 @@ class Audio(BaseObject):
         :param int sample_rate: 采样率
         :param int channels: 声道数
         :param float duration: 总时长
-        :param long size: 大小
+        :param long size: 字节大小
         """
+        self.file_name = file_name
         self.codec_type = codec_type
         self.codec_name = codec_name
         self.codec_long_name = codec_long_name
@@ -104,16 +106,19 @@ class Audio(BaseObject):
         :param is_ffprobe: 是否使用 ffprobe 解析文件格式
         :param file_path:
         :return:
+        :rtype: Audio
         """
         Assert.is_true(os.path.isfile(file_path), '文件不存在：{0}'.format(file_path))
+        _, file_name, format_name = FileUtil.get_path_name_ext(file_path)
+
         probe_json = ffmpeg.probe(file_path)
         audio_json = probe_json.get('streams')[0]
         audio_json.update(probe_json.get('format'))
+        audio_json.update({'file_name': '{name}.{ext}'.format(name=file_name, ext=format_name)})
         audio, errors = AudioSchema().load(audio_json)
         Assert.is_true(is_empty(errors), errors)
 
         if not is_ffprobe:
-            _, _, format_name = FileUtil.get_path_name_ext(file_path)
             audio.format_name = format_name
         return audio
 
@@ -272,6 +277,7 @@ class Audio(BaseObject):
 
 class AudioSchema(Schema):
 
+    file_name = fields.Str()
     codec_type = fields.Str()
     codec_name = fields.Str()
     codec_long_name = fields.Str()
@@ -288,7 +294,7 @@ class AudioSchema(Schema):
 
 
 if __name__ == '__main__':
-    # print(Audio.probe('D:/AIData/0850487.V3', is_ffprobe=False))
+    print(Audio.probe('D:/AIData/16k.wav', is_ffprobe=False))
 
     # v3 转换单声道，8k采样率，16bits采样点，pcm
     # Audio.to_pcm('D:/AIData/0850487.V3', 'D:/AIData/8k.pcm', 1, 8000)
@@ -304,7 +310,7 @@ if __name__ == '__main__':
     # Audio.to_mp3('D:/AIData/0850487.V3', 'D:/AIData/0850487.mp3', output_ac=2, output_ar=44100)
 
     # v3 转 wav
-    Audio.to_wav('D:/AIData/0850487.V3', 'D:/AIData/0850487.wav', output_ac=2, output_ar=44100)
+    # Audio.to_wav('D:/AIData/0850487.V3', 'D:/AIData/16k.wav', output_ac=2, output_ar=16000)
 
 
 # ffmpeg -y -f s16le -ar 8000 -ac 1 -i D:/AIData/16k.pcm -ar 44100 -ac 2 D:/AIData/16k.wav

@@ -190,13 +190,13 @@ if __name__ == '__main__':
 
     #****************************************************************
 
-    # url = 'http://10.5.60.77:8088/loan/loan_file'
-    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
+    url = 'http://10.5.60.77:8088/loan/loan_file'
+    res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     # ****************************************************************
 
-    url = 'http://127.0.0.1:5000/loan/loan_file'
-    res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
+    # url = 'http://127.0.0.1:5000/loan/loan_file'
+    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     # url = 'http://127.0.0.1:5000/loan/loan_file/7358d63a590311e9affa5800e36a34d8'
     # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)

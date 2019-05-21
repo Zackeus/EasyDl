@@ -79,3 +79,10 @@ def call_back():
     current_app.logger.error(json.dumps(request.json(), indent=4, ensure_ascii=False))
 
 
+@test_bp.route('xunfei/audio')
+def xunfei_audio():
+    from utils.xunfei_cloud.audio import Audio
+    audio = Audio()
+    print(audio)
+    return 'ok'
+
