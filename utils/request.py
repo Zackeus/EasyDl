@@ -47,8 +47,10 @@ class ContentType(Enum):
 _codes = {
 
     # 系统代号
+    -1: ('failed', ),
     0: ('success', ),
     1: ('login_fail', ),
+    9: ('asr_success', ),
     # 请求总量超限额
     17: ('request_limit_reached',),
 

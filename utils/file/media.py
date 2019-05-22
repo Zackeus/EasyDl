@@ -294,7 +294,7 @@ class AudioSchema(Schema):
 
 
 if __name__ == '__main__':
-    print(Audio.probe('D:/AIData/16k.wav', is_ffprobe=False))
+    # print(Audio.probe('D:/AIData/16k.wav', is_ffprobe=False))
 
     # v3 转换单声道，8k采样率，16bits采样点，pcm
     # Audio.to_pcm('D:/AIData/0850487.V3', 'D:/AIData/8k.pcm', 1, 8000)
@@ -310,7 +310,7 @@ if __name__ == '__main__':
     # Audio.to_mp3('D:/AIData/0850487.V3', 'D:/AIData/0850487.mp3', output_ac=2, output_ar=44100)
 
     # v3 转 wav
-    # Audio.to_wav('D:/AIData/0850487.V3', 'D:/AIData/16k.wav', output_ac=2, output_ar=16000)
+    Audio.to_wav('D:/AIData/1334006.V3', 'D:/AIData/1334006.wav', output_ac=2, output_ar=16000)
 
 
 # ffmpeg -y -f s16le -ar 8000 -ac 1 -i D:/AIData/16k.pcm -ar 44100 -ac 2 D:/AIData/16k.wav

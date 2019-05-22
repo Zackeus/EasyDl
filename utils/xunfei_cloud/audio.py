@@ -9,19 +9,25 @@
 
 import requests
 import json
+import math
+from marshmallow import Schema, fields, post_load, pre_load
 
 from utils import Unicode
 from utils.xunfei_cloud.xunfei import Sign
-# from utils.file.media import Audio
-from utils.object_util import is_not_empty, BaseObject
+from utils.object_util import is_not_empty, is_empty, BaseObject
 from utils.decorators import auto_wired
 from utils.errors import MyError
+from utils.request import codes
+from utils.assert_util import Assert
 
 
 class Audio(BaseObject):
 
+    # 文件分片大下52k
+    __FILE_PIECE_SIZE = 10485760
+
     @auto_wired('utils.xunfei_cloud.audio.Audio')
-    def __init__(self, app_id=None, api_key=None, sign=None):
+    def __init__(self, app_id=None, api_key=None, sign=None, **kwargs):
         """
         讯飞开放平台数字签名
         :param str app_id: 讯飞开放平台应用ID
@@ -38,28 +44,266 @@ class Audio(BaseObject):
 
         self.app_id = app_id
         self.ts = sign.ts
-        self.base_string = sign.base_string
         self.signa = sign.signa
+        self.task_id = None
 
-    def offline_transfer(self):
+        if kwargs:
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+
+    def init_asr(self, task_id, ts, signa):
         """
-        音频离线转写
+
+        :param str task_id: 任务id
+        :param str ts: 时间戳
+        :param str signa: 数字签名
         :return:
         """
-        pass
+        self.task_id = task_id
+        self.ts = ts
+        self.signa = signa
 
-    def _prepare(self):
+    def asr(self, file_path, has_participle=False, has_seperate=True, speaker_number=2):
         """
-        预处理
+        音频转写
+        :param str file_path: 音频文件路径
+        :param bool has_participle: 转写结果是否包含分词信息
+        :param bool has_seperate: 转写结果中是否包含发音人分离信息
+        :param int speaker_number: 发音人个数，可选值：0-10，0表示盲分
         :return:
         """
-        pass
+        from utils.file import Audio as BasicAudio
+        has_participle = 'true' if has_participle else 'false'
+        has_seperate = 'true' if has_seperate else 'false'
+        audio_file = BasicAudio.probe(file_path)
+
+        # 音频转写预处理
+        prepare_info = self._asr_prepare(
+            file_len=audio_file.size,
+            file_name=audio_file.file_name,
+            slice_num=math.ceil(audio_file.size / self.__FILE_PIECE_SIZE),
+            has_participle=has_participle,
+            has_seperate=has_seperate,
+            speaker_number=speaker_number
+        )
+        Assert.is_true(prepare_info.ok == codes.success, prepare_info.failed, prepare_info.err_no)
+        # 预处理成功，更新task_id
+        self.task_id = prepare_info.data
+
+        # 文件发片上传
+        self._asr_upload(file_path)
+
+        # 文件合并
+        merge_info = self._asr_merge()
+        Assert.is_true(merge_info.ok == codes.success, merge_info.failed, merge_info.err_no)
+
+    def get_asr_progress(self):
+        """
+        查询音频转写处理进度
+        :return:
+        """
+        url = getattr(self, 'asr_progress_url', None)
+        data = dict(
+            app_id=self.app_id,
+            signa=self.signa,
+            ts=self.ts,
+            task_id=self.task_id
+        )
+        res = requests.post(url=url, data=data)
+        res.encoding = Unicode.UTF_8.value
+
+        if res is None or res.status_code != codes.ok:
+            return AsrInfo(
+                ok=codes.failed,
+                err_no=res.status_code if res is not None else codes.bad,
+                failed='查询音频转写处理进度请求失败'
+            )
+        progress_info, errors = AsrInfo.AsrInfoSchema().load(res.json())
+        Assert.is_true(is_empty(errors), errors)
+        if progress_info.ok == codes.success:
+            progress_details, errors = AsrProgress.AsrProgressSchema().load(json.loads(progress_info.data))
+            Assert.is_true(is_empty(errors), errors)
+            progress_info.data = progress_details
+        return progress_info
+
+    def get_asr_result(self):
+        """
+        查询音频转写结果
+        :return:
+        """
+        url = getattr(self, 'asr_result_url', None)
+        data = dict(
+            app_id=self.app_id,
+            signa=self.signa,
+            ts=self.ts,
+            task_id=self.task_id
+        )
+        res = requests.post(url=url, data=data)
+        res.encoding = Unicode.UTF_8.value
+
+        if res is None or res.status_code != codes.ok:
+            return AsrInfo(
+                ok=codes.failed,
+                err_no=res.status_code if res is not None else codes.bad,
+                failed='查询音频转写结果请求失败'
+            )
+        result_info, errors = AsrInfo.AsrInfoSchema().load(res.json())
+        Assert.is_true(is_empty(errors), errors)
+        return result_info
+
+    def _asr_prepare(self, **kwargs):
+        """
+        音频转写预处理
+        :return:
+        """
+        url = getattr(self, 'asr_prepare_url', None)
+
+        kwargs.update(dict(app_id=self.app_id, signa=self.signa, ts=self.ts))
+
+        res = requests.post(url=url, data=kwargs)
+        res.encoding = Unicode.UTF_8.value
+
+        if res is None or res.status_code != codes.ok:
+            return AsrInfo(
+                ok=codes.failed,
+                err_no=res.status_code if res is not None else codes.bad,
+                failed='音频转写预处理请求失败'
+            )
+        prepare_info, errors = AsrInfo.AsrInfoSchema().load(res.json())
+        Assert.is_true(is_empty(errors), errors)
+        return prepare_info
+
+    def _asr_upload(self, upload_file_path):
+        """
+        音频转写文件分片上传
+        :param upload_file_path: 待上传音频文件路径
+        :return:
+        """
+        url = getattr(self, 'asr_upload_url', None)
+        sig = SliceIdGenerator()
+
+        with open(upload_file_path, 'rb') as f:
+            while True:
+                content = f.read(self.__FILE_PIECE_SIZE)
+                if not content or len(content) == 0:
+                    break
+
+                data = dict(
+                    app_id=self.app_id,
+                    signa=self.signa,
+                    ts=self.ts,
+                    task_id=self.task_id,
+                    slice_id=sig.get_next_slice_id()
+                )
+
+                res = requests.post(url=url, data=data, files={'content': content})
+                res.encoding = Unicode.UTF_8.value
+
+                if res is None or res.status_code != codes.ok:
+                    return AsrInfo(
+                        ok=codes.failed,
+                        err_no=res.status_code if res is not None else codes.bad,
+                        failed='音频转写文件分片上传请求失败'
+                    )
+                upload_info, errors = AsrInfo.AsrInfoSchema().load(res.json())
+                Assert.is_true(is_empty(errors), errors)
+
+                # 上传分片失败
+                Assert.is_true(
+                    upload_info.ok == codes.success,
+                    upload_info.err_no,
+                    '分片上传失败：{0}'.format(upload_info.failed)
+                )
+
+    def _asr_merge(self):
+        """
+        音频转写文件合并
+        :return:
+        """
+        url = getattr(self, 'asr_merge_url', None)
+
+        data = dict(
+            app_id=self.app_id,
+            signa=self.signa,
+            ts=self.ts,
+            task_id=self.task_id
+        )
+        res = requests.post(url=url, data=data)
+        res.encoding = Unicode.UTF_8.value
+
+        if res is None or res.status_code != codes.ok:
+            return AsrInfo(
+                ok=codes.failed,
+                err_no=res.status_code if res is not None else codes.bad,
+                failed='音频转写文件合并请求失败'
+            )
+        merge_info, errors = AsrInfo.AsrInfoSchema().load(res.json())
+        Assert.is_true(is_empty(errors), errors)
+        return merge_info
 
 
-class SliceIdGenerator:
-    """slice id生成器"""
+class AsrInfo(BaseObject):
+
+    def __init__(self, ok, err_no, failed=None, data=None, task_id=None):
+        """
+        音频转写返回结果
+        :param int ok: 调用成功标志（0：成功，-1：失败）
+        :param int err_no: 错误码
+        :param str failed: 错误描述（null：未出错）
+        :param str data: 数据，具体含义见各接口返回说明（null：无返回值）
+        :param str task_id: 任务id，此字段只在主动回调的结果中存在
+        """
+        self.ok = ok
+        self.err_no = err_no
+        self.failed = failed
+        self.data = data
+        self.task_id = task_id
+
+    class AsrInfoSchema(Schema):
+        ok = fields.Integer(required=True)
+        err_no = fields.Integer(required=True)
+        failed = fields.Str()
+        data = fields.Str()
+        task_id = fields.Str()
+
+        @pre_load
+        def pre_load_data(self, pre_data):
+            for key in list(pre_data.keys()):
+                if pre_data.get(key, None) is None:
+                    pre_data.pop(key)
+            return pre_data
+
+        @post_load
+        def make_object(self, data):
+            return AsrInfo(**data)
+
+
+class AsrProgress(BaseObject):
+
+    def __init__(self, status, desc):
+        """
+        音频转写查询进度
+        :param int status: 状态 仅当任务状态=9（转写结果上传完成），才可调用获取结果接口获取转写结果
+        :param str desc: 描述
+        """
+        self.status = status
+        self.desc = desc
+
+    class AsrProgressSchema(Schema):
+        status = fields.Integer(required=True)
+        desc = fields.Str(required=True)
+
+        @post_load
+        def make_object(self, data):
+            return AsrProgress(**data)
+
+
+class SliceIdGenerator(BaseObject):
 
     def __init__(self):
+        """
+        slice id生成器
+        """
         self.__ch = 'aaaaaaaaa`'
 
     def get_next_slice_id(self):
@@ -77,179 +321,25 @@ class SliceIdGenerator:
         return self.__ch
 
 
-def prepare(app_id, sign, ts, file_path, slice_num=1, has_seperate=True, speaker_number='2'):
-    """
-    预处理
-    :param str app_id: 讯飞开放平台应用ID
-    :param str sign: 加密数字签名（基于HMACSHA1算法)
-    :param str ts: 当前时间戳，从1970年1月1日0点0分0秒开始到现在的秒数
-    :param file_path: 文件路径
-    :param slice_num: 文件分片数目（时长小于 5 min 音频，不建议分片，此时slice_num=1）
-    :param has_seperate: 转写结果中是否包含发音人分离信息
-    :param speaker_number: 发音人个数，可选值：0-10，0表示盲分
-    :return:
-    """
-    has_seperate = 'true' if has_seperate else 'false'
-    url = 'http://raasr.xfyun.cn/api/prepare'
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'charset': 'UTF-8'
-    }
-
-    audio_file = Audio.probe(file_path)
-    params = dict(
-        app_id=app_id,
-        signa=sign,
-        ts=ts,
-        file_len=audio_file.size,
-        file_name=audio_file.file_name,
-        slice_num=slice_num,
-        has_seperate=has_seperate,
-        speaker_number=speaker_number
-    )
-    res = requests.post(url=url, data=params, headers=headers)
-    res.encoding = Unicode.UTF_8.value
-    print(res.status_code)
-    print(json.dumps(res.json(), indent=4, ensure_ascii=False))
-    return res.json()
-
-
-def upload_request(app_id, sign, ts, task_id, upload_file_path):
-    """
-    文件上传
-    :param app_id:
-    :param sign:
-    :param ts:
-    :param task_id:
-    :param upload_file_path:
-    :return:
-    """
-    # 文件分片大下52k
-    file_piece_sice = 10485760
-    url = 'http://raasr.xfyun.cn/api/upload'
-
-    with open(upload_file_path, 'rb') as f:
-        index = 1
-        sig = SliceIdGenerator()
-        while True:
-            content = f.read(file_piece_sice)
-            if not content or len(content) == 0:
-                break
-            files = {
-                # "filename": self.gene_params(api_upload).get("slice_id"),
-                'content': content
-            }
-
-            params = dict(
-                app_id=app_id,
-                signa=sign,
-                ts=ts,
-                task_id=task_id,
-                slice_id=sig.get_next_slice_id()
-            )
-
-            res = requests.post(url=url, data=params, files=files)
-            res.encoding = Unicode.UTF_8.value
-            print(res.status_code)
-            print(json.dumps(res.json(), indent=4, ensure_ascii=False))
-
-            if res.json().get('ok') != 0:
-                # 上传分片失败
-                print('upload slice fail, response: ' + str(res))
-                return False
-            print('upload slice ' + str(index) + ' success')
-            index += 1
-        return True
-
-
-def merge(app_id, sign, ts, task_id):
-    """
-    合并文件
-    :param app_id:
-    :param sign:
-    :param ts:
-    :param task_id:
-    :return:
-    """
-    url = 'http://raasr.xfyun.cn/api/merge'
-
-    params = dict(
-        app_id=app_id,
-        signa=sign,
-        ts=ts,
-        task_id=task_id
-    )
-    res = requests.post(url=url, data=params)
-    res.encoding = Unicode.UTF_8.value
-    print(res.status_code)
-    print(json.dumps(res.json(), indent=4, ensure_ascii=False))
-    return res.json()
-
-
-def get_progress(app_id, sign, ts, task_id):
-    """
-    查询处理进度
-    :param app_id:
-    :param sign:
-    :param ts:
-    :param task_id:
-    :return:
-    """
-    url = 'http://raasr.xfyun.cn/api/getProgress'
-    params = dict(
-        app_id=app_id,
-        signa=sign,
-        ts=ts,
-        task_id=task_id
-    )
-    res = requests.post(url=url, data=params)
-    res.encoding = Unicode.UTF_8.value
-    print(res.status_code)
-    print(json.dumps(res.json(), indent=4, ensure_ascii=False))
-    return res.json()
-
-
-def get_result(app_id, sign, ts, task_id):
-    """
-    获取结果
-    :param app_id:
-    :param sign:
-    :param ts:
-    :param task_id:
-    :return:
-    """
-    url = 'http://raasr.xfyun.cn/api/getResult'
-    params = dict(
-        app_id=app_id,
-        signa=sign,
-        ts=ts,
-        task_id=task_id
-    )
-    res = requests.post(url=url, data=params)
-    res.encoding = Unicode.UTF_8.value
-    print(res.status_code)
-    print(json.dumps(res.json(), indent=4, ensure_ascii=False))
-    return res.json()
-
-
 if __name__ == '__main__':
-    app_id = '5b331864'
-    api_key = '8ce5edee08cdce711d08fea808d55b00'
-    file_path = 'D:/AIData/16k.wav'
-
-    sign = 'TkrgxBS/KjOD+ZPz/G7K85KzRX4='
-    ts = '1557913311'
-    task_id = '0e9518942ef24e5a962e3e4481f2980a'
-    # sign, ts = init_token(app_id, api_key)
-    # print(sign, ts)
-    # prepare(app_id, sign, ts, file_path)
-
-    # upload_request(app_id, sign, ts, task_id, file_path)
-    # merge(app_id, sign, ts, task_id)
-    # get_progress(app_id, sign, ts, task_id)
-
-    res_json = get_result(app_id, sign, ts, task_id)
-    with open('D:/AIData/16k.txt', 'a') as f:
-        for info in json.loads(res_json.get('data')):
-            print(info)
-            f.writelines(str(info) + '\n')
+    pass
+    # app_id = '5b331864'
+    # api_key = '8ce5edee08cdce711d08fea808d55b00'
+    # file_path = 'D:/AIData/16k.wav'
+    #
+    # sign = 'TkrgxBS/KjOD+ZPz/G7K85KzRX4='
+    # ts = '1557913311'
+    # task_id = '0e9518942ef24e5a962e3e4481f2980a'
+    # # sign, ts = init_token(app_id, api_key)
+    # # print(sign, ts)
+    # # prepare(app_id, sign, ts, file_path)
+    #
+    # # upload_request(app_id, sign, ts, task_id, file_path)
+    # # merge(app_id, sign, ts, task_id)
+    # # get_progress(app_id, sign, ts, task_id)
+    #
+    # res_json = get_result(app_id, sign, ts, task_id)
+    # with open('D:/AIData/16k.txt', 'a') as f:
+    #     for info in json.loads(res_json.get('data')):
+    #         print(info)
+    #         f.writelines(str(info) + '\n')

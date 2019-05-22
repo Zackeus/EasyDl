@@ -82,6 +82,25 @@ def call_back():
 @test_bp.route('xunfei/audio')
 def xunfei_audio():
     from utils.xunfei_cloud.audio import Audio
+    from utils import codes, Assert
+    # audio = Audio()
+    # audio.asr(file_path='D:/AIData/1334006.wav')
+    # audio.get_asr_progress()
+    # print(audio.task_id, audio.signa, audio.ts)
+
     audio = Audio()
-    print(audio)
+    audio.init_asr('b2f842c81f454b69a8ef0ba345d36071', '1558510114', 'EoUu8ZaC47tpofHKwA+hIonz5xc=')
+    asr_progress = audio.get_asr_progress()
+
+    if asr_progress.ok == codes.success and asr_progress.data.status == codes.asr_success:
+        asr_result = audio.get_asr_result()
+        Assert.is_true(asr_result.ok == codes.success, asr_result.failed)
+
+        with open('D:/AIData/1334006.txt', 'a') as f:
+            for info in json.loads(asr_result.data):
+                print(info)
+                f.writelines(str(info) + '\n')
+    else:
+        print(asr_progress.failed if asr_progress.ok != codes.success else asr_progress.data.desc)
+
     return 'ok'
