@@ -8,4 +8,5 @@
 
 from .basic import (BasicModel, BaseSchema, )
 from .file import (FileModel, FileSchema)
+from .app_sys import (AppSys, AppSysSchema, )
 

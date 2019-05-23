@@ -10,7 +10,7 @@ import json
 import requests
 from flask import Blueprint, current_app, request
 
-from models import FileModel, FileSchema
+from models import FileModel, FileSchema, AppSys, AppSysSchema
 from models.img import ImgDataModel, ImgDataSchema, ImgTypeModel, ImgTypeSchema
 
 from utils import Method, ContentType, render_info, MyResponse, validated, Locations, file_to_base64, \
@@ -30,6 +30,11 @@ def add_img(img_data):
     :return:
     """
     img_data.dao_create()
+    app_sys = AppSys().dao_get_by_code(img_data.app_sys.code)  # type: AppSys
+
+    # 删除关联，通过外键添加
+    del img_data.app_sys
+    img_data.app_sys_id = app_sys.id
 
     # 创建资料目录
     loan_dir = FileUtil.path_join(
@@ -66,6 +71,18 @@ def get_loan(loan_file, id):
     ))
 
 
+@img_bp.route('/app_sys', methods=[Method.POST.value])
+@validated(AppSysSchema, only=AppSysSchema().only_create(), consumes=ContentType.JSON.value)
+def add_app_sys(app_sys):
+    """
+    添加应用系统
+    :param AppSys app_sys:
+    :return:
+    """
+    app_sys.dao_add()
+    return render_info(MyResponse(msg='添加成功'))
+
+
 @img_bp.route('/img_Type', methods=[Method.POST.value])
 @validated(ImgTypeSchema, only=ImgTypeSchema().only_create(), consumes=ContentType.JSON.value)
 def add_img_type(img_type):
@@ -87,6 +104,7 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
+        'appId': '1234',
         'fileData': [
             {
                 'fileName': 'pdf',
@@ -99,20 +117,18 @@ if __name__ == '__main__':
                 'fileBase64': file_to_base64('D:/AIData/1.png')
             }
         ],
+        'appSys': {
+            'code': 'OP_LOAN_H'
+        },
         'createBy': '17037',
         'remarks': '备注信息...........',
         'pushUrl': 'http://127.0.0.1:5000/img/push_info'
     }
 
     # data = {
-    #     'loanTypeName': 'H',
-    #     'loanDir': '贷后资料'
-    # }
-
-    # data = {
-    #     'flowTypeName': 'FO',
-    #     'flowDir': '一阶',
-    #     'remarks': '你大爷特'
+    #     'code': 'OP_LOAN_H',
+    #     'desc': '贷后资料',
+    #     'remarks': '由运营平台提交的贷后资料'
     # }
 
     # data = {
@@ -144,13 +160,10 @@ if __name__ == '__main__':
     # url = 'http://127.0.0.1:5000/loan/loan_file/7358d63a590311e9affa5800e36a34d8'
     # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/loan/loan_Type'
+    # url = 'http://127.0.0.1:5000/img/app_sys'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/loan/flow_Type'
-    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    # url = 'http://127.0.0.1:5000/loan/img_Type'
+    # url = 'http://127.0.0.1:5000/img/img_Type'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     print(res)

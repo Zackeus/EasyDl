@@ -13,10 +13,10 @@ from extensions import db
 from models.basic import BasicModel, BaseSchema
 from models.file import FileModel, FileSchema
 from models.img.img_detail import ImgDetailModel, ImgDetailSchema
-from utils.encodes import base64_to_file
-from utils.file.file import FileUtil, FileFormat
-from utils.file.pdf import PDFUtil
-from utils.object_util import is_not_empty, is_empty
+from models.app_sys import AppSys, AppSysSchema
+
+from utils import validates as MyValidates, base64_to_file, is_empty, is_not_empty
+from utils.file import FileUtil, FileFormat, PDFUtil
 from marshmallow import fields, validate, validates, ValidationError
 
 
@@ -26,6 +26,14 @@ class ImgDataModel(BasicModel):
     """
     __tablename__ = 'IMG_DATA'
 
+    app_id = db.Column(db.String(length=64), name='APP_ID', nullable=False, index=True, unique=True, comment='应用ID')
+    app_sys_id = db.Column(
+        db.String(length=64),
+        db.ForeignKey('APP_SYS.ID'),
+        name='APP_SYS_ID',
+        nullable=False,
+        index=True
+    )
     page_num = db.Column(db.Integer, name='PAGE_NUM', nullable=False, default=0, comment='PDF总页码数')
     success_num = db.Column(db.Integer, name='SUCCESS_NUM', nullable=False, default=0, comment='图片分割成功数')
     fail_num = db.Column(db.Integer, name='FAIL_NUM', nullable=False, default=0, comment='图片分割失败数')
@@ -38,6 +46,11 @@ class ImgDataModel(BasicModel):
         argument='ImgDetailModel',
         back_populates='img_data',
         cascade='all'
+    )
+
+    app_sys = db.relationship(
+        argument='AppSys',
+        back_populates='img_datas'
     )
 
     def __init__(self, file_data=None, **kwargs):
@@ -142,6 +155,11 @@ class ImgDataSchema(BaseSchema):
     __model__ = ImgDataModel
     __file_formats = (FileFormat.PDF.value, FileFormat.JPG.value, FileFormat.PNG.value)
 
+    app_id = fields.Str(
+        required=True,
+        validate=MyValidates.MyLength(min=1, max=64, not_empty=False),
+        load_from='appId'
+    )
     page_num = fields.Integer(load_from='pageNum')
     success_num = fields.Integer(load_from='successNum')
     fail_num = fields.Integer(load_from='failNum')
@@ -165,6 +183,13 @@ class ImgDataSchema(BaseSchema):
         load_from='imgDetails'
     )
 
+    app_sys = fields.Nested(
+        AppSysSchema,
+        only=('id', 'code', 'desc'),
+        required=True,
+        load_from='appSys'
+    )
+
     @validates('file_data')
     def validate_pdf_name(self, values):
         """
@@ -178,9 +203,21 @@ class ImgDataSchema(BaseSchema):
             if value.file_format.upper() not in self.__file_formats:
                 raise ValidationError('无效的文件格式')
 
+    @validates('app_sys')
+    def validate_app_sys(self, value):
+        """
+        校验应用系统
+        :param AppSys value:
+        :return:
+        """
+        app_sys = AppSys().dao_get_by_code(value.code)
+        if is_empty(app_sys):
+            raise ValidationError('无效的应用系统.')
+
     def only_create(self):
         return super().only_create() + \
-               ('file_data.file_name', 'file_data.file_format', 'file_data.file_base64', 'push_url')
+               ('app_id', 'app_sys.code',
+                'file_data.file_name', 'file_data.file_format', 'file_data.file_base64', 'push_url')
 
 
 
