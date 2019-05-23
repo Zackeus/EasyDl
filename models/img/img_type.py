@@ -1,6 +1,6 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*- 
-# @Title : 贷款图片文件类型
+# @Title : 图片文件类型
 # @Author : Zackeus
 # @File : img_type.py 
 # @Software: PyCharm
@@ -18,7 +18,7 @@ class ImgTypeModel(BasicModel):
     图片类型
     """
 
-    __tablename__ = 'LOAN_IMG_TYPE'
+    __tablename__ = 'IMG_TYPE'
 
     type_code = db.Column(
         db.String(length=10),

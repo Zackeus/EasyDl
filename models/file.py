@@ -37,7 +37,7 @@ class FileModel(BasicModel):
 
     @property
     def file_path(self):
-        aes = AESUtil(current_app.config.get('LOAN_PATH_KEY'))
+        aes = AESUtil(current_app.config.get('DATA_PATH_KEY'))
         return aes.decrypt(self.file_path_hash)
 
     @file_path.setter
@@ -48,7 +48,7 @@ class FileModel(BasicModel):
         :return:
         """
         # 文件路径加密
-        aes = AESUtil(current_app.config.get('LOAN_PATH_KEY'))
+        aes = AESUtil(current_app.config.get('DATA_PATH_KEY'))
         self.file_path_hash = aes.encrypt(file_path)
 
     def __init__(self, file_base64=None, **kwargs):

@@ -5,3 +5,7 @@
 # @File : __init__.py.py 
 # @Software: PyCharm
 # @Time : 2019/3/25 15:52
+
+from .basic import (BasicModel, BaseSchema, )
+from .file import (FileModel, FileSchema)
+

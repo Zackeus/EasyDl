@@ -1,6 +1,6 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*- 
-# @Title : 贷款图片文件明细
+# @Title : 图片文件明细
 # @Author : Zackeus
 # @File : img_detail.py 
 # @Software: PyCharm
@@ -10,22 +10,22 @@
 import os
 from extensions import db
 from models.basic import BasicModel, BaseSchema
-from models.loan.img_type import ImgTypeSchema
+from models.img.img_type import ImgTypeSchema
 from utils import validates as MyValidates
 from marshmallow import fields, validate
 
 
 class ImgDetailModel(BasicModel):
     """
-    贷款图片明细
+    图片明细
     """
 
-    __tablename__ = 'LOAN_IMG_DETAIL'
+    __tablename__ = 'IMG_DETAIL'
 
-    loan_file_id = db.Column(
+    img_data_id = db.Column(
         db.String(length=64),
-        db.ForeignKey('LOAN_FILE.ID'),
-        name='LOAN_FILE_ID',
+        db.ForeignKey('IMG_DATA.ID'),
+        name='IMG_DATA_ID',
         nullable=False,
         index=True
     )
@@ -42,7 +42,7 @@ class ImgDetailModel(BasicModel):
 
     img_type_id = db.Column(
         db.String(length=64),
-        db.ForeignKey('LOAN_IMG_TYPE.ID'),
+        db.ForeignKey('IMG_TYPE.ID'),
         name='IMG_TYPE_ID',
         index=True
     )
@@ -63,51 +63,51 @@ class ImgDetailModel(BasicModel):
         file_path = file_model.file_path
         return file_to_base64(file_path) if os.path.isfile(file_path) else None
 
+    img_data = db.relationship(
+        argument='ImgDataModel',
+        back_populates='img_details'
+    )
+
     img_type = db.relationship(
         argument='ImgTypeModel',
         back_populates='img_details'
     )
 
-    loan_file = db.relationship(
-        argument='LoanFileModel',
-        back_populates='img_details'
-    )
-
-    def dao_add(self, loan_file_id, parent_file_id, file_id, **kwargs):
+    def dao_add(self, img_data_id, parent_file_id, file_id, **kwargs):
         """
         图片明细入库
-        :param loan_file_id: 贷款文件入库流水号
+        :param img_data_id: 图片文件入库流水号
         :param parent_file_id: 父级文件ID
         :param file_id: 图片文件ID
         :param kwargs:
         :return:
         """
         super().dao_create()
-        self.loan_file_id = loan_file_id
+        self.img_data_id = img_data_id
         self.parent_file_id = parent_file_id
         self.file_id = file_id
         with db.auto_commit_db(**kwargs) as s:
             s.add(self)
 
-    def dao_get_todo_by_loan_file(self, loan_file):
+    def dao_get_todo_by_img_data(self, img_data):
         """
-        查询待处理贷款流程明细
-        :param loan_file: 贷款流水模型
+        查询待处理图片明细
+        :param img_data: 图片流水模型
         :return:
         """
-        return self.query.filter(ImgDetailModel.loan_file_id == loan_file.id, ImgDetailModel.is_handle == False).all()
+        return self.query.filter(ImgDetailModel.img_data_id == img_data.id, ImgDetailModel.is_handle == False).all()
 
 
 class ImgDetailSchema(BaseSchema):
     """
-    贷款图片明细
+    图片资料明细
     """
     __model__ = ImgDetailModel
 
-    loan_file_id = fields.Str(
+    img_data_id = fields.Str(
         required=True,
         validate=MyValidates.MyLength(min=1, max=64, not_empty=False),
-        load_from='loanFileId'
+        load_from='imgDataId'
     )
 
     parent_file_id = fields.Str(

@@ -9,7 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/utils" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/models" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/file" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/models/loan" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/img" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/jobs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/config" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/models/sys" isTestSource="false" />

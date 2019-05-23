@@ -116,43 +116,33 @@ class BaseConfig(object):
     OBJECT_DICT = init_object_dict()
 
     # 贷款路径秘钥
-    LOAN_PATH_KEY = os.getenv('LOAN_PATH_KEY', 'xatmTsm7GAmFcRet')
-    # 贷款资料存放目录
-    LOAN_DIR = 'D:/'
-    # 贷款资料分割图片文件夹
-    LOAN_DIR_IMG = 'IMG'
+    DATA_PATH_KEY = os.getenv('LOAN_PATH_KEY', 'xatmTsm7GAmFcRet')
+    # 资料存放目录
+    DATA_DIR = 'D:/FileData'
+    # 图片资料文件夹
+    DATA_DIR_IMG = 'Img'
 
-    # JOBS = [
-    #     # {
-    #     #     'id': 'pre_loan',
-    #     #     'func': 'jobs.loan:loan_sort',
-    #     #     'args': ('PRE_LOAN_URL', 'pre_loan'),
-    #     #     'trigger': 'cron',
-    #     #     # 'second': '0/10',
-    #     #     'minute': '0/5',
-    #     #     'hour': '8-20',
-    #     #     'max_instances': 1
-    #     # },
-    #     {
-    #         'id': 'post_loan',
-    #         'func': 'jobs.loan:loan_sort',
-    #         'args': (8, 'H', ),
-    #         'trigger': 'cron',
-    #         # 'second': '0/10',
-    #         'minute': '0/5',
-    #         'hour': '8-20',
-    #         'max_instances': 1
-    #     },
-    #     {
-    #         'id': 'loan_push',
-    #         'func': 'jobs.loan:loan_push',
-    #         'trigger': 'cron',
-    #         # 'second': '0/10',
-    #         'minute': '0/5',
-    #         'hour': '8-20',
-    #         'max_instances': 1
-    #     }
-    # ]
+    JOBS = [
+        {
+            'id': 'img_ocr',
+            'func': 'jobs.img:img_ocr',
+            'args': (8, ),
+            'trigger': 'cron',
+            'second': '0/10',
+            # 'minute': '0/5',
+            # 'hour': '8-20',
+            'max_instances': 1
+        },
+        {
+            'id': 'img_push',
+            'func': 'jobs.img:img_push',
+            'trigger': 'cron',
+            'second': '0/10',
+            # 'minute': '0/5',
+            # 'hour': '8-20',
+            'max_instances': 1
+        }
+    ]
 
 
 class DevelopmentConfig(BaseConfig):

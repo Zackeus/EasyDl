@@ -4,19 +4,14 @@ from flask import Flask as BasicFlask, current_app
 from flask_wtf.csrf import CSRFError
 
 from utils import is_empty, render_info, MyResponse
-from views.loan import loan_bp
+from views.img import img_bp
 from views.test import test_bp
 from views.sys.user import user_bp
 from views.sys.area import area_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.request import codes
-from models.basic import BasicModel
-from models.loan.loan_file import LoanFileModel
-from models.loan.loan_type import LoanTypeModel
-from models.loan.flow_type import FlowTypeModel
-from models.loan.img_type import ImgTypeModel
-from models.loan.img_detail import ImgDetailModel
-from models.file import FileModel
+from models import BasicModel, FileModel
+from models.img import ImgDataModel, ImgDetailModel, ImgTypeModel
 
 
 class Flask(BasicFlask):
@@ -66,7 +61,7 @@ def register_blueprints(app):
     :param app:
     :return:
     """
-    app.register_blueprint(blueprint=loan_bp, url_prefix='/loan')
+    app.register_blueprint(blueprint=img_bp, url_prefix='/img')
     app.register_blueprint(blueprint=user_bp, url_prefix='/user')
     app.register_blueprint(blueprint=area_bp, url_prefix='/sys')
     app.register_blueprint(blueprint=test_bp, url_prefix='/test')
@@ -84,12 +79,12 @@ def register_extensions(app):
     cache.init_app(app)
 
     login_manager.init_app(app)
-    login_manager.exempt_views((loan_bp, test_bp, user_bp))
+    login_manager.exempt_views((img_bp, test_bp, user_bp))
 
     session.init_app(app)
 
     csrf.init_app(app)
-    csrf.exempt_views((loan_bp, test_bp))
+    csrf.exempt_views((img_bp, test_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':

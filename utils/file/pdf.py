@@ -19,7 +19,7 @@ from utils.assert_util import Assert
 class PDFUtil(object):
 
     @staticmethod
-    def pdf_to_pic(path, pic_dir, format=FileFormat.PNG.value, zoom=300):
+    def pdf_to_pic(path, pic_dir, format=FileFormat.PNG.value, zoom=150):
         """
         从pdf中提取图片
         :param path: pdf的路径

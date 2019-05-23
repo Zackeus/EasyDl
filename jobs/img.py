@@ -10,36 +10,34 @@ import requests
 from flask import current_app
 
 from extensions import scheduler, db
-from models.loan.loan_file import LoanFileModel, LoanFileSchema
-from models.loan.img_detail import ImgDetailModel
-from models.loan.img_type import ImgTypeModel
-from models.file import FileModel
+
+from models.img import ImgDataModel, ImgDataSchema, ImgDetailModel, ImgTypeModel
+from models import FileModel
 
 from utils import MyError, is_empty, is_not_empty, abb_str, Assert, codes, split_list, MyThread
 from utils.baidu_cloud import Image
 from utils.file import ImgUtil
 
 
-def loan_sort(qps, type_name):
+def img_ocr(qps):
     """
     文件图片文档处理
     :param qps: 并发数
-    :param type_name: 贷款类型
     :return:
     """
     with scheduler.app.app_context():
-        # 获取待处理贷款流水
-        loan_files = LoanFileModel().dao_get_todo(type_name=type_name, limit=10)
+        # 获取待处理图片资料
+        img_datas = ImgDataModel().dao_get_todo(limit=10)
 
-        if is_empty(loan_files):
+        if is_empty(img_datas):
             # 无处理数据，直接结束
             return
 
         baidu = Image()
 
-        for loan_file in loan_files:
-            # 根据贷款流水获取待处理图片明细
-            img_details = ImgDetailModel().dao_get_todo_by_loan_file(loan_file)
+        for img_data in img_datas:
+            # 根据图片流水获取待处理图片明细
+            img_details = ImgDetailModel().dao_get_todo_by_img_data(img_data)
             # 根据 qps 数进行列表切割
             img_details = split_list(img_details, qps)
 
@@ -61,8 +59,8 @@ def loan_sort(qps, type_name):
 
             with db.auto_commit_db():
                 # 更新处理状态
-                loan_file.is_handle = True
-                loan_file.dao_update()
+                img_data.is_handle = True
+                img_data.dao_update()
 
 
 def process_img(app, baidu, img_split_details):
@@ -74,9 +72,6 @@ def process_img(app, baidu, img_split_details):
                 with db.auto_commit_db():
                     img_base64 = ImgUtil.img_compress(img_file.file_path)
                     class_info = baidu.to_class(image_bs64=img_base64)
-
-                    if img_detail.id == 'ca5377767b9811e980585800e36a34d8':
-                        raise MyError(code=codes.request_limit_reached, msg='调用次数限制')
 
                     # 分类失败
                     if is_not_empty(class_info.error_code):
@@ -118,9 +113,9 @@ def process_img(app, baidu, img_split_details):
                         img_detail.dao_update(nested=True)
 
 
-def loan_push():
+def img_push():
     """
-    贷款信息推送
+    图片信息推送
     :return:
     """
     from utils.encodes import Unicode
@@ -129,7 +124,7 @@ def loan_push():
     from utils.msg import WXMsg
 
     with scheduler.app.app_context():
-        loan_files = LoanFileModel().dao_get_push()
+        loan_files = ImgDataModel().dao_get_push()
 
         if is_empty(loan_files):
             # 无数据推送
@@ -137,7 +132,7 @@ def loan_push():
 
         for loan_file in loan_files:
             try:
-                loan_dict, errors = LoanFileSchema().dump(loan_file)
+                loan_dict, errors = ImgDataSchema().dump(loan_file)
                 # 对象序列化失败
                 Assert.is_true(is_empty(errors), errors)
 
@@ -158,7 +153,7 @@ def loan_push():
                 # 发送微信错误报警信息
                 err_res = MyResponse.init_error(e)
                 WXMsg(
-                    msg_content='【贷款文件推送】【{id}】：{msg}'.format(id=loan_file.id, msg=err_res.msg)
+                    msg_content='【图片文件推送】【{id}】：{msg}'.format(id=loan_file.id, msg=err_res.msg)
                 ).send_wx()
             finally:
                 # 更新推送次数
