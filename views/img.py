@@ -30,10 +30,9 @@ def add_img(img_data):
     :return:
     """
     img_data.dao_create()
-    app_sys = AppSys().dao_get_by_code(img_data.app_sys.code)  # type: AppSys
+    app_sys = AppSys().dao_get_by_code(img_data.app_sys_code)  # type: AppSys
 
-    # 删除关联，通过外键添加
-    del img_data.app_sys
+    # 通过外键添加
     img_data.app_sys_id = app_sys.id
 
     # 创建资料目录
@@ -104,7 +103,7 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
-        'appId': '1234',
+        'appId': 'zx12312hjsdfsjdkf1',
         'fileData': [
             {
                 'fileName': 'pdf',
@@ -117,9 +116,7 @@ if __name__ == '__main__':
                 'fileBase64': file_to_base64('D:/AIData/1.png')
             }
         ],
-        'appSys': {
-            'code': 'OP_LOAN_H'
-        },
+        'appSysCode': 'OP_LOAN_H',
         'createBy': '17037',
         'remarks': '备注信息...........',
         'pushUrl': 'http://127.0.0.1:5000/img/push_info'

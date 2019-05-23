@@ -42,18 +42,26 @@ class ImgDataModel(BasicModel):
     push_times = db.Column(db.Integer, name='PUSH_TIMES', nullable=False, default=0, comment='推送次数')
     is_push = db.Column(db.Boolean, name='IS_PUSH', nullable=False, default=False, comment='是否成功推送')
 
+    @property
+    def app_sys_code(self):
+        """
+        应用系统代号
+        :return:
+        """
+        if self.app_sys_id:
+            app_sys = AppSys().dao_get(self.app_sys_id)
+            return app_sys.code
+        elif self._app_sys_code:
+            return self._app_sys_code
+        return None
+
     img_details = db.relationship(
         argument='ImgDetailModel',
         back_populates='img_data',
         cascade='all'
     )
 
-    app_sys = db.relationship(
-        argument='AppSys',
-        back_populates='img_datas'
-    )
-
-    def __init__(self, file_data=None, **kwargs):
+    def __init__(self, file_data=None, app_sys_code=None, **kwargs):
         """
 
         :param file_data:
@@ -61,6 +69,7 @@ class ImgDataModel(BasicModel):
         """
         super(self.__class__, self).__init__(**kwargs)
         self.file_data = file_data
+        self._app_sys_code = app_sys_code
 
     def dao_add_info(self, loan_dir, subtransactions=False, nested=False):
         """
@@ -168,6 +177,12 @@ class ImgDataSchema(BaseSchema):
     push_times = fields.Integer(load_only=True, load_from='pushTimes')
     is_push = fields.Boolean(load_only=True, load_from='isPush')
 
+    app_sys_code = fields.Str(
+        required=True,
+        validate=MyValidates.MyLength(min=1, max=64, not_empty=False),
+        load_from='appSysCode'
+    )
+
     file_data = fields.Nested(
         FileSchema,
         required=True,
@@ -183,13 +198,6 @@ class ImgDataSchema(BaseSchema):
         load_from='imgDetails'
     )
 
-    app_sys = fields.Nested(
-        AppSysSchema,
-        only=('id', 'code', 'desc'),
-        required=True,
-        load_from='appSys'
-    )
-
     @validates('file_data')
     def validate_pdf_name(self, values):
         """
@@ -203,20 +211,20 @@ class ImgDataSchema(BaseSchema):
             if value.file_format.upper() not in self.__file_formats:
                 raise ValidationError('无效的文件格式')
 
-    @validates('app_sys')
-    def validate_app_sys(self, value):
+    @validates('app_sys_code')
+    def validate_app_sys_code(self, value):
         """
         校验应用系统
-        :param AppSys value:
+        :param str value:
         :return:
         """
-        app_sys = AppSys().dao_get_by_code(value.code)
+        app_sys = AppSys().dao_get_by_code(value)
         if is_empty(app_sys):
             raise ValidationError('无效的应用系统.')
 
     def only_create(self):
         return super().only_create() + \
-               ('app_id', 'app_sys.code',
+               ('app_id', 'app_sys_code',
                 'file_data.file_name', 'file_data.file_format', 'file_data.file_base64', 'push_url')
 
 

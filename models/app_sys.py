@@ -31,16 +31,19 @@ class AppSys(BasicModel):
 
     desc = db.Column(db.String(length=50), name='DESC', nullable=False, comment='代号描述')
 
-    img_datas = db.relationship(
-        argument='ImgDataModel',
-        back_populates='app_sys',
-        cascade='all'
-    )
-
     def dao_add(self, **kwargs):
         super().dao_create()
         with db.auto_commit_db(**kwargs) as s:
             s.add(self)
+
+    @cache.memoize()
+    def dao_get(self, id):
+        """
+        根据id查询数据
+        :param id:
+        :return:
+        """
+        return super().dao_get(id)
 
     @cache.memoize()
     def dao_get_by_code(self, code):
