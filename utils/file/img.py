@@ -38,7 +38,7 @@ class ImgUtil(object):
 
 
 if __name__ == '__main__':
-    filename = 'D:/贷前资料/05121ff8230511e997a8a164741611fd/png/1.png'
+    filename = 'D:/AIData/9.png'
     base_str = ImgUtil.img_compress(filename)
     print(base_str)
-    encodes.base64_to_file(base_str, 'D:/贷前资料/test.png')
+    encodes.base64_to_file(base_str, 'D:/AIData', 'zz', 'png')

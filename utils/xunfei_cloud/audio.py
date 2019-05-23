@@ -319,27 +319,3 @@ class SliceIdGenerator(BaseObject):
                 j = j - 1
         self.__ch = ch
         return self.__ch
-
-
-if __name__ == '__main__':
-    pass
-    # app_id = '5b331864'
-    # api_key = '8ce5edee08cdce711d08fea808d55b00'
-    # file_path = 'D:/AIData/16k.wav'
-    #
-    # sign = 'TkrgxBS/KjOD+ZPz/G7K85KzRX4='
-    # ts = '1557913311'
-    # task_id = '0e9518942ef24e5a962e3e4481f2980a'
-    # # sign, ts = init_token(app_id, api_key)
-    # # print(sign, ts)
-    # # prepare(app_id, sign, ts, file_path)
-    #
-    # # upload_request(app_id, sign, ts, task_id, file_path)
-    # # merge(app_id, sign, ts, task_id)
-    # # get_progress(app_id, sign, ts, task_id)
-    #
-    # res_json = get_result(app_id, sign, ts, task_id)
-    # with open('D:/AIData/16k.txt', 'a') as f:
-    #     for info in json.loads(res_json.get('data')):
-    #         print(info)
-    #         f.writelines(str(info) + '\n')

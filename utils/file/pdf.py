@@ -19,12 +19,13 @@ from utils.assert_util import Assert
 class PDFUtil(object):
 
     @staticmethod
-    def pdf_to_pic(path, pic_dir, format=FileFormat.PNG.value):
+    def pdf_to_pic(path, pic_dir, format=FileFormat.PNG.value, zoom=300):
         """
         从pdf中提取图片
         :param path: pdf的路径
         :param pic_dir: 图片保存的路径
         :param format: 图片格式
+        :param int zoom: 保存图片分辨率
         :return: {page_num, success_num, fail_num, msg}
         """
         Assert.is_true(os.path.isfile(path), '文件不存在, path: {0}'.format(path))
@@ -41,8 +42,8 @@ class PDFUtil(object):
                 pm_dict = {'page_code': pg + 1}
                 try:
                     page = pdf[pg]  # type: Page
-                    trans = fitz.Matrix(1.0, 1.0).preRotate(0)
-                    pm = page.getPixmap(matrix=trans, alpha=False)                                # 获得每一页的流对象
+                    trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(0)
+                    pm = page.getPixmap(matrix=trans, alpha=True)                                 # 获得每一页的流对象
                     page_path = FileUtil.path_join(pic_dir, '{0}.{1}'.format((pg + 1), format))   # 图片路径
                     pm.writePNG(page_path)                                                        # 保存图片
 
@@ -70,6 +71,6 @@ class PDFUtil(object):
 
 
 if __name__ == '__main__':
-    print(PDFUtil.pdf_to_pic('D:/AIData/post_3.pdf', 'D:/AIData/test'))
+    print(PDFUtil.pdf_to_pic('D:/AIData/test/1.pdf', 'D:/AIData/test'))
 
 
