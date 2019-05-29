@@ -10,6 +10,8 @@
 import datetime
 import time
 
+_TIME_FORMAT = ['%Y-%m-%d', '%Y-%m-%d %H:%M:%S']
+
 
 def in_time_zones(start_time, end_time, check_time=time.time()):
     """
@@ -51,11 +53,34 @@ def get_end_dawn(time_stamp=datetime.date.today()):
     return int(time.mktime(time.strptime(str(tomorrow.strftime('%Y-%m-%d')), '%Y-%m-%d'))) - 1
 
 
-if __name__ == '__main__':
-    start_time = get_before_dawn(time.time())
-    print(datetime.datetime.fromtimestamp(start_time))
-    end_time = get_end_dawn(time.time())
-    print(datetime.datetime.fromtimestamp(end_time))
+def s_to_time(s):
+    """
+    将秒转为时间格式
+    :param long s:
+    :return:
+    """
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    return '%d:%02d:%02d' % (h, m, s)
 
-    tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
-    print(in_time_zones(start_time, end_time, tomorrow))
+
+def ms_to_time(ms):
+    """
+    将毫秒转为时间格式
+    :param long ms:
+    :return:
+    """
+    s, ms = divmod(ms, 1000)
+    return s_to_time(s)
+
+
+if __name__ == '__main__':
+    # start_time = get_before_dawn(time.time())
+    # print(datetime.datetime.fromtimestamp(start_time))
+    # end_time = get_end_dawn(time.time())
+    # print(datetime.datetime.fromtimestamp(end_time))
+    #
+    # tomorrow = datetime.datetime.today() + datetime.timedelta(days=1)
+    # print(in_time_zones(start_time, end_time, tomorrow))
+
+    print(ms_to_time(13270))

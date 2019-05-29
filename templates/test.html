@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}测试{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='layui/css/layim.css') }}" media="all">
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="{{ url_for('static', filename='css/audio/style.css') }}" />
+    <script type="text/javascript" src="{{ url_for('static', filename='js/audio/jquery-1.7.2.min.js') }}"></script>
+
+    <style>
+    .layim-chat-mine .layim-chat-text{
+        background-color: #e2e2e2;
+        color: #333;
+    }
+
+    .layim-chat-mine .layim-chat-text:after {
+        left: auto;
+        right: -10px;
+        border-color: #e2e2e2 transparent transparent;
+    }
+
+    .layui-form-item{
+        padding: 10px;
+    }
+
+    {#.layui-form-checked span, .layui-form-checked:hover span {#}
+    {#    background-color: #FF5722;#}
+    {#}#}
+    {#.layui-form-checked i {#}
+    {#    color: #FF5722;#}
+    {#}#}
+    </style>
+
+    <script>
+    layui.use(['form', ],function() {
+        var form = layui.form;
+    });
+    </script>
+{% endblock head %}
+
+{% block bodyClass %}"childrenBody"{% endblock bodyClass %}
+
+{% block body %}
+
+    <div style="position: absolute; right: 10px; padding: 10px; width: 48%; height: 45%; float:right;">
+        <div class="layui-col-lg6 layui-col-md12" style="position: relative; width: 100%;">
+            <blockquote class="layui-elem-quote title">音频播放</blockquote>
+            <div class="layui-quote-nm audio_body">
+                <div id="player">
+                    <audio>
+                        <source src="{{ url_for('static', filename='songs/0850487.wav') }}">
+                    </audio>
+                    <!-- 播放图片 -->
+                    <div class="cover">
+                        <img src="{{ url_for('static', filename='images/audio/record.jpg') }}" alt="德国第一装甲师进行曲.mp3">
+                    </div>
+
+                    <!-- 音频标签 -->
+                    <div class="ctrl">
+                        <div class="tag">
+                            <strong>0850487</strong>
+                            <span class="album">0850487.wav</span>
+                        </div>
+
+                        <!-- 控制按钮 -->
+                        <div class="control">
+                            <div class="left">
+                                <!-- 上一曲 -->
+                                <div class="rewind icon"></div>
+                                <!-- 播放暂停 -->
+                                <div class="playback icon"></div>
+                                <!-- 下一曲 -->
+                                <div class="fastforward icon"></div>
+                            </div>
+                            <div class="volume right">
+                                <div class="mute icon left"></div>
+                                <div class="slider left">
+                                    <div class="pace"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress">
+                            <div class="slider">
+                                <div class="loaded"></div>
+                                <div class="pace"></div>
+                            </div>
+                            <div class="timer left">0:00</div>
+                            <div class="right">
+                                <!-- 重播 -->
+                                <div class="repeat icon"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript"
+                        src="{{ url_for('static', filename='js/audio/jquery-ui-1.8.17.custom.min.js') }}"></script>
+                <script type="text/javascript"
+                        src="{{ url_for('static', filename='js/audio/script.js') }}"></script>
+            </div>
+        </div>
+
+        <!-- 操作栏 -->
+        <div class="layui-col-lg6 layui-col-md12" style="position: relative; top: 10px; width: 100%;">
+            <blockquote class="layui-elem-quote title">操作栏</blockquote>
+            <div class="layui-quote-nm">
+                <form class="layui-form layui-form-pane" action="">
+                   <div class="layui-form-item">
+                       <label class="layui-form-label">语义标签</label>
+                       <div class="layui-input-block">
+                           <input type="checkbox" name="like[write]" title="忌讳语">
+                           <input type="checkbox" name="like[read]" title="汽车品牌" checked="">
+                           <input type="checkbox" name="like[game]" title="机构名">
+                           <input type="checkbox" name="like[game]" title="手机号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" name="like[game]" title="身份证号">
+                       </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-col-lg6 layui-col-md12 layui-layim-chat"
+         style="z-index: 19891016; position: absolute; width: 48%; height: 90%;">
+
+        <div class="layui-layer-title" style="cursor: move;"></div>
+
+        <div class="layim-chat-box">
+            <div class="layim-chat layim-chat-friend layui-show" style="position: absolute; height: 85%; width: 100%;">
+
+                <div class="layui-unselect layim-chat-title">
+                    <div class="layim-chat-other">
+                        <img class="layim-friend100001222"
+                             src="{{ url_for('static', filename='images/audio/record.jpg') }}">
+                        <span class="layim-chat-username">HR124569  </span>
+                        <p class="layim-chat-status"><span style="color:#FF5722;">音频转写</span></p>
+                    </div>
+                </div>
+
+                <div id="asrDatasDiv" class="layim-chat-main" style="height: 100%;">
+                    <!-- 音频转写 -->
+                    <ul id="asrDatas">
+                        {% for asr_data in asr_datas %}
+                            {% if asr_data.speaker is odd %}
+                                <li class="layim-chat-mine" style="visibility: hidden;" data-bg="{{ asr_data.bg }}">
+                                    <div class="layim-chat-user">
+                                        <img src="{{ url_for('static', filename='images/audio/recorduser.jpg') }}">
+                                        <cite><i>{{ asr_data.bg|ms_to_time }}</i>发音人{{ asr_data.speaker }}</cite>
+                                    </div>
+                                    <div class="layim-chat-text">{{ asr_data.onebest }}</div>
+                                </li>
+                            {% else %}
+                                <li style="visibility: hidden;" data-bg="{{ asr_data.bg }}">
+                                    <div class="layim-chat-user">
+                                        <img src="{{ url_for('static', filename='images/audio/recorduser.jpg') }}">
+                                        <cite>发音人{{ asr_data.speaker }}<i>{{ asr_data.bg|ms_to_time }}</i></cite>
+                                    </div>
+                                    <div class="layim-chat-text">{{ asr_data.onebest }}</div>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock body %}
+
+{% block footer %}
+{#    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>#}
+{% endblock footer %}

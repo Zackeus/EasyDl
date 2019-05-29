@@ -53,8 +53,8 @@ class NLP(BaseObject):
 
 
 if __name__ == '__main__':
-    url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer?charset=UTF-8&access_token={access_token}'
-    text = '雪弗兰是吧？'
+    url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer_custom?charset=UTF-8&access_token={access_token}'
+    text = '百度是一家高科技公司'
     nlp = NLP('6wheIPDCYOQy0nAjjkWPplT9', 'Q1SxbGtr9OLPzIpbQA3YD9CWda1H7zHk')
     res = nlp.lexer(url, text)
     print(res)

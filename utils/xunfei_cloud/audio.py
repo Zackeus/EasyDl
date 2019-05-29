@@ -21,6 +21,29 @@ from utils.request import codes
 from utils.assert_util import Assert
 
 
+class SliceIdGenerator(BaseObject):
+
+    def __init__(self):
+        """
+        slice id生成器
+        """
+        self.__ch = 'aaaaaaaaa`'
+
+    def get_next_slice_id(self):
+        ch = self.__ch
+        j = len(ch) - 1
+        while j >= 0:
+            cj = ch[j]
+            if cj != 'z':
+                ch = ch[:j] + chr(ord(cj) + 1) + ch[j + 1:]
+                break
+            else:
+                ch = ch[:j] + 'a' + ch[j + 1:]
+                j = j - 1
+        self.__ch = ch
+        return self.__ch
+
+
 class Audio(BaseObject):
 
     # 文件分片大下52k
@@ -298,24 +321,30 @@ class AsrProgress(BaseObject):
             return AsrProgress(**data)
 
 
-class SliceIdGenerator(BaseObject):
+class AsrData(BaseObject):
 
-    def __init__(self):
+    def __init__(self, bg, ed, onebest, speaker):
         """
-        slice id生成器
+        音频转写数据
+        :param long bg: 句子相对于本音频的起始时间，单位为ms
+        :param long ed: 句子相对于本音频的终止时间，单位为ms
+        :param str onebest: 句子内容
+        :param int speaker: 说话人编号，从1开始，未开启说话人分离时speaker都为0
         """
-        self.__ch = 'aaaaaaaaa`'
+        self.bg = bg
+        self.ed = ed
+        self.onebest = onebest
+        self.speaker = speaker
 
-    def get_next_slice_id(self):
-        ch = self.__ch
-        j = len(ch) - 1
-        while j >= 0:
-            cj = ch[j]
-            if cj != 'z':
-                ch = ch[:j] + chr(ord(cj) + 1) + ch[j + 1:]
-                break
-            else:
-                ch = ch[:j] + 'a' + ch[j + 1:]
-                j = j - 1
-        self.__ch = ch
-        return self.__ch
+    class AsrDataSchema(Schema):
+        bg = fields.Integer(required=True)
+        ed = fields.Integer(required=True)
+        onebest = fields.Str(required=True)
+        speaker = fields.Integer(required=True)
+
+        @post_load
+        def make_object(self, data):
+            return AsrData(**data)
+
+
+

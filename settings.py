@@ -122,27 +122,27 @@ class BaseConfig(object):
     # 图片资料文件夹
     DATA_DIR_IMG = 'Img'
 
-    JOBS = [
-        {
-            'id': 'img_ocr',
-            'func': 'jobs.img:img_ocr',
-            'args': (8, ),
-            'trigger': 'cron',
-            # 'second': '0/10',
-            'minute': '0/5',
-            'hour': '8-20',
-            'max_instances': 1
-        },
-        {
-            'id': 'img_push',
-            'func': 'jobs.img:img_push',
-            'trigger': 'cron',
-            'second': '0/10',
-            'minute': '0/5',
-            'hour': '8-20',
-            'max_instances': 1
-        }
-    ]
+    # JOBS = [
+    #     {
+    #         'id': 'img_ocr',
+    #         'func': 'jobs.img:img_ocr',
+    #         'args': (8, ),
+    #         'trigger': 'cron',
+    #         # 'second': '0/10',
+    #         'minute': '0/5',
+    #         'hour': '8-20',
+    #         'max_instances': 1
+    #     },
+    #     {
+    #         'id': 'img_push',
+    #         'func': 'jobs.img:img_push',
+    #         'trigger': 'cron',
+    #         # 'second': '0/10',
+    #         'minute': '0/5',
+    #         'hour': '8-20',
+    #         'max_instances': 1
+    #     }
+    # ]
 
 
 class DevelopmentConfig(BaseConfig):

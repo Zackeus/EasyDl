@@ -51,6 +51,10 @@ def create_app(config_name=None):
     register_shell_context(app)
     # 注册模板上下文处理函数
     register_template_context(app)
+    # 注册模板过滤器
+    register_template_filter(app)
+    # 注册模板测试器
+    register_template_test(app)
 
     return app
 
@@ -211,3 +215,41 @@ def register_template_context(app):
     :return:
     """
     pass
+
+
+def register_template_filter(app):
+    """
+    自定义过滤器
+    :param app:
+    :return:
+    """
+
+    @app.template_filter('ms_to_time')
+    def ms_to_time(ms):
+        """
+        毫秒转时间格式
+        :param ms:
+        :return:
+        """
+        from utils import ms_to_time as ms_to_time_util
+        return ms_to_time_util(ms)
+
+
+def register_template_test(app):
+    """
+    自定义测试器
+    :param app:
+    :return:
+    """
+
+    @app.template_test(name='odd')
+    def odd(n):
+        """
+        判断是否为基数
+        :param int n:
+        :return:
+        """
+        from utils import is_odd
+        return is_odd(n)
+
+

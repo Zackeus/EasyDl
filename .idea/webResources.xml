@@ -30,6 +30,14 @@
             <path value="file://$PROJECT_DIR$/static/images/loan" />
             <path value="file://$PROJECT_DIR$/static/images/timer" />
             <path value="file://$PROJECT_DIR$/static/js" />
+            <path value="file://$PROJECT_DIR$/static/images/record" />
+            <path value="file://$PROJECT_DIR$/static/fonts" />
+            <path value="file://$PROJECT_DIR$/static/fonts/audio" />
+            <path value="file://$PROJECT_DIR$/static/css/audio" />
+            <path value="file://$PROJECT_DIR$/static/images/audio" />
+            <path value="file://$PROJECT_DIR$/static/images/audio/songs" />
+            <path value="file://$PROJECT_DIR$/static/js/audio" />
+            <path value="file://$PROJECT_DIR$/static/songs" />
           </resourceRoots>
         </entryData>
       </entry>

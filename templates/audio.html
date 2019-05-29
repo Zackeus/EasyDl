@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>网友Blithe分享Jquery+HTML5实现音乐播放器</title>
+        <link rel="stylesheet" type="text/css" media="screen"
+                  href="{{ url_for('static', filename='css/audio/style.css') }}" />
+        <script type="text/javascript" src="{{ url_for('static', filename='js/audio/jquery-1.7.2.min.js') }}"></script>
+    </head>
+<body>
+    <div id="background"></div>
+    <div id="player">
+
+        <audio>
+            <source src="{{ url_for('static', filename='songs/0850487.wav') }}">
+        </audio>
+
+        <!-- 播放图片 -->
+        <div class="cover">
+            <img src="{{ url_for('static', filename='images/audio/record.jpg') }}" alt="德国第一装甲师进行曲.mp3">
+        </div>
+
+        <!-- 音频标签 -->
+        <div class="ctrl">
+            <div class="tag">
+                <strong>德国第一装甲师进行曲</strong>
+                <span class="artist">德国</span>
+                <span class="album">德国第一装甲师进行曲.mp3</span>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="control">
+                <div class="left">
+                    <!-- 上一曲 -->
+                    <div class="rewind icon"></div>
+                    <!-- 播放暂停 -->
+                    <div class="playback icon"></div>
+                    <!-- 下一曲 -->
+                    <div class="fastforward icon"></div>
+                </div>
+                <div class="volume right">
+                    <div class="mute icon left"></div>
+                    <div class="slider left">
+                        <div class="pace"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="progress">
+                <div class="slider">
+                    <div class="loaded"></div>
+                    <div class="pace"></div>
+                </div>
+                <div class="timer left">0:00</div>
+                <div class="right">
+                    <!-- 重播 -->
+                    <div class="repeat icon"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='js/audio/jquery-ui-1.8.17.custom.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='js/audio/script.js') }}"></script>
+
+</body>
+</html>
