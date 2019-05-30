@@ -4,8 +4,7 @@ from flask import Flask as BasicFlask, current_app
 from flask_wtf.csrf import CSRFError
 
 from utils import is_empty, render_info, MyResponse
-from views.img import img_bp
-from views.test import test_bp
+from views import img_bp, audio_bp, test_bp
 from views.sys.user import user_bp
 from views.sys.area import area_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
@@ -67,6 +66,7 @@ def register_blueprints(app):
     :return:
     """
     app.register_blueprint(blueprint=img_bp, url_prefix='/img')
+    app.register_blueprint(blueprint=audio_bp, url_prefix='/audio')
     app.register_blueprint(blueprint=user_bp, url_prefix='/user')
     app.register_blueprint(blueprint=area_bp, url_prefix='/sys')
     app.register_blueprint(blueprint=test_bp, url_prefix='/test')
@@ -84,12 +84,14 @@ def register_extensions(app):
     cache.init_app(app)
 
     login_manager.init_app(app)
-    login_manager.exempt_views((img_bp, test_bp, user_bp))
+    # 登录过滤保护
+    login_manager.exempt_views((img_bp, audio_bp, test_bp, user_bp))
 
     session.init_app(app)
 
     csrf.init_app(app)
-    csrf.exempt_views((img_bp, test_bp))
+    # csrf过滤保护
+    csrf.exempt_views((img_bp, audio_bp, test_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':
@@ -243,19 +245,13 @@ def register_template_filter(app):
         :param list items:
         :return:
         """
-        _ne_list = [
-            {'code': 'PER', 'title': '人名', 'color': '#FFCC33'},
-            {'code': 'LOC', 'title': '地名', 'color': '#FF9933'},
-            {'code': 'ORG', 'title': '机构名', 'color': '#FF6633'},
-            {'code': 'TIME', 'title': '时间', 'color': '#FFFF00'},
-            {'code': 'TBW', 'title': '忌讳语', 'color': '#FF0000'},
-            {'code': 'TOA', 'title': '汽车品牌', 'color': '#CC0000'},
-        ]
-        _item = '<font class="{ne} lexer_font_show" color="#FF0000">{item}</font>'
+        _item = '<font class="{ne} lexer_font_show" color="{color}">{item}</font>'
         if is_empty(items):
             return text
         for item in items:
-            text = text.replace(item.item, _item.format(ne=item.ne, item=item.item))
+            lexer = AudioLexerModel().dao_get_by_code(item.ne)  # type: AudioLexerModel
+            color = AudioLexerModel().default_color if is_empty(lexer) else lexer.color
+            text = text.replace(item.item, _item.format(ne=item.ne, color=color, item=item.item))
         return text
 
 

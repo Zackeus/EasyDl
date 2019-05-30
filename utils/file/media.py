@@ -308,6 +308,12 @@ class AudioAsrNlp(AsrData):
         """
         super(self.__class__, self).__init__(bg, ed, onebest, speaker)
         self.items = items
+        # 命名实体列表
+        self.ne_list = []
+
+        for item in items:
+            if item.ne not in self.ne_list:
+                self.ne_list.append(item.ne)
 
     class AudioAsrNlpSchema(AsrData.AsrDataSchema):
 

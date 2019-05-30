@@ -13,7 +13,7 @@ from extensions import db
 from marshmallow import fields, validate, Schema, post_load, post_dump
 
 
-class BasicModel(db.Model, BaseObject):
+class BasicModel(BaseObject, db.Model):
     """
     模型基类
     """

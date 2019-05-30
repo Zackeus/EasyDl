@@ -33,6 +33,7 @@
         <option value="$MODULE_DIR$/templates" />
         <option value="$MODULE_DIR$/templates/errors" />
         <option value="$MODULE_DIR$/templates/sys" />
+        <option value="$MODULE_DIR$/templates/audio" />
       </list>
     </option>
   </component>

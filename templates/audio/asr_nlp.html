@@ -104,12 +104,10 @@
                    <div class="layui-form-item">
                        <label class="layui-form-label">语义标签</label>
                        <div class="layui-input-block">
-                           <input type="checkbox" value="PER" title="人名" lay-filter="lexer" checked>
-                           <input type="checkbox" value="LOC" title="地名" lay-filter="lexer" checked>
-                           <input type="checkbox" value="ORG" title="机构名" lay-filter="lexer" checked>
-                           <input type="checkbox" value="TIME" title="时间" lay-filter="lexer" checked>
-                           <input type="checkbox" value="TBW" title="忌讳语" lay-filter="lexer" checked>
-                           <input type="checkbox" value="TOA" title="汽车品牌" lay-filter="lexer" checked>
+                           {% for audio_lexer in audio_lexers %}
+                               <input type="checkbox" value="{{ audio_lexer.code }}" title="{{ audio_lexer.title }}"
+                                      lay-filter="lexer" checked>
+                           {% endfor %}
                        </div>
                     </div>
                 </form>
@@ -173,5 +171,5 @@
 {% endblock body %}
 
 {% block footer %}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/test.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/audio/asr_nlp.js') }}"></script>
 {% endblock footer %}

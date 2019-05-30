@@ -9,7 +9,7 @@
 
 import json
 import os
-from flask import Blueprint, make_response, send_from_directory, request, current_app, render_template
+from flask import Blueprint, make_response, send_from_directory, request, current_app
 from extensions import db
 
 from utils import Method, IdGen
@@ -146,22 +146,3 @@ def baidu_nlp():
             print(info)
             f.writelines(str(info) + '\n')
     return 'ok'
-
-
-@test_bp.route('audio_nlp')
-def audio_nlp():
-    """
-
-    :return:
-    """
-    from utils import Assert, is_empty
-    from utils.file import AudioAsrNlp
-    result = []
-    with open('D:/AIData/音频转写/0850487/0850487_lexer.txt', 'r') as f:
-        for line in f.readlines():
-            result.append(json.loads(line.strip('\n').replace("'", "\"")))
-
-    asr_nlp_datas, errors = AudioAsrNlp.AudioAsrNlpSchema().load(result, many=True)
-    Assert.is_true(is_empty(errors), errors)
-
-    return render_template('test.html', asr_nlp_datas=asr_nlp_datas)
