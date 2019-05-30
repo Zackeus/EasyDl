@@ -9,11 +9,10 @@
 
 import requests
 import json
-from marshmallow import Schema, fields, post_load
 
-import encodes
+from utils import encodes
 from utils.errors import MyError
-from utils.request import codes, ContentType
+from utils.request import ContentType
 from utils.object_util import is_not_empty, BaseObject
 from utils.baidu_cloud.baidu import BaiduCloud
 from utils.decorators import auto_wired

@@ -12,7 +12,7 @@ import json
 import math
 from marshmallow import Schema, fields, post_load, pre_load
 
-import encodes
+from utils import encodes
 from utils.xunfei_cloud.xunfei import Sign
 from utils.object_util import is_not_empty, is_empty, BaseObject
 from utils.decorators import auto_wired

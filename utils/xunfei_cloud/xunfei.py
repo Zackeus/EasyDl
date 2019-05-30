@@ -12,7 +12,7 @@ import hashlib
 import hmac
 import base64
 
-import encodes
+from utils import encodes
 from utils.object_util import BaseObject
 
 

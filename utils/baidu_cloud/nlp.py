@@ -11,7 +11,7 @@ import requests
 import json
 from marshmallow import Schema, fields, post_load
 
-import encodes
+from utils import encodes
 from utils.errors import MyError
 from utils.request import codes, ContentType
 from utils.object_util import is_not_empty, is_empty, BaseObject

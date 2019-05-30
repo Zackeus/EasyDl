@@ -20,6 +20,7 @@
       <sourceFolder url="file://$MODULE_DIR$/utils/sys" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/baidu_cloud" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/xunfei_cloud" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/audio" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/migrations" />
     </content>
     <orderEntry type="inheritedJdk" />
