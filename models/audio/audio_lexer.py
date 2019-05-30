@@ -11,7 +11,7 @@ from marshmallow import fields
 
 from extensions import db, cache
 from models.basic import BasicModel, BaseSchema
-from utils import validates as MyValidates
+from utils import validates as MyValidates, is_empty, delete_memoizeds
 
 
 class AudioLexerModel(BasicModel):
@@ -26,10 +26,16 @@ class AudioLexerModel(BasicModel):
     title = db.Column(db.String(length=60), name='TITLE', nullable=False, default=default_title, comment='词性说明')
     color = db.Column(db.String(length=30), name='COLOR', nullable=False, default=default_color, comment='词性颜色')
 
-    def dao_create(self, id=None, **kwargs):
-        super().dao_create(id)
-        with db.auto_commit_db(**kwargs) as s:
-            s.add(self)
+    @cache.memoize()
+    def dao_get_codes(self):
+        """
+        查询所有code列表
+        :return:
+        """
+        codes = []
+        for code in self.query.with_entities(AudioLexerModel.code).distinct().all():
+            codes.append(code[0])
+        return codes
 
     def dao_get_by_codes(self, codes):
         """
@@ -50,7 +56,19 @@ class AudioLexerModel(BasicModel):
         :param str code:
         :return:
         """
-        return self.query.filter_by(code=code).first()
+        audio_lexer = self.query.filter_by(code=code).first()
+        if is_empty(audio_lexer):
+            audio_lexer = AudioLexerModel()
+            audio_lexer.code = code
+            audio_lexer.title = self.default_title
+            audio_lexer.color = self.default_color
+        return audio_lexer
+
+    @delete_memoizeds([dao_get_codes])
+    def dao_create(self, id=None, **kwargs):
+        super().dao_create(id)
+        with db.auto_commit_db(**kwargs) as s:
+            s.add(self)
 
 
 class AudioLexerSchema(BaseSchema):

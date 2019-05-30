@@ -250,8 +250,7 @@ def register_template_filter(app):
             return text
         for item in items:
             lexer = AudioLexerModel().dao_get_by_code(item.ne)  # type: AudioLexerModel
-            color = AudioLexerModel().default_color if is_empty(lexer) else lexer.color
-            text = text.replace(item.item, _item.format(ne=item.ne, color=color, item=item.item))
+            text = text.replace(item.item, _item.format(ne=item.ne, color=lexer.color, item=item.item))
         return text
 
 

@@ -109,5 +109,23 @@ def auto_wired(key):
     return decorator
 
 
+def delete_memoizeds(fs):
+    """
+    删除函数缓存
+    :param list fs:
+    :return:
+    """
+    from extensions import cache
+
+    def decorator(func):
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            for f in fs:
+                cache.delete_memoized(f)
+            return func(*args, **kwargs)
+        return decorated_function
+    return decorator
+
+
 
 
