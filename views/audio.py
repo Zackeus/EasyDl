@@ -9,7 +9,7 @@
 
 import json
 import requests
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, url_for
 
 from models.audio import AudioLexerModel, AudioLexerSchema
 from utils import Method, ContentType, render_info, MyResponse, validated
@@ -53,7 +53,12 @@ def asr_nlp(id):
         if is_not_empty(asr_nlp_data.ne_list):
             ne_list.extend(asr_nlp_data.ne_list)
     audio_lexers = AudioLexerModel().dao_get_by_codes(ne_list)
-    return render_template('audio/asr_nlp.html', asr_nlp_datas=asr_nlp_datas, audio_lexers=audio_lexers)
+    return render_template(
+        'audio/asr_nlp.html',
+        audio_src=url_for('static', filename='songs/{id}.wav'.format(id=id)),
+        asr_nlp_datas=asr_nlp_datas,
+        audio_lexers=audio_lexers
+    )
 
 
 @audio_bp.route('/baidu/nlp/<string:id>')

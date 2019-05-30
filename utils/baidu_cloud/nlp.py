@@ -137,7 +137,7 @@ if __name__ == '__main__':
     url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer_custom?charset=UTF-8&access_token={access_token}'
     ne_list = ['PER', 'LOC', 'ORG', 'TIME', 'TBW', 'TOA', ]
     # text = '我这边裕隆汽车金融的，跟您核对一下您的汽车贷款的信息方方便！'
-    text = '安徽省wer合肥市sdfsdf滁州市安徽省dsf！'
+    text = '现在居住是在康乐富城康乐县富城滨河镇路'
     # text = '谢尔盖·科罗廖夫（1907年1月12日－1966年1月14日），原苏联宇航事业的伟大设计师与组织者'
     nlp = NLP('6wheIPDCYOQy0nAjjkWPplT9', 'Q1SxbGtr9OLPzIpbQA3YD9CWda1H7zHk')
     lexer_res = nlp.lexer(url=url, text=text, ne_list=ne_list)

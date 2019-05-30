@@ -245,12 +245,17 @@ def register_template_filter(app):
         :param list items:
         :return:
         """
-        _item = '<font class="{ne} lexer_font_show" color="{color}">{item}</font>'
+        _item = '<font class="{ne} lexer_font_show" color="{color}" data-ne-title="{ne_title}">{item}</font>'
         if is_empty(items):
             return text
         for item in items:
             lexer = AudioLexerModel().dao_get_by_code(item.ne)  # type: AudioLexerModel
-            text = text.replace(item.item, _item.format(ne=item.ne, color=lexer.color, item=item.item))
+            text = text.replace(item.item, _item.format(
+                ne=item.ne,
+                color=lexer.color,
+                ne_title=lexer.title,
+                item=item.item
+            ))
         return text
 
 

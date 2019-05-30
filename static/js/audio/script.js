@@ -78,11 +78,17 @@
 					// 确认当前转写位置
 					var mainContainer = $('#asrDatasDiv'),
 					  scrollToContainer = $('#asrDatas li').eq(i === 0 ? 0 : i - 1);
-					//动画效果
-					mainContainer.animate({
-						scrollTop: scrollToContainer.offset().top - mainContainer.offset().top +
-							mainContainer.scrollTop() - 250
-					}, 100);//2秒滑动到指定位置
+
+					// 非动画效果
+					mainContainer.scrollTop(
+						scrollToContainer.offset().top - mainContainer.offset().top + mainContainer.scrollTop() - 250
+				  	);
+
+					// 动画效果
+					// mainContainer.animate({
+					// 	scrollTop: scrollToContainer.offset().top - mainContainer.offset().top +
+					// 		mainContainer.scrollTop() - 250
+					// }, 1);//2秒滑动到指定位置
 				}
 
 				for (index = i; index <= $('#asrDatas').children('li').length; index++) {
