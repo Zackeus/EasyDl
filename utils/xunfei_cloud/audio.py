@@ -12,7 +12,7 @@ import json
 import math
 from marshmallow import Schema, fields, post_load, pre_load
 
-from utils import Unicode
+import encodes
 from utils.xunfei_cloud.xunfei import Sign
 from utils.object_util import is_not_empty, is_empty, BaseObject
 from utils.decorators import auto_wired
@@ -133,7 +133,7 @@ class Audio(BaseObject):
             task_id=self.task_id
         )
         res = requests.post(url=url, data=data)
-        res.encoding = Unicode.UTF_8.value
+        res.encoding = encodes.Unicode.UTF_8.value
 
         if res is None or res.status_code != codes.ok:
             return AsrInfo(
@@ -162,7 +162,7 @@ class Audio(BaseObject):
             task_id=self.task_id
         )
         res = requests.post(url=url, data=data)
-        res.encoding = Unicode.UTF_8.value
+        res.encoding = encodes.Unicode.UTF_8.value
 
         if res is None or res.status_code != codes.ok:
             return AsrInfo(
@@ -184,7 +184,7 @@ class Audio(BaseObject):
         kwargs.update(dict(app_id=self.app_id, signa=self.signa, ts=self.ts))
 
         res = requests.post(url=url, data=kwargs)
-        res.encoding = Unicode.UTF_8.value
+        res.encoding = encodes.Unicode.UTF_8.value
 
         if res is None or res.status_code != codes.ok:
             return AsrInfo(
@@ -220,7 +220,7 @@ class Audio(BaseObject):
                 )
 
                 res = requests.post(url=url, data=data, files={'content': content})
-                res.encoding = Unicode.UTF_8.value
+                res.encoding = encodes.Unicode.UTF_8.value
 
                 if res is None or res.status_code != codes.ok:
                     return AsrInfo(
@@ -252,7 +252,7 @@ class Audio(BaseObject):
             task_id=self.task_id
         )
         res = requests.post(url=url, data=data)
-        res.encoding = Unicode.UTF_8.value
+        res.encoding = encodes.Unicode.UTF_8.value
 
         if res is None or res.status_code != codes.ok:
             return AsrInfo(

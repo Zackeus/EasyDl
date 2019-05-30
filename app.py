@@ -234,6 +234,29 @@ def register_template_filter(app):
         from utils import ms_to_time as ms_to_time_util
         return ms_to_time_util(ms)
 
+    @app.template_filter('lexer_label')
+    def lexer_label(text, items):
+        """
+        语义标签过滤
+        :param str text:
+        :param list items:
+        :return:
+        """
+        _ne_list = [
+            {'code': 'PER', 'title': '人名', 'color': '#FFCC33'},
+            {'code': 'LOC', 'title': '地名', 'color': '#FF9933'},
+            {'code': 'ORG', 'title': '机构名', 'color': '#FF6633'},
+            {'code': 'TIME', 'title': '时间', 'color': '#FFFF00'},
+            {'code': 'TBW', 'title': '忌讳语', 'color': '#FF0000'},
+            {'code': 'TOA', 'title': '汽车品牌', 'color': '#CC0000'},
+        ]
+        _item = '<font class="{ne} lexer_font_show" color="#FF0000">{item}</font>'
+        if is_empty(items):
+            return text
+        for item in items:
+            text = text.replace(item.item, _item.format(ne=item.ne, item=item.item))
+        return text
+
 
 def register_template_test(app):
     """

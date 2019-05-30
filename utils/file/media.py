@@ -15,6 +15,8 @@ from marshmallow import Schema, fields, post_load
 from utils.file.file import FileUtil, FileFormat
 from utils.assert_util import Assert
 from utils.object_util import is_not_empty, is_empty, BaseObject
+from utils.xunfei_cloud.audio import AsrData
+from utils.baidu_cloud.nlp import LexerItem
 
 
 @unique
@@ -291,6 +293,33 @@ class AudioSchema(Schema):
     @post_load
     def make_object(self, data):
         return Audio(**data)
+
+
+class AudioAsrNlp(AsrData):
+
+    def __init__(self, bg, ed, onebest, speaker, items):
+        """
+        音频转写+词性分析
+        :param long bg: 句子相对于本音频的起始时间，单位为ms
+        :param long ed: 句子相对于本音频的终止时间，单位为ms
+        :param str onebest: 句子内容
+        :param int speaker: 说话人编号，从1开始，未开启说话人分离时speaker都为0
+        :param list items: 词汇数组，每个元素对应结果中的一个词
+        """
+        super(self.__class__, self).__init__(bg, ed, onebest, speaker)
+        self.items = items
+
+    class AudioAsrNlpSchema(AsrData.AsrDataSchema):
+
+        items = fields.Nested(
+            LexerItem.LexerItemSchema,
+            required=True,
+            many=True
+        )
+
+        @post_load
+        def make_object(self, data):
+            return AudioAsrNlp(**data)
 
 
 if __name__ == '__main__':

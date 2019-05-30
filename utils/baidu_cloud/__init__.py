@@ -10,3 +10,4 @@
 from .baidu import (BaiduCloud, Token, )
 from .image import (Image, )
 from .audio import (Audio, )
+from .nlp import (NLP, LexerRes, LexerItem, )

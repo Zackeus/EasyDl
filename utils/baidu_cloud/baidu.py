@@ -8,8 +8,9 @@
 
 
 import requests
+
+import encodes
 from utils.errors import MyError
-from utils.encodes import Unicode
 from utils.request import codes, ContentType
 from utils.object_util import is_not_empty, BaseObject
 from marshmallow import Schema, fields, post_load
@@ -38,7 +39,7 @@ class BaiduCloud(BaseObject):
         :rtype:Token
         """
         res = requests.post(url=self.token_url, headers=ContentType.JSON_UTF8.value)
-        res.encoding = Unicode.UTF_8.value
+        res.encoding = encodes.Unicode.UTF_8.value
         if res is None or res.status_code != codes.ok:
             raise MyError(
                 code=codes.server_error,

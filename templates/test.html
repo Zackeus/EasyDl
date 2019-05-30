@@ -25,19 +25,14 @@
         padding: 10px;
     }
 
-    {#.layui-form-checked span, .layui-form-checked:hover span {#}
-    {#    background-color: #FF5722;#}
-    {#}#}
-    {#.layui-form-checked i {#}
-    {#    color: #FF5722;#}
-    {#}#}
-    </style>
+    .lexer_font_show {
+        cursor: pointer;
+    }
 
-    <script>
-    layui.use(['form', ],function() {
-        var form = layui.form;
-    });
-    </script>
+    .lexer_font__hide {
+        color: #333 !important;
+    }
+    </style>
 {% endblock head %}
 
 {% block bodyClass %}"childrenBody"{% endblock bodyClass %}
@@ -109,23 +104,12 @@
                    <div class="layui-form-item">
                        <label class="layui-form-label">语义标签</label>
                        <div class="layui-input-block">
-                           <input type="checkbox" name="like[write]" title="忌讳语">
-                           <input type="checkbox" name="like[read]" title="汽车品牌" checked="">
-                           <input type="checkbox" name="like[game]" title="机构名">
-                           <input type="checkbox" name="like[game]" title="手机号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
-                           <input type="checkbox" name="like[game]" title="身份证号">
+                           <input type="checkbox" value="PER" title="人名" lay-filter="lexer" checked>
+                           <input type="checkbox" value="LOC" title="地名" lay-filter="lexer" checked>
+                           <input type="checkbox" value="ORG" title="机构名" lay-filter="lexer" checked>
+                           <input type="checkbox" value="TIME" title="时间" lay-filter="lexer" checked>
+                           <input type="checkbox" value="TBW" title="忌讳语" lay-filter="lexer" checked>
+                           <input type="checkbox" value="TOA" title="汽车品牌" lay-filter="lexer" checked>
                        </div>
                     </div>
                 </form>
@@ -153,28 +137,35 @@
                 <div id="asrDatasDiv" class="layim-chat-main" style="height: 100%;">
                     <!-- 音频转写 -->
                     <ul id="asrDatas">
-                        {% for asr_data in asr_datas %}
-                            {% if asr_data.speaker is odd %}
-                                <li class="layim-chat-mine" style="visibility: hidden;" data-bg="{{ asr_data.bg }}">
+                        {% for asr_nlp_data in asr_nlp_datas %}
+                            {% if asr_nlp_data.speaker is odd %}
+                                <li class="layim-chat-mine" style="visibility: hidden;" data-bg="{{ asr_nlp_data.bg }}">
                                     <div class="layim-chat-user">
                                         <img src="{{ url_for('static', filename='images/audio/recorduser.jpg') }}">
-                                        <cite><i>{{ asr_data.bg|ms_to_time }}</i>发音人{{ asr_data.speaker }}</cite>
+                                        <cite>
+                                            <i>{{ asr_nlp_data.bg|ms_to_time }}</i>发音人{{ asr_nlp_data.speaker }}
+                                        </cite>
                                     </div>
-                                    <div class="layim-chat-text">{{ asr_data.onebest }}</div>
+                                    <div class="layim-chat-text">
+                                        {{ asr_nlp_data.onebest|lexer_label(asr_nlp_data.items)|safe }}
+                                    </div>
                                 </li>
                             {% else %}
-                                <li style="visibility: hidden;" data-bg="{{ asr_data.bg }}">
+                                <li style="visibility: hidden;" data-bg="{{ asr_nlp_data.bg }}">
                                     <div class="layim-chat-user">
                                         <img src="{{ url_for('static', filename='images/audio/recorduser.jpg') }}">
-                                        <cite>发音人{{ asr_data.speaker }}<i>{{ asr_data.bg|ms_to_time }}</i></cite>
+                                        <cite>
+                                            发音人{{ asr_nlp_data.speaker }}<i>{{ asr_nlp_data.bg|ms_to_time }}</i>
+                                        </cite>
                                     </div>
-                                    <div class="layim-chat-text">{{ asr_data.onebest }}</div>
+                                    <div class="layim-chat-text">
+                                        {{ asr_nlp_data.onebest|lexer_label(asr_nlp_data.items)|safe }}
+                                    </div>
                                 </li>
                             {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
-
             </div>
         </div>
     </div>
@@ -182,5 +173,5 @@
 {% endblock body %}
 
 {% block footer %}
-{#    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>#}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/test.js') }}"></script>
 {% endblock footer %}

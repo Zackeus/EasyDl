@@ -54,6 +54,10 @@ def data(date):
 
 @test_bp.route('audio')
 def audio():
+    """
+    百度音频转写
+    :return:
+    """
     from utils.baidu_cloud import Audio
     audio_cls = Audio()
     return audio_cls.offline_transfer(IdGen.uuid())
@@ -61,6 +65,11 @@ def audio():
 
 @test_bp.route('/download/<string:call_id>')
 def download_file(call_id):
+    """
+    下载音频文件
+    :param call_id:
+    :return:
+    """
     print(call_id)
     file_name = '8k.pcm'
     # 需要知道2个参数, 第1个参数是本地目录的path, 第2个参数是文件名(带扩展名)
@@ -73,7 +82,7 @@ def download_file(call_id):
 @test_bp.route('/call_back', methods=[Method.POST.value])
 def call_back():
     """
-    音频文件转写识别回调
+    百度音频文件转写识别回调
     :return:
     """
     current_app.logger.error(json.dumps(request.json(), indent=4, ensure_ascii=False))
@@ -81,6 +90,10 @@ def call_back():
 
 @test_bp.route('xunfei/audio')
 def xunfei_audio():
+    """
+    讯飞音频转写
+    :return:
+    """
     from utils.xunfei_cloud.audio import Audio
     from utils import codes, Assert
     # audio = Audio()
@@ -106,14 +119,49 @@ def xunfei_audio():
     return 'ok'
 
 
-@test_bp.route('nlp')
-def nlp():
-    from utils.xunfei_cloud import AsrData
+@test_bp.route('/baidu/nlp')
+def baidu_nlp():
+    """
+    百度自然语言处理
+    :return:
+    """
+    from utils.baidu_cloud import NLP, LexerRes
     from utils import Assert, is_empty
+    ne_list = ['PER', 'LOC', 'ORG', 'TIME', 'TBW', 'TOA', ]
     result = []
+
+    nlp = NLP()
     with open('D:/AIData/0850487.txt', 'r') as f:
         for line in f.readlines():
+            asr_json = json.loads(line.strip('\n').replace("'", "\""))
+            lexer_res = nlp.lexer(text=asr_json.get('onebest', ''), ne_list=ne_list)
+
+            lexer_json, errors = LexerRes.LexerResSchema().dump(lexer_res)
+            Assert.is_true(is_empty(errors), errors)
+            asr_json.update({'items': lexer_json.get('items', [])})
+            result.append(asr_json)
+
+    with open('D:/AIData/0850487_lexer.txt', 'a') as f:
+        for info in result:
+            print(info)
+            f.writelines(str(info) + '\n')
+    return 'ok'
+
+
+@test_bp.route('audio_nlp')
+def audio_nlp():
+    """
+
+    :return:
+    """
+    from utils import Assert, is_empty
+    from utils.file import AudioAsrNlp
+    result = []
+    with open('D:/AIData/音频转写/0850487/0850487_lexer.txt', 'r') as f:
+        for line in f.readlines():
             result.append(json.loads(line.strip('\n').replace("'", "\"")))
-    asr_datas, errors = AsrData.AsrDataSchema().load(result, many=True)
+
+    asr_nlp_datas, errors = AudioAsrNlp.AudioAsrNlpSchema().load(result, many=True)
     Assert.is_true(is_empty(errors), errors)
-    return render_template('test.html', asr_datas=asr_datas)
+
+    return render_template('test.html', asr_nlp_datas=asr_nlp_datas)

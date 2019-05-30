@@ -11,8 +11,8 @@ import requests
 import json
 from marshmallow import Schema, fields, post_load
 
+import encodes
 from utils.errors import MyError
-from utils.encodes import Unicode
 from utils.request import codes, ContentType
 from utils.object_util import is_not_empty, BaseObject
 from utils.baidu_cloud.baidu import BaiduCloud
@@ -77,7 +77,7 @@ class Audio(BaseObject):
         )
 
         res = requests.post(url=url, data=json.dumps(transfer_params), headers=ContentType.JSON_UTF8.value)
-        res.encoding = Unicode.UTF_8.value
+        res.encoding = encodes.Unicode.UTF_8.value
         print(res.status_code)
         print(json.dumps(res.json(), indent=4, ensure_ascii=False))
         return json.dumps(res.json(), indent=4, ensure_ascii=False)
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     }
 
     res = requests.post(url=url, data=json.dumps(params), headers=ContentType.JSON_UTF8.value)
-    res.encoding = Unicode.UTF_8.value
+    res.encoding = encodes.Unicode.UTF_8.value
     print(res.status_code)
     print(json.dumps(res.json(), indent=4, ensure_ascii=False))
 

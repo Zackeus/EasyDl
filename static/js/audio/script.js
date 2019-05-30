@@ -89,7 +89,6 @@
 					$('#asrDatas li').eq(index).css('visibility', 'hidden');
 				}
 				return false;
-				// $(e)[0].style.visibility='hidden';
 			} else {
 				$(e)[0].style.visibility='visible';
 			}
