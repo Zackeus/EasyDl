@@ -12,7 +12,7 @@ from .config_util import (ConfigUtils, )
 from .baidu_cloud.baidu import (BaiduCloud, Token, )
 from .baidu_cloud.image import (Image, )
 from .date import (in_time_zones, get_before_dawn, get_end_dawn, s_to_time, ms_to_time, )
-from .decorators import (result_mapper, login_required, delete_memoizeds, )
+from .decorators import (result_mapper, login_required, )
 from .digests import (get_key, get_salt, digest, )
 from .encodes import (file_to_base64, base64_to_file, base64_to_cv_np, cv_np_to_base64, pil_to_base64,
                       base64_to_pil, hash_code, Unicode, AESUtil, )

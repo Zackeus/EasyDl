@@ -11,7 +11,7 @@ from marshmallow import fields
 
 from extensions import db, cache
 from models.basic import BasicModel, BaseSchema
-from utils import validates as MyValidates, is_empty, delete_memoizeds
+from utils import validates as MyValidates, is_empty
 
 
 class AudioLexerModel(BasicModel):
@@ -56,6 +56,7 @@ class AudioLexerModel(BasicModel):
         :param str code:
         :return:
         """
+        print('查询***************')
         audio_lexer = self.query.filter_by(code=code).first()
         if is_empty(audio_lexer):
             audio_lexer = AudioLexerModel()
@@ -64,7 +65,7 @@ class AudioLexerModel(BasicModel):
             audio_lexer.color = self.default_color
         return audio_lexer
 
-    @delete_memoizeds([dao_get_codes])
+    @cache.delete_cache([dao_get_codes, dao_get_by_code])
     def dao_create(self, id=None, **kwargs):
         super().dao_create(id)
         with db.auto_commit_db(**kwargs) as s:

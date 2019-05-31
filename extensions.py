@@ -82,7 +82,7 @@ class Cache(BaseCache):
     def delete_cache(self, def_names):
         """
         缓存更新
-        :param tuple def_names: 被缓存的函数名
+        :param list def_names: 被缓存的函数名
         :return:
         """
         def decorator(func):

@@ -111,6 +111,8 @@ def process_img(app, baidu, img_split_details):
                         img_detail.err_code = res.code if res.code else str(requests.codes.server_error)
                         img_detail.err_msg = abb_str(res.msg, 100)
                         img_detail.dao_update(nested=True)
+                    # 记录日志
+                    current_app.logger.exception(e)
 
 
 def img_push():
