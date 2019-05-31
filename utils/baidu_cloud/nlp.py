@@ -133,15 +133,6 @@ class LexerRes(BaseObject):
             return LexerRes(**data)
 
 
-def multi_sub(text, p, c):
-    new = []
-    for s in text:
-        new.append(s)
-    for index, point in enumerate(p):
-        new[point] = c[index]
-    return ''.join(new)
-
-
 if __name__ == '__main__':
     url = 'https://aip.baidubce.com/rpc/2.0/nlp/v1/lexer_custom?charset=UTF-8&access_token={access_token}'
     ne_list = ['PER', 'LOC', 'ORG', 'TIME', 'TBW', 'TOA', ]

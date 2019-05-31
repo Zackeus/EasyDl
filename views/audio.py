@@ -61,6 +61,52 @@ def asr_nlp(id):
     )
 
 
+@audio_bp.route('/xunfei/asr/<string:id>')
+def xunfei_asr(id):
+    """
+    讯飞音频转写
+    :param id:
+    :return:
+    """
+    import os
+    from utils.xunfei_cloud.audio import Audio
+    audio = Audio()
+    audio.asr(file_path=os.path.join('D:/AIData/音频转写', id, '{id}.wav'.format(id=id)))
+    audio.get_asr_progress()
+    print(audio.task_id, audio.signa, audio.ts)
+    return 'ok'
+
+
+@audio_bp.route('/xunfei/asr_progress/<string:id>/<string:task_id>/<string:ts>/<path:signa>')
+def xunfei_asr_progress(id, task_id, ts, signa):
+    """
+    讯飞音频转写结果查询
+    :param id:
+    :param task_id:
+    :param ts:
+    :param signa:
+    :return:
+    """
+    import os
+    from utils.xunfei_cloud.audio import Audio
+    from utils import codes, Assert
+    audio = Audio()
+    audio.init_asr(task_id, ts, signa)
+    asr_progress = audio.get_asr_progress()
+
+    if asr_progress.ok == codes.success and asr_progress.data.status == codes.asr_success:
+        asr_result = audio.get_asr_result()
+        Assert.is_true(asr_result.ok == codes.success, asr_result.failed)
+
+        with open(os.path.join('D:/AIData/音频转写', id, '{id}.txt'.format(id=id)), 'a') as f:
+            for info in json.loads(asr_result.data):
+                print(info)
+                f.writelines(str(info) + '\n')
+    else:
+        print(asr_progress.failed if asr_progress.ok != codes.success else asr_progress.data.desc)
+    return 'ok'
+
+
 @audio_bp.route('/baidu/nlp/<string:id>')
 def baidu_nlp(id):
     """
