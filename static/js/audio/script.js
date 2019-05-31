@@ -91,10 +91,11 @@
 					// }, 1);//2秒滑动到指定位置
 				}
 
-				for (index = i; index <= $('#asrDatas').children('li').length; index++) {
-					$('#asrDatas li').eq(index).css('visibility', 'hidden');
-				}
-				return false;
+				// for (index = i; index <= $('#asrDatas').children('li').length; index++) {
+				// 	$('#asrDatas li').eq(index).css('visibility', 'hidden');
+				// }
+				// return false;
+				$(e)[0].style.visibility='hidden';
 			} else {
 				$(e)[0].style.visibility='visible';
 			}

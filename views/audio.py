@@ -11,21 +11,21 @@ import json
 import requests
 from flask import Blueprint, render_template, url_for
 
-from models.audio import AudioLexerModel, AudioLexerSchema
+from models.audio import AudioLexerNeModel, AudioLexerNeSchema
 from utils import Method, ContentType, render_info, MyResponse, validated
 
 audio_bp = Blueprint('audio', __name__)
 
 
-@audio_bp.route('/lexer', methods=[Method.POST.value])
-@validated(AudioLexerSchema, only=AudioLexerSchema().only_create(), consumes=ContentType.JSON.value)
-def add_lexer(audio_lexer):
+@audio_bp.route('/lexer_ne', methods=[Method.POST.value])
+@validated(AudioLexerNeSchema, only=AudioLexerNeSchema().only_create(), consumes=ContentType.JSON.value)
+def add_lexer_ne(audio_lexer_ne):
     """
     新增词性分析
-    :param AudioLexerModel audio_lexer:
+    :param AudioLexerModel audio_lexer_ne:
     :return:
     """
-    audio_lexer.dao_create()
+    audio_lexer_ne.dao_create()
     return render_info(MyResponse(msg='添加成功'))
 
 
@@ -52,7 +52,7 @@ def asr_nlp(id):
     for asr_nlp_data in asr_nlp_datas:
         if is_not_empty(asr_nlp_data.ne_list):
             ne_list.extend(asr_nlp_data.ne_list)
-    audio_lexers = AudioLexerModel().dao_get_by_codes(ne_list)
+    audio_lexers = AudioLexerNeModel().dao_get_by_codes(ne_list)
     return render_template(
         'audio/asr_nlp.html',
         audio_src=url_for('static', filename='songs/{id}.wav'.format(id=id)),
@@ -71,7 +71,7 @@ def baidu_nlp(id):
     import os
     from utils.baidu_cloud import NLP, LexerRes
     from utils import Assert, is_empty
-    ne_list = AudioLexerModel().dao_get_codes()
+    ne_list = AudioLexerNeModel().dao_get_codes()
     result = []
 
     nlp = NLP()
@@ -101,7 +101,7 @@ if __name__ == '__main__':
         'title': '汽车品牌',
         'color': '#CC0000'
     }
-    url = 'http://127.0.0.1:5000/audio/lexer'
+    url = 'http://127.0.0.1:5000/audio/lexer_ne'
     res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     print(res)

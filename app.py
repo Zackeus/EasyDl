@@ -11,7 +11,7 @@ from extensions import db, moment, migrate, init_log, scheduler, cache, login_ma
 from utils.request import codes
 from models import BasicModel, FileModel, AppSys
 from models.img import ImgDataModel, ImgDetailModel, ImgTypeModel
-from models.audio import AudioLexerModel
+from models.audio import AudioLexerNeModel
 
 
 class Flask(BasicFlask):
@@ -246,17 +246,26 @@ def register_template_filter(app):
         :return:
         """
         _item = '<font class="{ne} lexer_font_show" color="{color}" data-ne-title="{ne_title}">{item}</font>'
+        _ne_key = 'ne_{0}'
+
         if is_empty(items):
             return text
+
+        ne_dict = {}
         for item in items:
-            lexer = AudioLexerModel().dao_get_by_code(item.ne)  # type: AudioLexerModel
-            text = text.replace(item.item, _item.format(
-                ne=item.ne,
-                color=lexer.color,
-                ne_title=lexer.title,
-                item=item.item
-            ))
-        return text
+            lexer = AudioLexerNeModel().dao_get_by_code(item.ne)  # type: AudioLexerNeModel
+
+            ne_key = '{' + _ne_key.format(str(item.byte_offset)) + '}'
+            text = text.replace(item.item, ne_key, 1)
+            ne_dict.update(
+                {_ne_key.format(str(item.byte_offset)): _item.format(
+                    ne=item.ne,
+                    color=lexer.color,
+                    ne_title=lexer.title,
+                    item=item.item
+                )}
+            )
+        return text.format_map(ne_dict)
 
 
 def register_template_test(app):

@@ -150,17 +150,8 @@ if __name__ == '__main__':
     lexer_res = nlp.lexer(url=url, text=text, ne_list=ne_list)
 
     for lexer_item in lexer_res.items:
-        text = text.replace(lexer_item.item, '{ne_' + str(lexer_item.byte_offset) + '}', 1)
+        print(lexer_item)
 
-    print(text)
-
-    ne_dict = {
-        'ne_0': '时间',
-        'ne_18': '地名',
-        'ne_30': '地名',
-        'ne_39': '地名'
-    }
-    print(text.format_map(ne_dict))
 
 
 

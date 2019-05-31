@@ -14,11 +14,11 @@ from models.basic import BasicModel, BaseSchema
 from utils import validates as MyValidates, is_empty
 
 
-class AudioLexerModel(BasicModel):
+class AudioLexerNeModel(BasicModel):
     """
-    词性分析
+    词性分析命名实体
     """
-    __tablename__ = 'AUDIO_LEXER'
+    __tablename__ = 'AUDIO_LEXER_NE'
     default_title = '未定义'
     default_color = '#000099'
 
@@ -33,7 +33,7 @@ class AudioLexerModel(BasicModel):
         :return:
         """
         codes = []
-        for code in self.query.with_entities(AudioLexerModel.code).distinct().all():
+        for code in self.query.with_entities(AudioLexerNeModel.code).distinct().all():
             codes.append(code[0])
         return codes
 
@@ -56,10 +56,9 @@ class AudioLexerModel(BasicModel):
         :param str code:
         :return:
         """
-        print('查询***************')
         audio_lexer = self.query.filter_by(code=code).first()
         if is_empty(audio_lexer):
-            audio_lexer = AudioLexerModel()
+            audio_lexer = AudioLexerNeModel()
             audio_lexer.code = code
             audio_lexer.title = self.default_title
             audio_lexer.color = self.default_color
@@ -72,11 +71,11 @@ class AudioLexerModel(BasicModel):
             s.add(self)
 
 
-class AudioLexerSchema(BaseSchema):
+class AudioLexerNeSchema(BaseSchema):
     """
-    词性分析校验器
+    词性分析命名实体校验器
     """
-    __model__ = AudioLexerModel
+    __model__ = AudioLexerNeModel
 
     code = fields.Str(required=True, validate=MyValidates.MyLength(min=1, max=64, not_empty=False))
     title = fields.Str(required=True, validate=MyValidates.MyLength(min=1, max=60, not_empty=False))
