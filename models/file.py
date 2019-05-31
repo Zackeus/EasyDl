@@ -12,8 +12,7 @@ from extensions import db
 from models.basic import BasicModel, BaseSchema
 
 from utils.file.file import FileUtil
-from utils.encodes import AESUtil
-from utils import validates
+from utils import validates, AESUtil, Unicode
 from marshmallow import fields
 
 
@@ -83,7 +82,7 @@ class FileSchema(BaseSchema):
 
     file_name = fields.Str(
         required=True,
-        validate=validates.MyLength(min=1, max=64, not_empty=False),
+        validate=validates.MyLength(min=1, max=64, not_empty=False, encode_str=Unicode.UTF_8.value),
         load_from='fileName'
     )
     file_format = fields.Str(

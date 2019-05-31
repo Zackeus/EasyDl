@@ -73,11 +73,11 @@ class BaseConfig(object):
     # 启用查询记录
     SQLALCHEMY_RECORD_QUERIES = True
     # 数据库连接池大小
-    SQLALCHEMY_POOL_SIZE = 3
+    SQLALCHEMY_POOL_SIZE = 15
     # 数据库连接池的超时时间
-    SQLALCHEMY_POOL_TIMEOUT = 20
+    SQLALCHEMY_POOL_TIMEOUT = 30
     # 控制在连接池达到最大值后可以创建的连接数。当这些额外的 连接回收到连接池后将会被断开和抛弃
-    SQLALCHEMY_MAX_OVERFLOW = 5
+    SQLALCHEMY_MAX_OVERFLOW = 20
 
     # 缓存类型
     CACHE_TYPE = 'redis'
@@ -122,27 +122,27 @@ class BaseConfig(object):
     # 图片资料文件夹
     DATA_DIR_IMG = 'Img'
 
-    # JOBS = [
-    #     {
-    #         'id': 'img_ocr',
-    #         'func': 'jobs.img:img_ocr',
-    #         'args': (8, ),
-    #         'trigger': 'cron',
-    #         # 'second': '0/10',
-    #         'minute': '0/3',
-    #         'hour': '8-20',
-    #         'max_instances': 1
-    #     },
-    #     {
-    #         'id': 'img_push',
-    #         'func': 'jobs.img:img_push',
-    #         'trigger': 'cron',
-    #         # 'second': '0/10',
-    #         'minute': '0/3',
-    #         'hour': '8-20',
-    #         'max_instances': 1
-    #     }
-    # ]
+    JOBS = [
+        {
+            'id': 'img_ocr',
+            'func': 'jobs.img:img_ocr',
+            'args': (8, ),
+            'trigger': 'cron',
+            # 'second': '0/10',
+            'minute': '0/3',
+            'hour': '8-20',
+            'max_instances': 1
+        },
+        {
+            'id': 'img_push',
+            'func': 'jobs.img:img_push',
+            'trigger': 'cron',
+            # 'second': '0/10',
+            'minute': '0/3',
+            'hour': '8-20',
+            'max_instances': 1
+        }
+    ]
 
 
 class DevelopmentConfig(BaseConfig):

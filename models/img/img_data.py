@@ -199,17 +199,21 @@ class ImgDataSchema(BaseSchema):
     )
 
     @validates('file_data')
-    def validate_pdf_name(self, values):
+    def validate_file_data(self, values):
         """
         文件校验
         :param values:
         :return:
         """
         for value in values:
-            if value.file_name.find(os.curdir) != -1:
-                raise ValidationError('文件名包含特殊字符')
-            if value.file_format.upper() not in self.__file_formats:
-                raise ValidationError('无效的文件格式')
+            if isinstance(value, dict):
+                # 前面校验失败会返回dict而不是对象
+                pass
+            else:
+                if value.file_name.find(os.curdir) != -1:
+                    raise ValidationError('文件名包含特殊字符')
+                if value.file_format.upper() not in self.__file_formats:
+                    raise ValidationError('无效的文件格式')
 
     @validates('app_sys_code')
     def validate_app_sys_code(self, value):

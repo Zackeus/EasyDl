@@ -119,7 +119,7 @@ if __name__ == '__main__':
         'appSysCode': 'OP_LOAN_H',
         'createBy': '17037',
         'remarks': '备注信息...........',
-        'pushUrl': 'http://127.0.0.1:5000/img/push_info'
+        # 'pushUrl': 'http://127.0.0.1:5000/img/push_info'
     }
 
     # data = {
