@@ -10,11 +10,11 @@ import json
 import requests
 from flask import Blueprint, current_app, request
 
-from models import FileModel, FileSchema, AppSys, AppSysSchema
+from models import AppSys, AppSysSchema
 from models.img import ImgDataModel, ImgDataSchema, ImgTypeModel, ImgTypeSchema
 
 from utils import Method, ContentType, render_info, MyResponse, validated, Locations, file_to_base64, \
-    Assert, is_not_empty
+    Assert, is_not_empty, is_empty, codes
 from utils.file import FileUtil
 
 
@@ -46,27 +46,26 @@ def add_img(img_data):
     return render_info(MyResponse(msg='接收资料成功', handle_info=handle_info))
 
 
-@img_bp.route('/loan_file/<string:id>', methods=[Method.GET.value])
+@img_bp.route('/img_data/<string:id>', methods=[Method.GET.value])
 @validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
-def get_loan(loan_file, id):
+def get_img(img_data, id):
     """
-    根据 ID 流水号查询贷款资料
-    :param loan_file:
+    根据 ID 流水号查询图片流水(附带路径)
+    :param img_data:
     :param id:
     :return:
     """
-    # 查询贷款流水
-    loan_file = ImgDataModel.query.get(loan_file.id)  # type: LoanFileModel
-    Assert.is_true(is_not_empty(loan_file), '查无此数据', 200)
-    loan_schema = ImgDataSchema().dump(loan_file)
+    # 查询图片流水
+    img_data = ImgDataModel.query.get(img_data.id)  # type: ImgDataModel
+    Assert.is_true(is_not_empty(img_data), '查无此数据', codes.no_data)
+    img_data_dict, errors = ImgDataSchema().dump(img_data)
+    Assert.is_true(is_empty(errors), errors)
 
-    # 查询贷款主文件
-    file = FileModel.query.get(loan_file.file_id)
-    file_schema = FileSchema().dump(file)
+    # 过滤图片明细字典字段
+    ImgDataSchema().filter_img_details(img_data_dict.get('imgDetails', []), ['fileData'])
     return render_info(MyResponse(
         msg='查询成功',
-        loan_detail=loan_schema.data,
-        loan_file=file_schema.data
+        img_data=img_data_dict
     ))
 
 
@@ -103,7 +102,7 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
-        'appId': 'zx12312hjsdfsjdkf1',
+        'appId': 'zxcasdasda',
         'fileData': [
             {
                 'fileName': 'pdf',
@@ -119,7 +118,7 @@ if __name__ == '__main__':
         'appSysCode': 'OP_LOAN_H',
         'createBy': '17037',
         'remarks': '备注信息...........',
-        # 'pushUrl': 'http://127.0.0.1:5000/img/push_info'
+        'pushUrl': 'http://127.0.0.1:5000/img/push_info'
     }
 
     # data = {
@@ -151,11 +150,11 @@ if __name__ == '__main__':
 
     # ****************************************************************
 
-    url = 'http://127.0.0.1:5000/img/img_data'
-    res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
+    # url = 'http://127.0.0.1:5000/img/img_data'
+    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/loan/loan_file/7358d63a590311e9affa5800e36a34d8'
-    # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
+    url = 'http://127.0.0.1:5000/img/img_data/108d9b48867611e9a9975800e36a34d8'
+    res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
 
     # url = 'http://127.0.0.1:5000/img/app_sys'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)

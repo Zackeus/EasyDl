@@ -11,7 +11,7 @@ import os
 from extensions import db
 from models.basic import BasicModel, BaseSchema
 from models.img.img_type import ImgTypeSchema
-from utils import validates as MyValidates
+from utils import validates as MyValidates, is_not_empty
 from marshmallow import fields, validate
 
 
@@ -54,7 +54,7 @@ class ImgDetailModel(BasicModel):
     @property
     def file_data(self):
         """
-        文件的base64字符
+        图片文件的base64字符
         :return:
         """
         from models.file import FileModel
@@ -62,6 +62,16 @@ class ImgDetailModel(BasicModel):
         file_model = FileModel().dao_get(self.file_id)  # type: FileModel
         file_path = file_model.file_path
         return file_to_base64(file_path) if os.path.isfile(file_path) else None
+
+    @property
+    def file_path(self):
+        """
+        图片文件路径
+        :return:
+        """
+        from models.file import FileModel
+        file_model = FileModel().dao_get(self.file_id)  # type: FileModel
+        return file_model.file_path if is_not_empty(file_model) else None
 
     img_data = db.relationship(
         argument='ImgDataModel',
@@ -133,6 +143,7 @@ class ImgDetailSchema(BaseSchema):
     err_code = fields.Str()
     err_msg = fields.Str(validate=validate.Length(max=100))
     file_data = fields.Str(required=True, dump_only=True)
+    file_path = fields.Str(required=True, dump_only=True)
 
     img_type = fields.Nested(
         ImgTypeSchema,

@@ -50,6 +50,7 @@ _codes = {
     -1: ('failed', ),
     0: ('success', ),
     1: ('login_fail', ),
+    2: ('no_data', ),
     9: ('asr_success', ),
     # 请求总量超限额
     17: ('request_limit_reached',),

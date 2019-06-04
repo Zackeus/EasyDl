@@ -126,19 +126,21 @@ def img_push():
     from utils.msg import WXMsg
 
     with scheduler.app.app_context():
-        loan_files = ImgDataModel().dao_get_push()
+        img_datas = ImgDataModel().dao_get_push()
 
-        if is_empty(loan_files):
+        if is_empty(img_datas):
             # 无数据推送
             return
 
-        for loan_file in loan_files:
+        for img_data in img_datas:
             try:
-                loan_dict, errors = ImgDataSchema().dump(loan_file)
+                img_data_dict, errors = ImgDataSchema().dump(img_data)
                 # 对象序列化失败
                 Assert.is_true(is_empty(errors), errors)
 
-                res = requests.post(url=loan_file.push_url, json=loan_dict, headers=ContentType.JSON_UTF8.value)
+                # 过滤图片明细字典字段
+                ImgDataSchema().filter_img_details(img_data_dict.get('imgDetails', []), ['fileData', 'filePath'])
+                res = requests.post(url=img_data.push_url, json=img_data_dict, headers=ContentType.JSON_UTF8.value)
                 res.encoding = Unicode.UTF_8.value
                 Assert.is_true(res is not None and res.status_code == codes.ok,
                                '推送请求失败, status_code：{0}'.format(res.status_code))
@@ -147,8 +149,8 @@ def img_push():
                 Assert.is_true(str(codes.success) == my_res.code, '推送失败，code：{0}'.format(my_res.code))
 
                 # 更新推送状态
-                loan_file.is_push = True
-                loan_file.dao_update()
+                img_data.is_push = True
+                img_data.dao_update()
             except Exception as e:
                 # 记录日志
                 current_app.logger.exception(e)
@@ -159,5 +161,5 @@ def img_push():
                 ).send_wx()
             finally:
                 # 更新推送次数
-                loan_file.push_times += 1
-                loan_file.dao_update()
+                img_data.push_times += 1
+                img_data.dao_update()

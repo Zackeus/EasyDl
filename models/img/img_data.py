@@ -194,7 +194,7 @@ class ImgDataSchema(BaseSchema):
     img_details = fields.Nested(
         ImgDetailSchema,
         many=True,
-        only=('id', 'parent_file_id', 'file_id', 'err_code', 'err_msg', 'file_data', 'img_type'),
+        only=('id', 'parent_file_id', 'file_id', 'file_data', 'file_path', 'err_code', 'err_msg', 'img_type'),
         load_from='imgDetails'
     )
 
@@ -225,6 +225,20 @@ class ImgDataSchema(BaseSchema):
         app_sys = AppSys().dao_get_by_code(value)
         if is_empty(app_sys):
             raise ValidationError('无效的应用系统.')
+
+    @classmethod
+    def filter_img_details(cls, img_details, filter_fields):
+        """
+        过滤图片明细指定字段
+        :param list img_details: 图片明细字典列表
+        :param list filter_fields: 待过滤字段列表
+        :return:
+        """
+        if is_not_empty(img_details) and is_not_empty(filter_fields):
+            for img_detail in img_details:
+                for filter_field in filter_fields:
+                    img_detail.pop(filter_field)
+        return img_details
 
     def only_create(self):
         return super().only_create() + \
