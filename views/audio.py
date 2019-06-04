@@ -143,9 +143,9 @@ def baidu_nlp(id):
 
 if __name__ == '__main__':
     data = {
-        'code': 'TOA',
-        'title': '汽车品牌',
-        'color': '#CC0000'
+        'code': 'TEL',
+        'title': '电话号码',
+        'color': '#000066'
     }
     url = 'http://127.0.0.1:5000/audio/lexer_ne'
     res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
