@@ -11,7 +11,7 @@ import requests
 from flask import Blueprint, current_app, request
 
 from models import AppSys, AppSysSchema
-from models.img import ImgDataModel, ImgDataSchema, ImgTypeModel, ImgTypeSchema
+from models.img import ImgDataModel, ImgDataSchema, ImgTypeModel, ImgTypeSchema, ImgDetailModel, ImgDetailSchema
 
 from utils import Method, ContentType, render_info, MyResponse, validated, Locations, file_to_base64, \
     Assert, is_not_empty, is_empty, codes
@@ -69,6 +69,26 @@ def get_img(img_data, id):
     ))
 
 
+@img_bp.route('/img_detail/type', methods=[Method.PATCH.value])
+@validated(ImgDetailSchema, only=ImgDetailSchema().only_patch_type(), consumes=ContentType.JSON.value)
+def patch_img_detail_type(img_detail):
+    """
+    更新图片明细类型
+    :param ImgDetailModel img_detail:
+    :return:
+    """
+    img_type = ImgTypeModel().dao_get_by_code(img_detail.img_type_code)
+    Assert.is_true(is_not_empty(img_type), '无效的图片类型：{0}'.format(img_detail.img_type_code), codes.unprocessable)
+
+    img_detail_id = img_detail.id
+    img_detail_update_by = img_detail.update_by
+    img_detail = ImgDetailModel().dao_get(img_detail_id) # type: ImgDetailModel
+    Assert.is_true(is_not_empty(img_detail), '无查无此数据：{0}'.format(img_detail_id), codes.no_data)
+
+    img_detail.dao_update_type(img_type.id, img_detail_update_by)
+    return render_info(MyResponse(code=0, msg='更新成功'))
+
+
 @img_bp.route('/app_sys', methods=[Method.POST.value])
 @validated(AppSysSchema, only=AppSysSchema().only_create(), consumes=ContentType.JSON.value)
 def add_app_sys(app_sys):
@@ -101,25 +121,25 @@ def push_info():
 
 if __name__ == '__main__':
 
-    data = {
-        'appId': 'zxcasdasda',
-        'fileData': [
-            {
-                'fileName': 'pdf',
-                'fileFormat': 'pdf',
-                'fileBase64': file_to_base64('D:/AIData/5.pdf')
-            },
-            {
-                'fileName': '图片',
-                'fileFormat': 'jpg',
-                'fileBase64': file_to_base64('D:/AIData/1.png')
-            }
-        ],
-        'appSysCode': 'OP_LOAN_H',
-        'createBy': '17037',
-        'remarks': '备注信息...........',
-        'pushUrl': 'http://127.0.0.1:5000/img/push_info'
-    }
+    # data = {
+    #     'appId': 'zxcasdasda',
+    #     'fileData': [
+    #         {
+    #             'fileName': 'pdf',
+    #             'fileFormat': 'pdf',
+    #             'fileBase64': file_to_base64('D:/AIData/5.pdf')
+    #         },
+    #         {
+    #             'fileName': '图片',
+    #             'fileFormat': 'jpg',
+    #             'fileBase64': file_to_base64('D:/AIData/1.png')
+    #         }
+    #     ],
+    #     'appSysCode': 'OP_LOAN_H',
+    #     'createBy': '17037',
+    #     'remarks': '备注信息...........',
+    #     'pushUrl': 'http://127.0.0.1:5000/img/push_info'
+    # }
 
     # data = {
     #     'code': 'OP_LOAN_H',
@@ -133,6 +153,12 @@ if __name__ == '__main__':
     #     'isOcr': '0',
     #     'remarks': '你大爷'
     # }
+
+    data = {
+        'id': '0115ba8a869811e9aeace8c02069d75d',
+        'imgTypeCode': 'IVP',
+        'updateBy': '123123'
+    }
 
     # url = 'http://127.0.0.1:8088/loan/get_loan/2dc64710552b11e9acf95800e36a34d8'
     # res = requests.get(url=url, headers=json_headers)
@@ -153,14 +179,17 @@ if __name__ == '__main__':
     # url = 'http://127.0.0.1:5000/img/img_data'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    url = 'http://127.0.0.1:5000/img/img_data/108d9b48867611e9a9975800e36a34d8'
-    res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
+    # url = 'http://127.0.0.1:5000/img/img_data/108d9b48867611e9a9975800e36a34d8'
+    # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
 
     # url = 'http://127.0.0.1:5000/img/app_sys'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     # url = 'http://127.0.0.1:5000/img/img_Type'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
+
+    url = 'http://127.0.0.1:5000/img/img_detail/type'
+    res = requests.patch(url, json=data, headers=ContentType.JSON_UTF8.value)
 
     print(res)
     print(res.status_code)

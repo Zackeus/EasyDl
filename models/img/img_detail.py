@@ -83,6 +83,15 @@ class ImgDetailModel(BasicModel):
         back_populates='img_details'
     )
 
+    def __init__(self, img_type_code=None, **kwargs):
+        """
+
+        :param str img_type_code: 图片类型
+        :param kwargs:
+        """
+        super(self.__class__, self).__init__(**kwargs)
+        self.img_type_code = img_type_code
+
     def dao_add(self, img_data_id, parent_file_id, file_id, **kwargs):
         """
         图片明细入库
@@ -106,6 +115,16 @@ class ImgDetailModel(BasicModel):
         :return:
         """
         return self.query.filter(ImgDetailModel.img_data_id == img_data.id, ImgDetailModel.is_handle == False).all()
+
+    def dao_update_type(self, type_id, update_by):
+        """
+        更新图片文件类型
+        :param type_id:
+        :param update_by:
+        :return:
+        """
+        self.img_type_id = type_id
+        super().dao_update(update_by)
 
 
 class ImgDetailSchema(BaseSchema):
@@ -144,9 +163,18 @@ class ImgDetailSchema(BaseSchema):
     err_msg = fields.Str(validate=validate.Length(max=100))
     file_data = fields.Str(required=True, dump_only=True)
     file_path = fields.Str(required=True, dump_only=True)
+    img_type_code = fields.Str(
+        required=True,
+        validate=MyValidates.MyLength(min=1, max=10, not_empty=False),
+        load_only=True,
+        load_from='imgTypeCode'
+    )
 
     img_type = fields.Nested(
         ImgTypeSchema,
         only=('type_code', 'type_explain'),
         load_from='imgType'
     )
+
+    def only_patch_type(self):
+        return super().only_update() + ('id', 'img_type_code', )

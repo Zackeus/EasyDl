@@ -37,8 +37,9 @@ class BasicModel(BaseObject, db.Model):
     def dao_get(self, id):
         return self.query.get(id)
 
-    def dao_update(self, subtransactions=False, nested=False):
+    def dao_update(self, update_by=None, subtransactions=False, nested=False):
         with db.auto_commit_db(subtransactions=subtransactions, nested=nested):
+            self.update_by = update_by
             self.update_date = datetime.utcnow()
 
 
@@ -89,7 +90,7 @@ class BaseSchema(Schema):
         return 'id',
 
     def only_update(self):
-        pass
+        return 'update_by',
 
 
 class DataEntity(BaseObject):
