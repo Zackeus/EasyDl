@@ -7,4 +7,5 @@
 # @Time : 2019/4/16 11:03
 
 
-from .user import (User, UserSchema)
+from .user import (User, UserSchema, )
+from .menu import (Menu, MenuSchema, )

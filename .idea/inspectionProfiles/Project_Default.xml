@@ -47,9 +47,7 @@
         </value>
       </option>
     </inspection_tool>
-    <inspection_tool class="PyDefaultArgumentInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PyMandatoryEncodingInspection" enabled="false" level="TYPO" enabled_by_default="false" />
-    <inspection_tool class="PyMethodMayBeStaticInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="PyMissingOrEmptyDocstringInspection" enabled="false" level="TYPO" enabled_by_default="false" />
     <inspection_tool class="PyMissingTypeHintsInspection" enabled="false" level="TYPO" enabled_by_default="false" />
     <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
@@ -66,7 +64,6 @@
         </list>
       </option>
     </inspection_tool>
-    <inspection_tool class="PyProtectedMemberInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="PyShadowingBuiltinsInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoredNames">
         <list>
@@ -75,9 +72,7 @@
         </list>
       </option>
     </inspection_tool>
-    <inspection_tool class="PyShadowingNamesInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyTypeCheckerInspection" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoredIdentifiers">
         <list>
           <option value="settings.init_object_dict" />

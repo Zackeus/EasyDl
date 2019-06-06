@@ -10,6 +10,7 @@ from views.sys.area import area_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.request import codes
 from models import BasicModel, FileModel, AppSys
+from models.sys import Menu
 from models.img import ImgDataModel, ImgDetailModel, ImgTypeModel
 from models.audio import AudioLexerNeModel
 

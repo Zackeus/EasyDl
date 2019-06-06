@@ -12,10 +12,10 @@ from datetime import datetime
 from flask import current_app
 from marshmallow import fields, validate
 
-from utils.decorators import result_mapper
 from extensions import db, cache
 from models.basic import DataEntity, DataEntitySchema
-from utils import validates as MyValidates
+from utils.decorators import result_mapper
+from utils import validates as MyValidates, is_not_empty
 
 
 class User(DataEntity, UserMixin):
@@ -71,6 +71,10 @@ class User(DataEntity, UserMixin):
         self.old_login_date = old_login_date
         self.role = role
         self.role_list = role_list
+
+    @property
+    def is_admin(self):
+        return is_not_empty(self.id) and '1' == self.id
 
     def validate_password(self, plain_password):
         """
