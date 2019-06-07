@@ -26,7 +26,11 @@ class ImgDataModel(BasicModel):
     """
     __tablename__ = 'IMG_DATA'
 
-    app_id = db.Column(db.String(length=64), name='APP_ID', nullable=False, index=True, unique=True, comment='应用ID')
+    __table_args__ = (
+        db.Index('ix_IMG_DATA_APP_ID_APP_SYS_ID', 'APP_ID', 'APP_SYS_ID', unique=True),
+    )
+
+    app_id = db.Column(db.String(length=64), name='APP_ID', nullable=False, comment='应用ID')
     app_sys_id = db.Column(
         db.String(length=64),
         db.ForeignKey('APP_SYS.ID'),
