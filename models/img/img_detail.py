@@ -116,15 +116,14 @@ class ImgDetailModel(BasicModel):
         """
         return self.query.filter(ImgDetailModel.img_data_id == img_data.id, ImgDetailModel.is_handle == False).all()
 
-    def dao_update_type(self, type_id, update_by):
+    def dao_update_type(self, type_id):
         """
         更新图片文件类型
         :param type_id:
-        :param update_by:
         :return:
         """
         self.img_type_id = type_id
-        super().dao_update(update_by)
+        super().dao_update()
 
 
 class ImgDetailSchema(BaseSchema):

@@ -43,9 +43,10 @@ class BasicModel(BaseObject, db.Model):
     def dao_get(self, id):
         return self.query.get(id)
 
-    def dao_update(self, update_by=None, subtransactions=False, nested=False):
+    def dao_update(self, subtransactions=False, nested=False):
         with db.auto_commit_db(subtransactions=subtransactions, nested=nested):
-            self.update_by = update_by
+            if is_not_empty(current_user) and is_not_empty(current_user.id):
+                self.update_by = current_user.id
             self.update_date = datetime.utcnow()
 
 

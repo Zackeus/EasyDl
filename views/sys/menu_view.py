@@ -42,15 +42,8 @@ def get_menu_list(menu, id):
     :param id:
     :return:
     """
-    menus = user_util.get_menus_by_user(menu.id)
-    Assert.is_true(is_not_empty(menus), '查无此数据', codes.no_data)
-
-    menus_dict, errors = MenuSchema().dump(menus, many=True)
-    Assert.is_true(is_empty(errors), errors)
-
-    print(menus_dict)
-
-    return render_info(MyResponse(msg='查询成功', menus=menus_dict))
+    menus = user_util.get_menus_by_user(menu.id, is_dump=True)
+    return render_info(MyResponse(msg='查询成功', menus=menus))
 
 
 if __name__ == '__main__':

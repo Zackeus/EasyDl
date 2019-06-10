@@ -10,7 +10,7 @@
 from extensions import db, cache
 from models.basic import BasicModel, BaseSchema
 
-from utils import validates, Unicode
+from utils import validates, Unicode, Assert, is_not_empty, is_empty, codes
 from marshmallow import fields
 
 
@@ -20,28 +20,30 @@ class Menu(BasicModel):
     """
     __tablename__ = 'SYS_MENU'
 
-    parent_id = db.Column(db.String(length=64), name='PARENT_ID', index=True, comment='父级菜单ID')
+    parent_id = db.Column(
+        db.String(length=64),
+        db.ForeignKey('SYS_MENU.ID'),
+        name='PARENT_ID',
+        index=True,
+        comment='父级菜单ID'
+    )
     name = db.Column(db.String(length=30), name='NAME', nullable=False, comment='菜单名称')
     icon = db.Column(db.String(length=64), name='ICON', comment='菜单图标')
     sort = db.Column(db.Integer, name='SORT', default=1, comment='排序')
     href = db.Column(db.Text, name='HREF', comment='链接')
     spread = db.Column(db.Boolean, name='SPREAD', nullable=False, default=False, comment='是否展开')
 
-    @property
-    def children(self):
-        """
-        查询全部子级菜单
-        :return:
-        """
-        return self.dao_get_children()
+    menu = db.relationship(
+        argument='Menu',
+        back_populates='children',
+        remote_side='Menu.id'
+    )
 
-    def dao_get_children(self):
-        """
-        获取子级菜单
-        :return:
-        """
-        print('查询子级***************')
-        return self.query.filter(Menu.parent_id == self.id).order_by(Menu.sort.asc()).all()
+    children = db.relationship(
+        argument='Menu',
+        back_populates='menu',
+        cascade='all'
+    )
 
     @cache.memoize()
     def dao_get_all_tree_menus(self):
@@ -49,18 +51,24 @@ class Menu(BasicModel):
         获取全部一级菜单
         :return:
         """
-        print('查询一级****************')
         return self.query.filter(Menu.parent_id == '1').order_by(Menu.sort.asc()).all()
 
     @cache.memoize()
-    def dao_get_all_menus(self, id):
+    def dao_get_all_menus(self, id, is_dump=False):
         """
         获取全部左侧菜单树
         :param id:
+        :param is_dump: 是否序列化字典(序列化尽量写在同一个方法，因为relationship的懒加载机制，结合缓存会报Session异常)
         :return:
         """
-        print('查询二级**********************')
-        return self.query.filter(Menu.parent_id == id).order_by(Menu.sort.asc()).all()
+        menus = self.query.filter(Menu.parent_id == id).order_by(Menu.sort.asc()).all()
+
+        if is_dump:
+            Assert.is_true(is_not_empty(menus), '查无此数据', codes.no_data)
+
+            menus, errors = MenuSchema().dump(menus, many=True)
+            Assert.is_true(is_empty(errors), errors)
+        return menus
 
     def dao_add(self, **kwargs):
         """

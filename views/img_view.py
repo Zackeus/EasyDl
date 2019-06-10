@@ -81,11 +81,13 @@ def patch_img_detail_type(img_detail):
     Assert.is_true(is_not_empty(img_type), '无效的图片类型：{0}'.format(img_detail.img_type_code), codes.unprocessable)
 
     img_detail_id = img_detail.id
-    img_detail_update_by = img_detail.update_by
-    img_detail = ImgDetailModel().dao_get(img_detail_id) # type: ImgDetailModel
+    # 接口提交的更新者
+    update_by = img_detail.update_by
+    img_detail = ImgDetailModel().dao_get(img_detail_id)  # type: ImgDetailModel
     Assert.is_true(is_not_empty(img_detail), '无查无此数据：{0}'.format(img_detail_id), codes.no_data)
 
-    img_detail.dao_update_type(img_type.id, img_detail_update_by)
+    img_detail.update_by = update_by
+    img_detail.dao_update_type(img_type.id)
     return render_info(MyResponse(code=0, msg='更新成功'))
 
 
@@ -121,25 +123,25 @@ def push_info():
 
 if __name__ == '__main__':
 
-    data = {
-        'appId': 'asdqweqweqwe',
-        'fileData': [
-            {
-                'fileName': 'pdf',
-                'fileFormat': 'pdf',
-                'fileBase64': file_to_base64('D:/AIData/5.pdf')
-            },
-            {
-                'fileName': '图片',
-                'fileFormat': 'jpg',
-                'fileBase64': file_to_base64('D:/AIData/1.png')
-            }
-        ],
-        'appSysCode': 'OP_LOAN_H',
-        'createBy': '17037',
-        'remarks': '备注信息...........',
-        'pushUrl': 'http://127.0.0.1:5000/img/push_info'
-    }
+    # data = {
+    #     'appId': 'asdqweqweqwe',
+    #     'fileData': [
+    #         {
+    #             'fileName': 'pdf',
+    #             'fileFormat': 'pdf',
+    #             'fileBase64': file_to_base64('D:/AIData/5.pdf')
+    #         },
+    #         {
+    #             'fileName': '图片',
+    #             'fileFormat': 'jpg',
+    #             'fileBase64': file_to_base64('D:/AIData/1.png')
+    #         }
+    #     ],
+    #     'appSysCode': 'OP_LOAN_H',
+    #     'createBy': '17037',
+    #     'remarks': '备注信息...........',
+    #     'pushUrl': 'http://127.0.0.1:5000/img/push_info'
+    # }
 
     # data = {
     #     'code': 'OP_LOAN_H',
@@ -154,11 +156,11 @@ if __name__ == '__main__':
     #     'remarks': '你大爷'
     # }
 
-    # data = {
-    #     'id': '0115ba8a869811e9aeace8c02069d75d',
-    #     'imgTypeCode': 'IVP',
-    #     'updateBy': '123123'
-    # }
+    data = {
+        'id': '1dfb17fe8b2411e9b1179032c5b02716',
+        'imgTypeCode': 'IVP',
+        'updateBy': '123123'
+    }
 
     # url = 'http://127.0.0.1:8088/loan/get_loan/2dc64710552b11e9acf95800e36a34d8'
     # res = requests.get(url=url, headers=json_headers)
@@ -176,8 +178,8 @@ if __name__ == '__main__':
 
     # ****************************************************************
 
-    url = 'http://127.0.0.1:5000/img/img_data'
-    res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
+    # url = 'http://127.0.0.1:5000/img/img_data'
+    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     # url = 'http://127.0.0.1:5000/img/img_data/108d9b48867611e9a9975800e36a34d8'
     # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
@@ -188,8 +190,8 @@ if __name__ == '__main__':
     # url = 'http://127.0.0.1:5000/img/img_Type'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/img/img_detail/type'
-    # res = requests.patch(url, json=data, headers=ContentType.JSON_UTF8.value)
+    url = 'http://127.0.0.1:5000/img/img_detail/type'
+    res = requests.patch(url, json=data, headers=ContentType.JSON_UTF8.value)
 
     print(res)
     print(res.status_code)
