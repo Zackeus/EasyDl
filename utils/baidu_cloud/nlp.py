@@ -138,7 +138,7 @@ if __name__ == '__main__':
     ne_list = ['PER', 'LOC', 'ORG', 'TIME', 'TBW', 'TOA', 'NUM', 'AMT', 'VIN', 'ID', 'TEL']
     text = '金额5635'
     nlp = NLP('5aQ3R9T6zVrERi0TlpX3axCX', 'Ez4kysRhRGZxtBFI37awoy4CmeHwnSys')
-    lexer_res = nlp.lexer(url=url, text=text, ne_list=None)
+    lexer_res = nlp.lexer(url=url, text=text, ne_list=ne_list)
 
     for lexer_item in lexer_res.items:
         print(lexer_item)

@@ -6,8 +6,13 @@ layui.config({
 	"bodyTab" : "bodyTab"
 });
 
-layui.use(['bodyTab','form','element','layer','jquery'],function(){
+layui.extend({
+	requests: '{/}' + ctxStatic + '/layui/requests'
+});
+
+layui.use(['bodyTab','form','element','layer','jquery', 'requests'],function(){
 	var form = layui.form,
+		requests = layui.requests,
 		element = layui.element;
 		$ = layui.$;
     	layer = parent.layer === undefined ? layui.layer : top.layer;
@@ -17,12 +22,15 @@ layui.use(['bodyTab','form','element','layer','jquery'],function(){
 		});
 
 	//通过顶部菜单获取左侧二三级菜单   注：此处只做演示之用，实际开发中通过接口传参的方式获取导航数据
-	function getData(json){
-		$.getJSON(tab.tabConfig.url + "/" + json, function(data) {
-			dataStr = data;
-			// 重新渲染左侧菜单
-			tab.render();
-		})
+	function getData(json) {
+		requests.doGetJdon(tab.tabConfig.url + '/' + json, null, function () {}, function (result) {
+			console.log(result);
+			if (result.code === "0") {
+				dataStr = result.menus;
+				// 重新渲染左侧菜单
+				tab.render();
+			}
+		});
 	}
 	
 	// 初始化左侧菜单

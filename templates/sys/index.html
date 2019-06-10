@@ -18,14 +18,14 @@
 				<a href="javascript:" class="seraph hideMenu layui-icon layui-icon-shrink-right"></a>
 				<!-- 顶部菜单 -->
 				<ul class="layui-nav topLevelMenus" pc>
-{#					<c:forEach items="${treeMenus}" var="treeMenu">#}
-{#						<li class="layui-nav-item" data-menu="${treeMenu.id}">#}
-{#							<a href="javascript:;">#}
-{#								<i class="layui-icon ${treeMenu.icon}"></i>#}
-{#								<cite>${treeMenu.name}</cite>#}
-{#							</a>#}
-{#						</li>#}
-{#					</c:forEach>#}
+                    {% for tree_menu in tree_menus %}
+                        <li class="layui-nav-item" data-menu="{{ tree_menu.id }}">
+							<a href="javascript:;">
+								<i class="layui-icon {{ tree_menu.icon }}"></i>
+								<cite>{{ tree_menu.name }}</cite>
+							</a>
+						</li>
+                    {% endfor %}
 				</ul>
 			    <!-- 顶部右侧菜单 -->
 			    <ul class="layui-nav top_menu">
@@ -78,8 +78,8 @@
                             </dd>
                             <dd>
 {#                                <a href="javascript:" data-url="{{ url_for('audio.asr_nlp', id='0903139') }}">#}
-{#                                <a href="javascript:" data-url="{{ url_for('audio.asr_nlp', id='1334006') }}">#}
-                                <a href="javascript:" data-url="{{ url_for('audio.asr_nlp', id='0850487') }}">
+                                <a href="javascript:" data-url="{{ url_for('audio.asr_nlp', id='1334006') }}">
+{#                                <a href="javascript:" data-url="{{ url_for('audio.asr_nlp', id='0850487') }}">#}
                                     <i class="seraph icon-xiugai" data-icon="icon-xiugai"></i>
                                     <cite>音频转写</cite>
                                 </a>

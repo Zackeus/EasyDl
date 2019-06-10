@@ -23,9 +23,29 @@ layui.define(['jquery','layer'], function(exports) {
 				}
 			});
 		},
+		// Get 提交json数据
+		doGetJdon: function (url, data, before, success, error) {
+			$.ajax({
+				method: 'GET',
+				url : url,
+				data : typeof(data) === 'string' ? data : JSON.stringify(data),
+				headers:{'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
+				contentType : 'application/json',
+				dataType : 'json',
+				beforeSend: function() {
+					before && before();
+				},
+				success : function(result) {
+					success && success(result);
+				},
+				error : function(event) {
+					error && error(event);
+				}
+			});
+		},
 		// 用户登录请求
 		doLogin: function (data, loginBtn) {
-			requests.doPostJson(ctx + 'user/login', data,
+			requests.doPostJson(ctx + 'sys/user/login', data,
 				function () {
 					loginBtn.text("登录中...").attr("disabled","disabled").addClass("layui-disabled");
                 },

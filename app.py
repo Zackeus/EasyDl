@@ -5,8 +5,7 @@ from flask_wtf.csrf import CSRFError
 
 from utils import is_empty, render_info, MyResponse
 from views import img_bp, audio_bp, test_bp
-from views.sys.user import user_bp
-from views.sys.area import area_bp
+from views.sys import user_bp, area_bp, menu_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.request import codes
 from models import BasicModel, FileModel, AppSys
@@ -66,10 +65,12 @@ def register_blueprints(app):
     :param app:
     :return:
     """
+    app.register_blueprint(blueprint=area_bp, url_prefix='/sys')
+    app.register_blueprint(blueprint=user_bp, url_prefix='/sys/user')
+    app.register_blueprint(blueprint=menu_bp, url_prefix='/sys/menu')
+
     app.register_blueprint(blueprint=img_bp, url_prefix='/img')
     app.register_blueprint(blueprint=audio_bp, url_prefix='/audio')
-    app.register_blueprint(blueprint=user_bp, url_prefix='/user')
-    app.register_blueprint(blueprint=area_bp, url_prefix='/sys')
     app.register_blueprint(blueprint=test_bp, url_prefix='/test')
 
 
@@ -86,13 +87,13 @@ def register_extensions(app):
 
     login_manager.init_app(app)
     # 登录过滤保护
-    login_manager.exempt_views((img_bp, audio_bp, test_bp, user_bp))
+    login_manager.exempt_views((img_bp, audio_bp, test_bp, user_bp, menu_bp))
 
     session.init_app(app)
 
     csrf.init_app(app)
     # csrf过滤保护
-    csrf.exempt_views((img_bp, audio_bp, test_bp))
+    csrf.exempt_views((img_bp, audio_bp, test_bp, menu_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':

@@ -8,9 +8,9 @@
 
 
 from flask import Blueprint, render_template
-from flask_login import current_user
 
 from utils.request import Method
+from utils.sys import user_util
 
 area_bp = Blueprint('sys', __name__)
 
@@ -21,9 +21,8 @@ def index():
     主页面
     :return:
     """
-    print(current_user)
-    print(current_user.is_admin)
-    return render_template(template_name_or_list='sys/index.html')
+    tree_menus = user_util.get_tree_menus_by_user()
+    return render_template(template_name_or_list='sys/index.html', tree_menus=tree_menus)
 
 
 @area_bp.route('/main', methods=[Method.GET.value])

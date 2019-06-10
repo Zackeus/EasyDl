@@ -7,10 +7,12 @@
 # @Time : 2019/3/26 8:46
 
 
-from utils import IdGen, EncodingFormat, BaseObject
+from flask_login import current_user
 from datetime import datetime
-from extensions import db
 from marshmallow import fields, validate, Schema, post_load, post_dump
+
+from extensions import db
+from utils import IdGen, EncodingFormat, BaseObject, is_empty, is_not_empty
 
 
 class BasicModel(BaseObject, db.Model):
@@ -30,6 +32,10 @@ class BasicModel(BaseObject, db.Model):
         self.id = id if id else IdGen.uuid()
         self.create_date = datetime.utcnow()
         self.update_date = datetime.utcnow()
+
+        if is_empty(self.create_by):
+            self.create_by = current_user.id if is_not_empty(current_user) else None
+        self.update_by = self.create_by
 
     def dao_delete(self):
         pass

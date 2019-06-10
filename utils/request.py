@@ -50,7 +50,7 @@ _codes = {
     # 系统代号
     -1: ('failed', ),
     0: ('success', ),
-    1: ('login_fail', ),
+    1: ('login_fail', 'not_logged_in', ),
     2: ('no_data', ),
     9: ('asr_success', ),
     # 请求总量超限额

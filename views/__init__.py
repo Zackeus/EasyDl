@@ -7,6 +7,6 @@
 # @Time : 2019/3/21 9:50
 
 
-from .test import (test_bp, )
-from .img import (img_bp, )
-from .audio import (audio_bp, )
+from .test_view import (test_bp, )
+from .img_view import (img_bp, )
+from .audio_view import (audio_bp, )

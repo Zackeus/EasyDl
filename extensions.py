@@ -195,11 +195,15 @@ class Guest(AnonymousUserMixin):
     访客类
     """
 
-    def can(self, permission_name):
-        return False
+    @property
+    def id(self):
+        return None
 
     @property
     def is_admin(self):
+        return False
+
+    def can(self, permission_name):
         return False
 
 

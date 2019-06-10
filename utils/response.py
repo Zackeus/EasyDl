@@ -88,7 +88,7 @@ def render_info(info, template=None, status=codes.ok, **kwargs):
     :return:
     """
     if codes.ok != status and hasattr(info, 'code'):
-        info.code = status
+        info.code = str(status)
     if request.headers.get(Headers.CONTENT_TYPE.value) and \
             request.headers.get(Headers.CONTENT_TYPE.value) == ContentType.JSON.value:
         # 判断请求响应类型是否为 JSON

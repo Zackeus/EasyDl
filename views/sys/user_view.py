@@ -7,7 +7,7 @@
 # @Time : 2019/4/16 14:08
 
 
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, redirect, url_for
 from flask_login import current_user, login_user, logout_user
 
 from utils import Method, ContentType, codes, validated, render_info, MyResponse, redirect_back, \
@@ -23,7 +23,7 @@ def login():
     if current_user.is_authenticated:
         # 用户已登录认证
         return redirect(location=url_for(endpoint='sys.index'))
-    return render_template(template_name_or_list='sys/login.html')
+    return render_info(MyResponse(msg='账号未登录!', code=codes.not_logged_in), template='sys/login.html')
 
 
 @user_bp.route('/login', methods=[Method.POST.value])

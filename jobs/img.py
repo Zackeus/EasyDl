@@ -157,7 +157,7 @@ def img_push():
                 # 发送微信错误报警信息
                 err_res = MyResponse.init_error(e)
                 WXMsg(
-                    msg_content='【图片文件推送】【{id}】：{msg}'.format(id=loan_file.id, msg=err_res.msg)
+                    msg_content='【图片文件推送】【{id}】：{msg}'.format(id=img_data.id, msg=err_res.msg)
                 ).send_wx()
             finally:
                 # 更新推送次数
