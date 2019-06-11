@@ -18,7 +18,7 @@ def get_tree_menus_by_user():
     :return:
     """
     if current_user.is_admin:
-        return Menu().dao_get_all_tree_menus()
+        return Menu().dao_get_tree_menus()
     return []
 
 
@@ -30,5 +30,5 @@ def get_menus_by_user(id, is_dump=False):
     :return:
     """
     if current_user.is_admin:
-        return Menu().dao_get_all_menus(id, is_dump=is_dump)
+        return Menu().dao_get_sub_menus(id, is_dump=is_dump)
     return []

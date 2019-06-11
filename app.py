@@ -87,13 +87,13 @@ def register_extensions(app):
 
     login_manager.init_app(app)
     # 登录过滤保护
-    login_manager.exempt_views((img_bp, audio_bp, test_bp, user_bp, menu_bp))
+    login_manager.exempt_views((img_bp, audio_bp, test_bp, user_bp))
 
     session.init_app(app)
 
     csrf.init_app(app)
     # csrf过滤保护
-    csrf.exempt_views((img_bp, audio_bp, test_bp, menu_bp))
+    csrf.exempt_views((img_bp, audio_bp, test_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':

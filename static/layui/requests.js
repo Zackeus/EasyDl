@@ -3,10 +3,10 @@ layui.define(['jquery','layer'], function(exports) {
 		layer = parent.layer === undefined ? layui.layer : top.layer;
 
 	let requests = {
-		// post 提交json数据
-		doPostJson: function (url, data, before, success, error) {
+		// 提交 json 数据
+		doJson: function(method, url, data, before, success, error) {
 			$.ajax({
-				method: 'POST',
+				method: method,
 				url : url,
 				data : typeof(data) === 'string' ? data : JSON.stringify(data),
 				headers:{'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
@@ -23,25 +23,13 @@ layui.define(['jquery','layer'], function(exports) {
 				}
 			});
 		},
+		// post 提交json数据
+		doPostJson: function (url, data, before, success, error) {
+			requests.doJson('POST', url, data, before, success, error);
+		},
 		// Get 提交json数据
-		doGetJdon: function (url, data, before, success, error) {
-			$.ajax({
-				method: 'GET',
-				url : url,
-				data : typeof(data) === 'string' ? data : JSON.stringify(data),
-				headers:{'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
-				contentType : 'application/json',
-				dataType : 'json',
-				beforeSend: function() {
-					before && before();
-				},
-				success : function(result) {
-					success && success(result);
-				},
-				error : function(event) {
-					error && error(event);
-				}
-			});
+		doGetJson: function (url, data, before, success, error) {
+			requests.doJson('GET', url, data, before, success, error);
 		},
 		// 用户登录请求
 		doLogin: function (data, loginBtn) {

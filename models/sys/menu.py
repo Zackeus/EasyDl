@@ -46,7 +46,42 @@ class Menu(BasicModel):
     )
 
     @cache.memoize()
-    def dao_get_all_tree_menus(self):
+    def dao_get_max_sort_by_id(self, id):
+        """
+        根据 id 查询子菜单最大最大排序值
+        :param str id:
+        :return:
+        """
+        menu = self.query.filter(Menu.parent_id == id).order_by(Menu.sort.desc()).first()
+        return 10 if is_empty(menu) else menu.sort + 10
+
+    @cache.memoize()
+    def dao_get(self, id):
+        """
+        根据id查询菜单
+        :param str id:
+        :return:
+        """
+        return super().dao_get(id)
+
+    @cache.memoize()
+    def dao_get_all(self, is_dump=False):
+        """
+        获取全部菜单列表 包括功能菜单
+        :param is_dump:
+        :return:
+        """
+        menus = self.query.order_by(Menu.sort.asc()).all()
+
+        if is_dump:
+            if is_empty(menus):
+                return []
+            menus, errors = MenuSchema().dump(menus, many=True)
+            Assert.is_true(is_empty(errors), errors)
+        return menus
+
+    @cache.memoize()
+    def dao_get_tree_menus(self):
         """
         获取全部一级菜单
         :return:
@@ -54,9 +89,9 @@ class Menu(BasicModel):
         return self.query.filter(Menu.parent_id == '1').order_by(Menu.sort.asc()).all()
 
     @cache.memoize()
-    def dao_get_all_menus(self, id, is_dump=False):
+    def dao_get_sub_menus(self, id, is_dump=False):
         """
-        获取全部左侧菜单树
+        根据ID获取全部子级菜单
         :param id:
         :param is_dump: 是否序列化字典(序列化尽量写在同一个方法，因为relationship的懒加载机制，结合缓存会报Session异常)
         :return:

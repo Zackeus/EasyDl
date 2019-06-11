@@ -1,5 +1,6 @@
-layui.define(['layer', 'table'], function (exports) {
+layui.define(['layer', 'table', 'requests'], function (exports) {
     var $ = layui.jquery;
+    var requests = layui.requests;
     var layer = layui.layer;
     var table = layui.table;
     var globalParam;
@@ -15,9 +16,14 @@ layui.define(['layer', 'table'], function (exports) {
             if (param.data) {
                 treetable.init(param, param.data);
             } else {
-                $.getJSON(param.url, param.where, function (res) {
-                    treetable.init(param, res.data);
+                requests.doGetJson(param.url, param.where, function () {}, function (result) {
+                    if (result.code === "0") {
+                        treetable.init(param, result.menus);
+                    }
                 });
+                // $.getJSON(param.url, param.where, function (res) {
+                //     treetable.init(param, res.data);
+                // });
             }
             globalParam = param;
             return this;

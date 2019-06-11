@@ -38,6 +38,8 @@
             <path value="file://$PROJECT_DIR$/static/images/audio/songs" />
             <path value="file://$PROJECT_DIR$/static/js/audio" />
             <path value="file://$PROJECT_DIR$/static/songs" />
+            <path value="file://$PROJECT_DIR$/static/js/sys" />
+            <path value="file://$PROJECT_DIR$/static/js/sys/menu" />
           </resourceRoots>
         </entryData>
       </entry>

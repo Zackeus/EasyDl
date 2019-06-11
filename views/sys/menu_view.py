@@ -9,13 +9,13 @@
 
 import json
 import requests
-from flask import Blueprint, current_app, request
+from flask import Blueprint, current_app, request, render_template
 from flask_login import current_user
 
 from utils import Method, ContentType, render_info, MyResponse, validated, Locations, file_to_base64, \
     Assert, is_not_empty, is_empty, codes
 from utils.sys import user_util
-from models.sys import MenuSchema
+from models.sys import Menu, MenuSchema
 
 
 menu_bp = Blueprint('menu', __name__)
@@ -33,17 +33,39 @@ def add_menu(menu):
     return render_info(MyResponse(msg='添加成功'))
 
 
-@menu_bp.route('/list/<string:id>', methods=[Method.GET.value])
+@menu_bp.route('/<string:id>', methods=[Method.GET.value])
 @validated(MenuSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ), consumes=ContentType.JSON.value)
-def get_menu_list(menu, id):
+def get_menus(menu, id):
     """
-    根据一级菜单生成左侧菜单树
+    根据父级菜单ID查询子级菜单
     :param menu:
     :param id:
     :return:
     """
     menus = user_util.get_menus_by_user(menu.id, is_dump=True)
     return render_info(MyResponse(msg='查询成功', menus=menus))
+
+
+@menu_bp.route('/manage', methods=[Method.GET.value])
+def menu_manage():
+    """
+    菜单管理页面
+    :return:
+    """
+    menus = Menu().dao_get_all(is_dump=True)
+    return render_info(MyResponse(msg='查询成功!', menus=menus), template='sys/menu/menu_manage.html')
+
+
+@menu_bp.route('/add/<string:id>', methods=[Method.GET.value])
+def menu_add(id):
+    """
+    菜单添加页面
+    :param id:
+    :return:
+    """
+    menu = Menu().dao_get(id)
+    sort = Menu().dao_get_max_sort_by_id(id)
+    return render_template('sys/menu/menu_add.html', menu=menu, sort=sort)
 
 
 if __name__ == '__main__':

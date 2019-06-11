@@ -14,7 +14,7 @@ layui.define(["element","jquery"],function(exports){
 			this.tabConfig = {
 				openTabNum : undefined, 		//最大可打开窗口数量
 				tabFilter : "bodyTab",  		//添加窗口的filter
-				url : ctx + "menu/list" 	    //获取菜单json地址
+				url : ctx + "sys/menu" 	    	//获取菜单json地址
 			}
 		};
     //生成左侧菜单
