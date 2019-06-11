@@ -34,4 +34,13 @@ def main():
     return render_template(template_name_or_list='sys/main.html')
 
 
+@area_bp.route('/icon', methods=[Method.GET.value])
+def icon():
+    """
+    图标设置
+    :return:
+    """
+    return render_template(template_name_or_list='sys/icon.html')
+
+
 

@@ -1,12 +1,7 @@
 var $,tab,dataStr,layer;
 
-layui.config({
-	base : ctxStatic + "/js/"
-}).extend({
-	"bodyTab" : "bodyTab"
-});
-
 layui.extend({
+	bodyTab: '{/}' + ctxStatic + '/js/sys/bodyTab',
 	requests: '{/}' + ctxStatic + '/layui/requests'
 });
 
@@ -17,19 +12,18 @@ layui.use(['bodyTab','form','element','layer','jquery', 'requests'],function(){
 		$ = layui.$;
     	layer = parent.layer === undefined ? layui.layer : top.layer;
 		tab = layui.bodyTab({
-			openTabNum : "50",  			//最大可打开窗口数量
-			url : ctx + "sys/menu" 			//获取菜单json地址
+			openTabNum : "50"	//最大可打开窗口数量
 		});
 
-	//通过顶部菜单获取左侧二三级菜单   注：此处只做演示之用，实际开发中通过接口传参的方式获取导航数据
+	//通过顶部菜单获取左侧二三级菜单
 	function getData(json) {
-		requests.doGetJson(tab.tabConfig.url + '/' + json, null, function () {}, function (result) {
+		requests.doGetMenus(json, null, function (result) {
 			if (result.code === "0") {
-				dataStr = result.menus;
-				// 重新渲染左侧菜单
-				tab.render();
-			}
-		});
+                dataStr = result.menus;
+                // 重新渲染左侧菜单
+                tab.render();
+            }
+        });
 	}
 	
 	// 初始化左侧菜单

@@ -2,22 +2,20 @@ layui.extend({
 	requests: '{/}' + ctxStatic + '/layui/requests'
 });
 
-layui.use(['requests','form','layer','laydate','table','laytpl','tree'],function(){
+layui.use(['requests', 'form', 'layer', 'tree'], function() {
     var form = layui.form,
         layer = parent.layer === undefined ? layui.layer : top.layer,
         $ = layui.jquery,
-        laydate = layui.laydate,
-        laytpl = layui.laytpl,
-        table = layui.table,
+		tree = layui.tree,
         requests = layui.requests,
-        tree = layui.tree,
-    	treeSelectData;
-    
+		treeSelectData;
+
     // 树形菜单下拉选点击
-	$(".downpanel").on("click",".layui-select-title",function(e) {
+	$(".downpanel").on("click",".layui-select-title", function(e) {
 		if (!treeSelectData) {
 			getTreeSelect();
 		}
+
 		$(".layui-form-select").not($(this).parents(".layui-form-select")).removeClass("layui-form-selected");
 		$(this).parents(".downpanel").toggleClass("layui-form-selected");
 		layui.stope(e);
@@ -31,32 +29,34 @@ layui.use(['requests','form','layer','laydate','table','laytpl','tree'],function
 	
 	// 树形菜单 Select 渲染
 	function getTreeSelect() {
-	    $.ajax({
-			method: 'POST',
-			url : ctx + 'sys/menu/chose_menu',
-			dataType : 'json',
-	        success: function (result) {
-	            // 选择菜单下拉选
-	            layui.tree({
-	            	elem:'#classtree',
-	            	href:'javascript:;',
-	            	nodes:result,
-	            	click:function(node) {
-	            		var $select=$($(this)[0].elem).parents(".layui-form-select");
-	            		$select.removeClass("layui-form-selected").find(".layui-select-title span").html(node.name).end().find("input:hidden[name='parentId']").val(node.id);
-	            		
-	            		var sortMsg = layuiRequest.getMaxMenuSort(ctx + '/sys/menu/maxMenuSort/' + node.id);
-	            		if (sortMsg.code == "0") {
-	            			$('#sort').val(sortMsg.customObj.sort);
-	            		}
-	            	}
-	            });
-	            treeSelectData = result;
-	        },
-			error : function(result) {
+		requests.doGetMenus($('#parentId').val(), null,
+			function (result) {
+				if (result.code === "0") {
+					// 选择菜单下拉选
+					tree({
+						elem: '#classtree',
+						href: 'javascript:;',
+						nodes: result.menus,
+						click: function(node) {
+							var $select = $($(this)[0].elem).parents(".layui-form-select");
+							$select.removeClass("layui-form-selected").find(".layui-select-title span").
+							html(node.name).end().find("input:hidden[name='parentId']").val(node.id);
+
+							requests.doGetMaxMenuSort(node.id, null, function (result) {
+								if (result.code === "0") {
+									$('#sort').val(result.sort);
+								}
+							})
+						}
+					});
+					treeSelectData = result.menus;
+				} else {
+					layer.msg(result.msg, {icon: 5,time: 2000,shift: 6}, function(){});
+				}
+			},
+			function(event) {
 				layer.msg('加载菜单树形列表失败', {icon: 5,time: 2000,shift: 6}, function(){});
-			}
-	    })
+			});
 	}
 	
 	// 菜单图标
@@ -76,7 +76,7 @@ layui.use(['requests','form','layer','laydate','table','laytpl','tree'],function
             maxmin: true, 			// 最大最小化
             id: 'LAY_Icon', 		// 用于控制弹层唯一标识
             moveType: 1,
-            content: [ctx + '/sys/area/icon']
+            content: [ctx + 'sys/icon']
     	});
     });
     
@@ -92,7 +92,7 @@ layui.use(['requests','form','layer','laydate','table','laytpl','tree'],function
     });
     
     form.on('submit(addMenu)', function(data) {
-    	layuiRequest.addMenu(ctx + '/sys/menu/add', data.field, $(this));
+    	requests.addMenu(ctx + '/sys/menu/add', data.field, $(this));
     	return false;
     });
     

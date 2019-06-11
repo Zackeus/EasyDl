@@ -51,7 +51,15 @@ layui.define(['jquery','layer'], function(exports) {
 					loginBtn.text("登录").attr("disabled",false).removeClass("layui-disabled");
                 }
 			)
-        }
+        },
+		// 根据父级菜单ID获取子级菜单列表
+		doGetMenus: function (id, before, success, error) {
+			requests.doGetJson(ctx + 'sys/menu' + '/' + id, null, before, success, error);
+		},
+		// 根据 id 查询子菜单最大最大排序值
+		doGetMaxMenuSort: function (id, before, success, error) {
+			requests.doGetJson(ctx + 'sys/menu/max_sort' + '/' + id, null, before, success, error);
+        },
 	};
 	exports('requests', requests);
 });

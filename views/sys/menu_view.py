@@ -68,6 +68,19 @@ def menu_add(id):
     return render_template('sys/menu/menu_add.html', menu=menu, sort=sort)
 
 
+@menu_bp.route('/max_sort/<string:id>', methods=[Method.GET.value])
+@validated(MenuSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ), consumes=ContentType.JSON.value)
+def max_sort(menu, id):
+    """
+    根据 id 查询子菜单最大最大排序值
+    :param menu:
+    :param id:
+    :return:
+    """
+    sort = Menu().dao_get_max_sort_by_id(menu.id)
+    return render_info(MyResponse(msg='查询成功!', sort=sort))
+
+
 if __name__ == '__main__':
 
     data = {
