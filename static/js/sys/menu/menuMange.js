@@ -84,12 +84,13 @@ layui.use(['table', 'treetable', 'requests', 'layer'], function() {
                 },500)
             },
             end:function(index) {
+                $(window).unbind("resize", editMenuResize);
             	menuListIns.reload();
            }
     	});
     	layui.layer.full(editMenuIndex);
         window.sessionStorage.setItem("editMenuIndex", editMenuIndex);
-        $(window).on("resize",function() {
+        $(window).on("resize", editMenuResize = function() {
         	layui.layer.full(window.sessionStorage.getItem("editMenuIndex"));
         })
 		
@@ -101,7 +102,7 @@ layui.use(['table', 'treetable', 'requests', 'layer'], function() {
         	time: 0, 
         	btn: ['确定', '取消'],
             btn1: function(index, layero) {
-            	requests.delMenu(data, index, ctx + 'sys/menu/del', menuListIns);
+            	requests.doDelMenu(data, index, menuListIns);
             },
             btn2: function(index, layero) {
             	layer.close(index);
@@ -140,15 +141,17 @@ layui.use(['table', 'treetable', 'requests', 'layer'], function() {
             cancel: function(index, layero) {
             },
             end:function(index) {
+                $(window).unbind("resize", addMenuResize);
             	menuListIns.reload();
            }
     	});
+
     	layui.layer.full(addMenuIndex);
         window.sessionStorage.setItem("addMenuIndex", addMenuIndex);
         //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-        $(window).on("resize",function() {
-        	layui.layer.full(window.sessionStorage.getItem("addMenuIndex"));
-        })
+        $(window).on("resize", addMenuResize = function() {
+            layui.layer.full(window.sessionStorage.getItem("addMenuIndex"));
+        });
     }
 
     // 全部展开

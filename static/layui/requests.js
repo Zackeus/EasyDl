@@ -31,6 +31,14 @@ layui.define(['jquery','layer'], function(exports) {
 		doGetJson: function (url, data, before, success, error) {
 			requests.doJson('GET', url, data, before, success, error);
 		},
+		// delete 提交json数据
+		doDeleteJson: function (url, data, before, success, error) {
+			requests.doJson('DELETE', url, data, before, success, error);
+		},
+		// put 提交json数据
+		doPutJson: function (url, data, before, success, error) {
+			requests.doJson('PUT', url, data, before, success, error);
+		},
 		// 用户登录请求
 		doLogin: function (data, loginBtn) {
 			requests.doPostJson(ctx + 'sys/user/login', data,
@@ -60,6 +68,67 @@ layui.define(['jquery','layer'], function(exports) {
 		doGetMaxMenuSort: function (id, before, success, error) {
 			requests.doGetJson(ctx + 'sys/menu/max_sort' + '/' + id, null, before, success, error);
         },
+		// 添加菜单
+		doAddMenu: function (data, btn) {
+			requests.doPostJson(ctx + 'sys/menu', data,
+				function() {
+					btn.text("提交中...").attr("disabled","disabled").addClass("layui-disabled");
+				},
+				function (res) {
+					if (res.code === "0") {
+						layer.msg(res.msg, {icon: 6,time: 1000});
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					} else {
+						layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
+						btn.text("提交").attr("disabled",false).removeClass("layui-disabled");
+					}
+                },
+				function (event) {
+					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
+					btn.text("提交").attr("disabled",false).removeClass("layui-disabled");
+                })
+        },
+		// 删除菜单
+		doDelMenu: function (data, index, tableIns) {
+			requests.doDeleteJson(ctx + 'sys/menu', data,
+				function() {
+					layer.close(index);
+					layer.load();
+				},
+				function (res) {
+					layer.closeAll('loading');
+					if (res.code === "0") {
+						layer.msg(res.msg, {icon: 6,time: 1000});
+						tableIns.reload();
+					} else {
+						layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
+					}
+                },
+				function (event) {
+					layer.closeAll('loading');
+					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
+                })
+        },
+		// 修改菜单
+		doEditMenu: function (data, btn) {
+			requests.doPutJson(ctx + 'sys/menu', data,
+				function() {
+					btn.text("提交中...").attr("disabled","disabled").addClass("layui-disabled");
+				},
+				function (res) {
+					if (res.code === "0") {
+						layer.msg(res.msg, {icon: 6,time: 1000});
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					} else {
+						layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
+						btn.text("提交").attr("disabled",false).removeClass("layui-disabled");
+					}
+                },
+				function (event) {
+					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
+					btn.text("提交").attr("disabled",false).removeClass("layui-disabled");
+                })
+        }
 	};
 	exports('requests', requests);
 });

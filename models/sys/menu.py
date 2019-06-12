@@ -10,7 +10,7 @@
 from extensions import db, cache
 from models.basic import BasicModel, BaseSchema
 
-from utils import validates, Unicode, Assert, is_not_empty, is_empty, codes
+from utils import validates, Unicode, Assert, is_empty
 from marshmallow import fields
 
 
@@ -60,6 +60,7 @@ class Menu(BasicModel):
         """
         根据id查询菜单
         :param str id:
+        :rtype: Menu
         :return:
         """
         return super().dao_get(id)
@@ -99,12 +100,14 @@ class Menu(BasicModel):
         menus = self.query.filter(Menu.parent_id == id).order_by(Menu.sort.asc()).all()
 
         if is_dump:
-            Assert.is_true(is_not_empty(menus), '查无此数据', codes.no_data)
-
+            if is_empty(menus):
+                return []
             menus, errors = MenuSchema().dump(menus, many=True)
             Assert.is_true(is_empty(errors), errors)
         return menus
 
+    @cache.delete_cache([dao_get_sub_menus, dao_get_tree_menus, dao_get_all,
+                         dao_get, dao_get_max_sort_by_id])
     def dao_add(self, **kwargs):
         """
         添加菜单
@@ -115,6 +118,35 @@ class Menu(BasicModel):
         with db.auto_commit_db(**kwargs) as s:
             s.add(self)
 
+    @cache.delete_cache([dao_get_sub_menus, dao_get_tree_menus, dao_get_all,
+                         dao_get, dao_get_max_sort_by_id])
+    def dao_delete(self, **kwargs):
+        """
+        删除菜单
+        :param kwargs:
+        :return:
+        """
+        super().dao_delete(**kwargs)
+
+    @cache.delete_cache([dao_get_sub_menus, dao_get_tree_menus, dao_get_all,
+                         dao_get, dao_get_max_sort_by_id])
+    def dao_put(self, menu, **kwargs):
+        """
+        put 更新菜单
+        :param Menu menu:
+        :param kwargs:
+        :return:
+        """
+        self.parent_id = menu.parent_id
+        self.name = menu.name
+        self.href = menu.href
+        self.sort = menu.sort
+        self.icon = menu.icon
+        self.spread = menu.spread
+        self.update_by = menu.update_by
+        self.remarks = menu.remarks
+        super().dao_update(**kwargs)
+
 
 class MenuSchema(BaseSchema):
     """
@@ -123,6 +155,7 @@ class MenuSchema(BaseSchema):
     __model__ = Menu
 
     parent_id = fields.Str(
+        required=True,
         validate=validates.MyLength(min=1, max=64, not_empty=False, encode_str=Unicode.UTF_8.value),
         load_from='parentId'
     )
@@ -141,3 +174,6 @@ class MenuSchema(BaseSchema):
 
     def only_create(self):
         return super().only_create() + ('parent_id', 'name', 'icon', 'sort', 'href', 'spread')
+
+    def only_put(self):
+        return super().only_put() + ('parent_id', 'name', 'icon', 'sort', 'href', 'spread')

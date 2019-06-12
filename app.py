@@ -287,4 +287,13 @@ def register_template_test(app):
         from utils import is_odd
         return is_odd(n)
 
+    @app.template_test(name='empty')
+    def empty(o):
+        """
+        判断是否为空
+        :param o:
+        :return:
+        """
+        return True if is_empty(o) else False
+
 

@@ -2,20 +2,19 @@ layui.extend({
 	requests: '{/}' + ctxStatic + '/layui/requests'
 });
 
-layui.use(['requests', 'form', 'layer', 'tree'], function() {
+layui.use(['requests','form','layer', 'tree'], function() {
     var form = layui.form,
         layer = parent.layer === undefined ? layui.layer : top.layer,
         $ = layui.jquery,
-		tree = layui.tree,
         requests = layui.requests,
-		treeSelectData;
-
+        tree = layui.tree,
+    	treeSelectData;
+    
     // 树形菜单下拉选点击
-	$(".downpanel").on("click",".layui-select-title", function(e) {
+	$(".downpanel").on("click",".layui-select-title",function(e) {
 		if (!treeSelectData) {
 			getTreeSelect();
 		}
-
 		$(".layui-form-select").not($(this).parents(".layui-form-select")).removeClass("layui-form-selected");
 		$(this).parents(".downpanel").toggleClass("layui-form-selected");
 		layui.stope(e);
@@ -91,11 +90,12 @@ layui.use(['requests', 'form', 'layer', 'tree'], function() {
     	parent.layer.close(parent.layer.getFrameIndex(window.name));
     });
     
-    form.on('submit(addMenu)', function(data) {
+    form.on('submit(editMenu)', function(data) {
     	if ($.isEmptyObject(data.field.spread)) {
 			data.field.spread = false
 		}
-    	requests.doAddMenu(data.field, $(this));
+
+    	requests.doEditMenu(data.field, $(this));
     	return false;
     });
     

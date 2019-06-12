@@ -37,17 +37,20 @@ class BasicModel(BaseObject, db.Model):
             self.create_by = current_user.id if is_not_empty(current_user) else None
         self.update_by = self.create_by
 
-    def dao_delete(self):
-        pass
+    def dao_delete(self, subtransactions=False, nested=False):
+        with db.auto_commit_db(subtransactions=subtransactions, nested=nested) as s:
+            s.delete(self)
 
     def dao_get(self, id):
         return self.query.get(id)
 
     def dao_update(self, subtransactions=False, nested=False):
-        with db.auto_commit_db(subtransactions=subtransactions, nested=nested):
+        with db.auto_commit_db(subtransactions=subtransactions, nested=nested) as s:
             if is_not_empty(current_user) and is_not_empty(current_user.id):
                 self.update_by = current_user.id
             self.update_date = datetime.utcnow()
+            # 将对象添加到session中，解决从缓存读取更新报 not in session 异常
+            s.merge(self)
 
 
 # noinspection PyMethodMayBeStatic
@@ -95,6 +98,9 @@ class BaseSchema(Schema):
 
     def only_get(self):
         return 'id',
+
+    def only_put(self):
+        return 'id', 'update_by', 'remarks'
 
     def only_update(self):
         return 'update_by',
