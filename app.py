@@ -4,7 +4,8 @@ from flask import Flask as BasicFlask, current_app
 from flask_wtf.csrf import CSRFError
 
 from utils import is_empty, render_info, MyResponse
-from views import img_bp, audio_bp, test_bp
+from views import test_bp
+from views.ai import img_bp, audio_bp
 from views.sys import user_bp, area_bp, menu_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.request import codes
