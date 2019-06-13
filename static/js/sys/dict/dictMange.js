@@ -47,7 +47,6 @@ layui.use(['form','layer','table'],function(){
     });
     
     form.on('submit(search)', function(data) {
-        data.field.type = 'ocr';
     	dictListtIns.reload({
     		where: data.field,
     		page: {curr: 1}

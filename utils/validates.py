@@ -39,7 +39,7 @@ class Parser(FlaskParser):
     DEFAULT_VALIDATION_STATUS = requests.codes.unprocessable
 
     def validated(self, schema_cls, only=None, locations=(Locations.JSON.value, ),
-                  schema_kwargs=None, consumes=None, **kwargs):
+                  schema_kwargs=None, consumes=None, page=False, **kwargs):
         """
         参数校验器
         :param schema_cls: 校验 schema 类
@@ -47,6 +47,7 @@ class Parser(FlaskParser):
         :param tuple locations: 搜索值的请求位置
         :param schema_kwargs:
         :param consumes: 请求处理类型
+        :param page: 是否分页校验；分页校验模式下，对缺省值不报异常
         :param kwargs:
         :return:
         """
@@ -58,7 +59,7 @@ class Parser(FlaskParser):
                 raise MethodNotAllowed(description='不支持的请求头')
             return schema_cls(
                 only=only,
-                partial=False,
+                partial=page,
                 strict=True,
                 context={"request": request},
                 **schema_kwargs

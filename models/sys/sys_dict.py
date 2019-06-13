@@ -73,6 +73,4 @@ class SysDictSchema(BaseSchema):
         return super().only_create() + ('value', 'label', 'type', 'description', 'sort')
 
     def only_page(self):
-        return {
-            'type': fields.Str()
-        }
+        return super().only_page() + ('type', 'description')

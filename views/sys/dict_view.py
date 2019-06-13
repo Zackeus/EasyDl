@@ -38,10 +38,10 @@ def dict_manage():
 
 
 @dict_bp.route('/page', methods=[Method.GET.value])
-@validated(PageSchema, only=PageSchema().only_create(), locations=(Locations.PAGE.value, ),
-           consumes=ContentType.JSON.value)
-@validated(SysDictSchema, only=SysDictSchema().only_page(), locations=(Locations.JSON.value, ),
-           consumes=ContentType.JSON.value)
+@validated(PageSchema, only=PageSchema().only_create(),
+           locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
+@validated(SysDictSchema, only=('type', 'description', ), page=True,
+           locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
 def dict_page(page, sys_dict):
     """
     字典分页查询
