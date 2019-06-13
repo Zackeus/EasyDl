@@ -7,11 +7,13 @@
 # @Time : 2019/3/25 15:49
 
 
+import json
 import utils
 import requests
 from webargs.flaskparser import FlaskParser
 from werkzeug.exceptions import MethodNotAllowed
 from marshmallow.validate import Length, ValidationError
+from marshmallow.utils import missing
 from enum import Enum, unique
 
 
@@ -28,6 +30,7 @@ class Locations(Enum):
     COOKIES = 'cookies'
     FILES = 'files'
     VIEW_ARGS = 'view_args'
+    PAGE = 'page'               # 分页参数提取位置
 
 
 class Parser(FlaskParser):
@@ -115,5 +118,22 @@ parser = Parser()
 use_args = parser.use_args
 use_kwargs = parser.use_kwargs
 validated = parser.validated
+
+
+@parser.location_handler(Locations.PAGE.value)
+def parse_page(request, name, field):
+    """
+    分页参数提取
+    :param request:
+    :param name:
+    :param field:
+    :return:
+    """
+    for k, v in request.args.to_dict().items():
+        k = json.loads(k, encoding=utils.Unicode.UTF_8.value)
+        v = k.get(name, '')
+        if v:
+            return v
+    return missing
 
 

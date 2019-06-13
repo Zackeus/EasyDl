@@ -36,6 +36,7 @@
         <option value="$MODULE_DIR$/templates/sys" />
         <option value="$MODULE_DIR$/templates/audio" />
         <option value="$MODULE_DIR$/templates/sys/menu" />
+        <option value="$MODULE_DIR$/templates/sys/dict" />
       </list>
     </option>
   </component>

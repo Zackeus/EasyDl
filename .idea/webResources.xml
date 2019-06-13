@@ -40,6 +40,7 @@
             <path value="file://$PROJECT_DIR$/static/songs" />
             <path value="file://$PROJECT_DIR$/static/js/sys" />
             <path value="file://$PROJECT_DIR$/static/js/sys/menu" />
+            <path value="file://$PROJECT_DIR$/static/js/sys/dict" />
           </resourceRoots>
         </entryData>
       </entry>
