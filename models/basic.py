@@ -106,7 +106,7 @@ class BaseSchema(Schema):
         return 'update_by',
 
     def only_page(self):
-        pass
+        return '',
 
 
 class DataEntity(BaseObject):

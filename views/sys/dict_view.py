@@ -40,7 +40,7 @@ def dict_manage():
 @dict_bp.route('/page', methods=[Method.GET.value])
 @validated(PageSchema, only=PageSchema().only_create(),
            locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
-@validated(SysDictSchema, only=('type', 'description', ), page=True,
+@validated(SysDictSchema, only=SysDictSchema().only_page(), page=True,
            locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
 def dict_page(page, sys_dict):
     """
