@@ -66,6 +66,16 @@ class SysDict(BasicModel):
         return super().dao_get(id)
 
     @cache.memoize()
+    def dao_get_type_value(self, type, value):
+        """
+        根据类型和value查询字典
+        :param type:
+        :param value:
+        :return:
+        """
+        return self.query.filter(SysDict.type == type, SysDict.value == value).first()
+
+    @cache.memoize()
     def dao_get_all(self):
         """
         获取全部字典
@@ -85,7 +95,7 @@ class SysDict(BasicModel):
             types.append(dict_type[0])
         return types
 
-    @cache.delete_cache([dao_get, dao_get_all, dao_get_types])
+    @cache.delete_cache([dao_get, dao_get_all, dao_get_types, dao_get_type_value])
     def dao_add(self, **kwargs):
         """
         添加字典
@@ -96,7 +106,7 @@ class SysDict(BasicModel):
         with db.auto_commit_db(**kwargs) as s:
             s.add(self)
 
-    @cache.delete_cache([dao_get, dao_get_all, dao_get_types])
+    @cache.delete_cache([dao_get, dao_get_all, dao_get_types, dao_get_type_value])
     def dao_delete(self, **kwargs):
         """
         删除字典

@@ -133,7 +133,7 @@ class BaseConfig(object):
     #         # 'hour': '8-20',
     #         'max_instances': 1,
     #         'coalesce': True,
-    #         'misfire_grace_time': 300
+    #         'misfire_grace_time': 1800
     #     },
     #     {
     #         'id': 'img_push',
@@ -144,7 +144,7 @@ class BaseConfig(object):
     #         # 'hour': '8-20',
     #         'max_instances': 1,
     #         'coalesce': True,
-    #         'misfire_grace_time': 300
+    #         'misfire_grace_time': 1800
     #     }
     # ]
 

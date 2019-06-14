@@ -10,7 +10,6 @@ import json
 import requests
 from flask import Blueprint, current_app, request
 
-from models import AppSys, AppSysSchema
 from models.img import ImgDataModel, ImgDataSchema, ImgTypeModel, ImgTypeSchema, ImgDetailModel, ImgDetailSchema
 
 from utils import Method, ContentType, render_info, MyResponse, validated, Locations, file_to_base64, \
@@ -30,7 +29,8 @@ def add_img(img_data):
     :return:
     """
     img_data.dao_create()
-    app_sys = AppSys().dao_get_by_code(img_data.app_sys_code)  # type: AppSys
+    app_sys = img_data.dao_get_app_sys(img_data.app_sys_code)
+    Assert.is_true(is_not_empty(app_sys), '无效的应用系统：{0}'.format(img_data.app_sys_code), codes.unprocessable)
 
     # 通过外键添加
     img_data.app_sys_id = app_sys.id
@@ -88,19 +88,7 @@ def patch_img_detail_type(img_detail):
 
     img_detail.update_by = update_by
     img_detail.dao_update_type(img_type.id)
-    return render_info(MyResponse(code=0, msg='更新成功'))
-
-
-@img_bp.route('/app_sys', methods=[Method.POST.value])
-@validated(AppSysSchema, only=AppSysSchema().only_create(), consumes=ContentType.JSON.value)
-def add_app_sys(app_sys):
-    """
-    添加应用系统
-    :param AppSys app_sys:
-    :return:
-    """
-    app_sys.dao_add()
-    return render_info(MyResponse(msg='添加成功'))
+    return render_info(MyResponse('更新成功'))
 
 
 @img_bp.route('/img_Type', methods=[Method.POST.value])
@@ -112,19 +100,19 @@ def add_img_type(img_type):
     :return: 
     """
     img_type.dao_add()
-    return render_info(MyResponse(code=0, msg='添加成功'))
+    return render_info(MyResponse('添加成功'))
 
 
 @img_bp.route('/push_info', methods=[Method.POST.value])
 def push_info():
     print(json.dumps(request.json, indent=4, ensure_ascii=False))
-    return render_info(MyResponse(msg='OK'))
+    return render_info(MyResponse('OK'))
 
 
 if __name__ == '__main__':
 
     # data = {
-    #     'appId': 'asdqweqweqwe',
+    #     'appId': '1232131',
     #     'fileData': [
     #         {
     #             'fileName': 'pdf',
@@ -157,7 +145,7 @@ if __name__ == '__main__':
     # }
 
     data = {
-        'id': '1dfb17fe8b2411e9b1179032c5b02716',
+        'id': 'ddb87e9a8e5311e9899c5800e36a34d8',
         'imgTypeCode': 'IVP',
         'updateBy': '123123'
     }
@@ -181,7 +169,7 @@ if __name__ == '__main__':
     # url = 'http://127.0.0.1:5000/img/img_data'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/img/img_data/108d9b48867611e9a9975800e36a34d8'
+    # url = 'http://127.0.0.1:5000/img/img_data/261fd1908e4f11e99ea75800e36a34d8'
     # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
 
     # url = 'http://127.0.0.1:5000/img/app_sys'

@@ -13,7 +13,7 @@ from extensions import db
 from models.basic import BasicModel, BaseSchema
 from models.file import FileModel, FileSchema
 from models.img.img_detail import ImgDetailModel, ImgDetailSchema
-from models.app_sys import AppSys, AppSysSchema
+from models.sys import SysDict
 
 from utils import validates as MyValidates, base64_to_file, is_empty, is_not_empty
 from utils.file import FileUtil, FileFormat, PDFUtil
@@ -25,6 +25,8 @@ class ImgDataModel(BasicModel):
     图片资料流水
     """
     __tablename__ = 'IMG_DATA'
+    # 来源系统字典类型
+    __app_sys_type__ = 'APP_SYS'
 
     __table_args__ = (
         db.Index('ix_IMG_DATA_APP_ID_APP_SYS_ID', 'APP_ID', 'APP_SYS_ID', unique=True),
@@ -33,7 +35,7 @@ class ImgDataModel(BasicModel):
     app_id = db.Column(db.String(length=64), name='APP_ID', nullable=False, comment='应用ID')
     app_sys_id = db.Column(
         db.String(length=64),
-        db.ForeignKey('APP_SYS.ID'),
+        db.ForeignKey('SYS_DICT.ID'),
         name='APP_SYS_ID',
         nullable=False,
         index=True
@@ -53,8 +55,8 @@ class ImgDataModel(BasicModel):
         :return:
         """
         if self.app_sys_id:
-            app_sys = AppSys().dao_get(self.app_sys_id)
-            return app_sys.code
+            app_sys = SysDict().dao_get(self.app_sys_id)
+            return app_sys.value if is_not_empty(app_sys) else '查无此来源系统.'
         elif self._app_sys_code:
             return self._app_sys_code
         return None
@@ -74,6 +76,35 @@ class ImgDataModel(BasicModel):
         super(self.__class__, self).__init__(**kwargs)
         self.file_data = file_data
         self._app_sys_code = app_sys_code
+
+    def dao_get_app_sys(self, app_sys_code):
+        """
+        根据系统代号查询来源系统
+        :param app_sys_code:
+        :rtype: SysDict
+        :return:
+        """
+        return SysDict().dao_get_type_value(self.__app_sys_type__, app_sys_code)
+
+    def dao_get_todo(self, limit=10):
+        """
+        查询待处理数据
+        :param limit:
+        :return:
+        """
+        return self.query.filter(ImgDataModel.is_handle == False). \
+            order_by(ImgDataModel.create_date.asc()).limit(limit).all()
+
+    def dao_get_push(self):
+        """
+        查询待推送数据
+        :return:
+        """
+        return self.query.filter(ImgDataModel.is_handle == True,
+                                 ImgDataModel.is_push == False,
+                                 ImgDataModel.push_times < 5,
+                                 ImgDataModel.push_url.isnot(None)).\
+            order_by(ImgDataModel.create_date.asc()).all()
 
     def dao_add_info(self, loan_dir, subtransactions=False, nested=False):
         """
@@ -140,26 +171,6 @@ class ImgDataModel(BasicModel):
                     details.append(dict(id=file_model.id, md5=file_model.md5_id, page_num=1, success_num=1, fail_num=0))
         return dict(id=self.id, details=details)
 
-    def dao_get_todo(self, limit=10):
-        """
-        查询待处理数据
-        :param limit:
-        :return:
-        """
-        return self.query.filter(ImgDataModel.is_handle == False). \
-            order_by(ImgDataModel.create_date.asc()).limit(limit).all()
-
-    def dao_get_push(self):
-        """
-        查询待推送数据
-        :return:
-        """
-        return self.query.filter(ImgDataModel.is_handle == True,
-                                 ImgDataModel.is_push == False,
-                                 ImgDataModel.push_times < 5,
-                                 ImgDataModel.push_url.isnot(None)).\
-            order_by(ImgDataModel.create_date.asc()).all()
-
 
 class ImgDataSchema(BaseSchema):
     """
@@ -218,17 +229,6 @@ class ImgDataSchema(BaseSchema):
                     raise ValidationError('文件名包含特殊字符')
                 if value.file_format.upper() not in self.__file_formats:
                     raise ValidationError('无效的文件格式')
-
-    @validates('app_sys_code')
-    def validate_app_sys_code(self, value):
-        """
-        校验应用系统
-        :param str value:
-        :return:
-        """
-        app_sys = AppSys().dao_get_by_code(value)
-        if is_empty(app_sys):
-            raise ValidationError('无效的应用系统.')
 
     @classmethod
     def filter_img_details(cls, img_details, filter_fields):
