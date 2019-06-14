@@ -1,14 +1,19 @@
-layui.use(['form','layer','table'],function(){
+layui.extend({
+	requests: '{/}' + ctxStatic + '/layui/requests'
+});
+
+layui.use(['form', 'layer', 'table', 'requests'],function(){
     var form = layui.form,
         layer = parent.layer === undefined ? layui.layer : top.layer,
         $ = layui.jquery,
-        table = layui.table;
+        table = layui.table,
+        requests = layui.requests;
 
     layer.load();
     var dictListtIns =  table.render({
         elem: '#dictList',
         title: '字典表',								//  定义 table 的大标题（在文件导出等地方会用到）layui 2.4.0 新增
-        method : 'GET',							// 	接口http请求类型，默认：get
+        method : 'GET',							    // 	接口http请求类型，默认：get
         url : ctx + 'sys/dict/page',
         toolbar: '#dictListToolBar',
         contentType: 'application/json',			// 	发送到服务端的内容编码类型
@@ -26,7 +31,7 @@ layui.use(['form','layer','table'],function(){
               'code': res.code, 					//解析接口状态
               'msg': res.msg, 						//解析提示文本
               'count': res.total, 					//解析数据长度
-              'data': res.list 						//解析数据列表
+              'data': res.data 						//解析数据列表
             };
         },
         request: {									// 定义前端 json 格式
@@ -76,6 +81,7 @@ layui.use(['form','layer','table'],function(){
 			break;
 			
 		case "del":
+		    delDict(obj.data);
 			break;
 			
 		default:
@@ -85,7 +91,8 @@ layui.use(['form','layer','table'],function(){
     
     // 添加字典
     function addDict(data) {
-    	var url = data == "" || data == null || data == undefined ? (ctx + '/sys/dict/add') : (ctx + '/sys/dict/add/' + data);
+    	var url = data === "" || data == null || data === undefined ?
+            (ctx + 'sys/dict/add') : (ctx + 'sys/dict/add/' + data);
     	
     	var addDictIndex = layui.layer.open({
             type: 2,
@@ -100,28 +107,44 @@ layui.use(['form','layer','table'],function(){
             id: 'LAY_AddDict', 		// 用于控制弹层唯一标识
             moveType: 1,
             content: [url],
-            success : function(layero, index){
+            success : function(layero, index) {
+                //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                $(window).on("resize", addDictResize = function() {
+                    layui.layer.full(window.sessionStorage.getItem("addDictIndex"));
+                });
+
                 var body = layui.layer.getChildFrame('body', index);
-                setTimeout(function(){
+                setTimeout(function() {
                     layui.layer.tips('点击此处返回字典列表', '.layui-layer-setwin .layui-layer-close', {
                         tips: 3
                     });
-                },500)
+                }, 500)
             },
             cancel: function(index, layero) {
             },
             end:function(index) {
+                $(window).unbind("resize", addDictResize);
             	dictListtIns.reload();
            }
     	});
     	layui.layer.full(addDictIndex);
         window.sessionStorage.setItem("addDictIndex", addDictIndex);
-        //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-        $(window).on("resize",function() {
-        	layui.layer.full(window.sessionStorage.getItem("addDictIndex"));
-        })
 	}
-    
+
+	// 删除字典
+    function delDict(data) {
+        layer.msg('确定要删除此字典?', {
+        	time: 0,
+        	btn: ['确定', '取消'],
+            btn1: function(index, layero) {
+            	requests.doDelDict(data, index, dictListtIns);
+            },
+            btn2: function(index, layero) {
+            	layer.close(index);
+            }
+        });
+    }
+
     //控制表格编辑时文本的位置【跟随渲染时的位置】
     $("body").on("click",".layui-table-body.layui-table-main tbody tr td",function() {
         $(this).find(".layui-table-edit").addClass("layui-"+$(this).attr("align"));

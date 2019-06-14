@@ -52,6 +52,18 @@ class BasicModel(BaseObject, db.Model):
             # 将对象添加到session中，解决从缓存读取更新报 not in session 异常
             s.merge(self)
 
+    def dao_find_page(self, page, error_out=False):
+        """
+        分页查询
+        :param page: 父页对象
+        :param error_out: 是否抛出错误 (当其为True时,在以下情况会抛出404,否则返回空的列表)
+        : 没有匹配项或者page不等于1
+        : page比1小或者per_page是负数
+        : page和per_page不是整数
+        :return:
+        """
+        pass
+
 
 # noinspection PyMethodMayBeStatic
 class BaseSchema(Schema):

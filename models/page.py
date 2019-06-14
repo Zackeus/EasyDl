@@ -11,7 +11,7 @@ from marshmallow import fields
 
 from extensions import db
 from models.basic import BasicModel, BaseSchema
-from utils import validates, Unicode
+from utils import validates, Unicode, codes
 
 
 class Page(BasicModel):
@@ -24,6 +24,22 @@ class Page(BasicModel):
     page_size = db.Column(db.Integer, name='PAGE_SIZE', comment='每页限制条数')
     total = db.Column(db.Integer, name='TOTAL', comment='总条数')
     total_page = db.Column(db.Integer, name='TOTAL_PAGE', comment='总页数')
+    data = db.Column(db.Text, name='DATA', comment='分页数据')
+
+    def init_pagination(self, pagination, msg='查询成功.'):
+        """
+        根据 pagination 实例化分页对象
+        :param pagination:
+        :param msg:
+        :return:
+        """
+        self.code = codes.success
+        self.msg = msg
+        self.page = pagination.page
+        self.page_size = pagination.per_page
+        self.total = pagination.total
+        self.total_page = pagination.pages
+        self.data = pagination.items
 
 
 class PageSchema(BaseSchema):
@@ -38,6 +54,7 @@ class PageSchema(BaseSchema):
     page_size = fields.Integer(required=True, load_from='pageSize')
     total = fields.Integer()
     total_page = fields.Integer(load_from='totalPage')
+    data = fields.Str(dump_only=True)
 
     def only_create(self):
         return super().only_create() + ('page', 'page_size')

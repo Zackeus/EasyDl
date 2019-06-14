@@ -11,7 +11,7 @@ from marshmallow import fields
 
 from extensions import db, cache
 from models.basic import BasicModel, BaseSchema
-from utils import validates, Unicode
+from utils import validates, Unicode, is_not_empty, is_empty, Assert
 
 
 class SysDict(BasicModel):
@@ -29,6 +29,41 @@ class SysDict(BasicModel):
     type = db.Column(db.String(length=64), name='TYPE', index=True, nullable=False, comment='类型')
     description = db.Column(db.String(length=225), name='DESCRIPTION', comment='描述')
     sort = db.Column(db.Integer, name='SORT', default=10, comment='排序')
+
+    def dao_find_page(self, page, error_out=False):
+        """
+        分页条件查询
+        :param page:
+        :param error_out:
+        :return:
+        """
+        # 条件查询
+        filter = []
+
+        if is_not_empty(self.type):
+            filter.append(SysDict.type == self.type)
+        if is_not_empty(self.description):
+            filter.append(SysDict.description.like('%{description}%'.format(description=self.description)))
+
+        pagination = self.query.filter(*filter).\
+            order_by(SysDict.sort.asc(), SysDict.type.asc(), SysDict.create_date.asc()).\
+            paginate(page=page.page, per_page=page.page_size, error_out=error_out)
+        page.init_pagination(pagination)
+
+        # 数据序列化 json
+        data_dict, errors = SysDictSchema().dump(page.data, many=True)
+        Assert.is_true(is_empty(errors), errors)
+        page.data = data_dict
+        return page, pagination.query
+
+    @cache.memoize()
+    def dao_get(self, id):
+        """
+
+        :param id:
+        :return:
+        """
+        return super().dao_get(id)
 
     @cache.memoize()
     def dao_get_all(self):
@@ -49,6 +84,26 @@ class SysDict(BasicModel):
         for dict_type in self.query.with_entities(SysDict.type).distinct().all():
             types.append(dict_type[0])
         return types
+
+    @cache.delete_cache([dao_get, dao_get_all, dao_get_types])
+    def dao_add(self, **kwargs):
+        """
+        添加字典
+        :param kwargs:
+        :return:
+        """
+        super().dao_create()
+        with db.auto_commit_db(**kwargs) as s:
+            s.add(self)
+
+    @cache.delete_cache([dao_get, dao_get_all, dao_get_types])
+    def dao_delete(self, **kwargs):
+        """
+        删除字典
+        :param kwargs:
+        :return:
+        """
+        super().dao_delete(**kwargs)
 
 
 class SysDictSchema(BaseSchema):

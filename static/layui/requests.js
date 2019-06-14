@@ -128,6 +128,47 @@ layui.define(['jquery','layer'], function(exports) {
 					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
 					btn.text("提交").attr("disabled",false).removeClass("layui-disabled");
                 })
+        },
+		// 添加字典
+		doAddDict: function (data, btn) {
+			requests.doPostJson(ctx + 'sys/dict', data,
+				function() {
+					btn.text("提交中...").attr("disabled","disabled").addClass("layui-disabled");
+				},
+				function (res) {
+					if (res.code === "0") {
+						layer.msg(res.msg, {icon: 6,time: 1000});
+						parent.layer.close(parent.layer.getFrameIndex(window.name));
+					} else {
+						layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
+						btn.text("提交").attr("disabled",false).removeClass("layui-disabled");
+					}
+                },
+				function (event) {
+					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
+					btn.text("提交").attr("disabled",false).removeClass("layui-disabled");
+                })
+        },
+		// 删除字典
+		doDelDict: function (data, index, tableIns) {
+			requests.doDeleteJson(ctx + 'sys/dict', data,
+				function() {
+					layer.close(index);
+					layer.load();
+				},
+				function (res) {
+					layer.closeAll('loading');
+					if (res.code === "0") {
+						layer.msg(res.msg, {icon: 6,time: 1000});
+						tableIns.reload();
+					} else {
+						layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
+					}
+                },
+				function (event) {
+					layer.closeAll('loading');
+					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
+                })
         }
 	};
 	exports('requests', requests);

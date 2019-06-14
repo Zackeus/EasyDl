@@ -231,6 +231,15 @@ def register_template_filter(app):
     :return:
     """
 
+    @app.template_filter('filter_none')
+    def filter_none(v):
+        """
+        空值过滤
+        :param v:
+        :return:
+        """
+        return '' if v is None else v
+
     @app.template_filter('ms_to_time')
     def ms_to_time(ms):
         """
