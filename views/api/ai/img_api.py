@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*- 
 # @Title : 
 # @Author : Zackeus
-# @File : index.py 
+# @File : img_api.py 
 # @Software: PyCharm
-# @Time : 2019/3/21 9:50
+# @Time : 2019/6/14 13:25
+
 
 import json
 import requests
@@ -17,10 +18,10 @@ from utils import Method, ContentType, render_info, MyResponse, validated, Locat
 from utils.file import FileUtil
 
 
-img_bp = Blueprint('img', __name__)
+img_api_bp = Blueprint('img_api', __name__)
 
 
-@img_bp.route('/img_data', methods=[Method.POST.value])
+@img_api_bp.route('/img_data', methods=[Method.POST.value])
 @validated(ImgDataSchema, only=ImgDataSchema().only_create(), consumes=ContentType.JSON.value)
 def add_img(img_data):
     """
@@ -46,7 +47,7 @@ def add_img(img_data):
     return render_info(MyResponse(msg='接收资料成功', handle_info=handle_info))
 
 
-@img_bp.route('/img_data/<string:id>', methods=[Method.GET.value])
+@img_api_bp.route('/img_data/<string:id>', methods=[Method.GET.value])
 @validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
 def get_img(img_data, id):
     """
@@ -69,7 +70,7 @@ def get_img(img_data, id):
     ))
 
 
-@img_bp.route('/img_detail/type', methods=[Method.PATCH.value])
+@img_api_bp.route('/img_detail/type', methods=[Method.PATCH.value])
 @validated(ImgDetailSchema, only=ImgDetailSchema().only_patch_type(), consumes=ContentType.JSON.value)
 def patch_img_detail_type(img_detail):
     """
@@ -91,19 +92,19 @@ def patch_img_detail_type(img_detail):
     return render_info(MyResponse('更新成功'))
 
 
-@img_bp.route('/img_Type', methods=[Method.POST.value])
+@img_api_bp.route('/img_Type', methods=[Method.POST.value])
 @validated(ImgTypeSchema, only=ImgTypeSchema().only_create(), consumes=ContentType.JSON.value)
 def add_img_type(img_type):
     """
     添加图片类型
     :param ImgTypeModel img_type:
-    :return: 
+    :return:
     """
     img_type.dao_add()
     return render_info(MyResponse('添加成功'))
 
 
-@img_bp.route('/push_info', methods=[Method.POST.value])
+@img_api_bp.route('/push_info', methods=[Method.POST.value])
 def push_info():
     print(json.dumps(request.json, indent=4, ensure_ascii=False))
     return render_info(MyResponse('OK'))
@@ -112,7 +113,7 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
-        'appId': '1232131',
+        'appId': 'sadasd',
         'fileData': [
             {
                 'fileName': 'pdf',
@@ -150,39 +151,37 @@ if __name__ == '__main__':
     #     'updateBy': '123123'
     # }
 
-    # url = 'http://127.0.0.1:8088/loan/get_loan/2dc64710552b11e9acf95800e36a34d8'
+    # url = 'http://127.0.0.1:8088/api/loan/get_loan/2dc64710552b11e9acf95800e36a34d8'
     # res = requests.get(url=url, headers=json_headers)
 
-    # url = 'http://127.0.0.1:8088/img/img_data'
+    # url = 'http://127.0.0.1:8088/api/img/img_data'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:8088/loan/img_Type'
+    # url = 'http://127.0.0.1:8088/api/loan/img_Type'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     #****************************************************************
 
-    # url = 'http://10.5.60.77:8088/img/img_data'
+    # url = 'http://10.5.60.77:8088/api/img/img_data'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
     # ****************************************************************
 
-    url = 'http://127.0.0.1:5000/img/img_data'
+    url = 'http://127.0.0.1:5000/api/img/img_data'
     res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/img/img_data/261fd1908e4f11e99ea75800e36a34d8'
+    # url = 'http://127.0.0.1:5000/api/img/img_data/261fd1908e4f11e99ea75800e36a34d8'
     # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/img/app_sys'
+    # url = 'http://127.0.0.1:5000/api/img/app_sys'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/img/img_Type'
+    # url = 'http://127.0.0.1:5000/api/img/img_Type'
     # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/img/img_detail/type'
+    # url = 'http://127.0.0.1:5000/api/img/img_detail/type'
     # res = requests.patch(url, json=data, headers=ContentType.JSON_UTF8.value)
 
     print(res)
     print(res.status_code)
     print(json.dumps(res.json(), indent=4, ensure_ascii=False))
-
-

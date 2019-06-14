@@ -7,6 +7,7 @@ from utils import is_empty, render_info, MyResponse
 from views import test_bp
 from views.ai import img_bp, audio_bp
 from views.sys import user_bp, area_bp, menu_bp, dict_bp
+from views.api import img_api_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.request import codes
 from models.audio import AudioLexerNeModel
@@ -72,6 +73,8 @@ def register_blueprints(app):
     app.register_blueprint(blueprint=audio_bp, url_prefix='/audio')
     app.register_blueprint(blueprint=test_bp, url_prefix='/test')
 
+    app.register_blueprint(blueprint=img_api_bp, url_prefix='/api/img')
+
 
 def register_extensions(app):
     """
@@ -86,13 +89,13 @@ def register_extensions(app):
 
     login_manager.init_app(app)
     # 登录过滤保护
-    login_manager.exempt_views((img_bp, audio_bp, test_bp, user_bp))
+    login_manager.exempt_views((user_bp, test_bp, audio_bp, img_api_bp))
 
     session.init_app(app)
 
     csrf.init_app(app)
     # csrf过滤保护
-    csrf.exempt_views((img_bp, audio_bp, test_bp))
+    csrf.exempt_views((test_bp, audio_bp, img_api_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':
