@@ -43,20 +43,23 @@ layui.define(['jquery','layer'], function(exports) {
 		doLogin: function (data, loginBtn) {
 			requests.doPostJson(ctx + 'sys/user/login', data,
 				function () {
-					loginBtn.text("登录中...").attr("disabled","disabled").addClass("layui-disabled");
+					loginBtn.addClass("layui-btn-disabled").prop("disabled", true).text("登录中…");
+					// loginBtn.text("登录中...").attr("disabled","disabled").addClass("layui-disabled");
                 },
 				function (result) {
 					if (result.code === "0") {
 						location.href = ctx + 'sys/index';
 					} else {
 						layer.msg(result.msg, {icon: 5,time: 2000,shift: 6}, function(){});
-						loginBtn.text("登录").attr("disabled",false).removeClass("layui-disabled");
+						loginBtn.text("登录").attr("disabled",false).removeClass("layui-btn-disabled");
+						// loginBtn.text("登录").attr("disabled",false).removeClass("layui-disabled");
 					}
 				},
 				function (event) {
 					// 错误信息
 					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
-					loginBtn.text("登录").attr("disabled",false).removeClass("layui-disabled");
+					loginBtn.text("登录").attr("disabled", false).removeClass("layui-btn-disabled");
+					// loginBtn.text("登录").attr("disabled",false).removeClass("layui-disabled");
                 }
 			)
         },

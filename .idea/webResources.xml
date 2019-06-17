@@ -41,6 +41,12 @@
             <path value="file://$PROJECT_DIR$/static/js/sys" />
             <path value="file://$PROJECT_DIR$/static/js/sys/menu" />
             <path value="file://$PROJECT_DIR$/static/js/sys/dict" />
+            <path value="file://$PROJECT_DIR$/static/css/plugins" />
+            <path value="file://$PROJECT_DIR$/static/css/plugins/icon-extend" />
+            <path value="file://$PROJECT_DIR$/static/js/plugins" />
+            <path value="file://$PROJECT_DIR$/static/css/plugins/font" />
+            <path value="file://$PROJECT_DIR$/static/js/plugins/layui-extend" />
+            <path value="file://$PROJECT_DIR$/static/json" />
           </resourceRoots>
         </entryData>
       </entry>
