@@ -7,7 +7,6 @@
 # @Time : 2019/3/21 9:50
 
 import json
-import requests
 from flask import Blueprint, current_app, request
 
 from models.img import ImgDataModel, ImgDataSchema, ImgTypeModel, ImgTypeSchema, ImgDetailModel, ImgDetailSchema
@@ -107,82 +106,5 @@ def add_img_type(img_type):
 def push_info():
     print(json.dumps(request.json, indent=4, ensure_ascii=False))
     return render_info(MyResponse('OK'))
-
-
-if __name__ == '__main__':
-
-    data = {
-        'appId': '1232131',
-        'fileData': [
-            {
-                'fileName': 'pdf',
-                'fileFormat': 'pdf',
-                'fileBase64': file_to_base64('D:/AIData/5.pdf')
-            },
-            {
-                'fileName': '图片',
-                'fileFormat': 'jpg',
-                'fileBase64': file_to_base64('D:/AIData/1.png')
-            }
-        ],
-        'appSysCode': 'OP_LOAN_H',
-        'createBy': '17037',
-        'remarks': '备注信息...........',
-        'pushUrl': 'http://127.0.0.1:5000/img/push_info'
-    }
-
-    # data = {
-    #     'code': 'OP_LOAN_H',
-    #     'desc': '贷后资料',
-    #     'remarks': '由运营平台提交的贷后资料'
-    # }
-
-    # data = {
-    #     'typeCode': 'abc',
-    #     'typeExplain': '测试',
-    #     'isOcr': '0',
-    #     'remarks': '你大爷'
-    # }
-
-    # data = {
-    #     'id': 'ddb87e9a8e5311e9899c5800e36a34d8',
-    #     'imgTypeCode': 'IVP',
-    #     'updateBy': '123123'
-    # }
-
-    # url = 'http://127.0.0.1:8088/loan/get_loan/2dc64710552b11e9acf95800e36a34d8'
-    # res = requests.get(url=url, headers=json_headers)
-
-    # url = 'http://127.0.0.1:8088/img/img_data'
-    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    # url = 'http://127.0.0.1:8088/loan/img_Type'
-    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    #****************************************************************
-
-    # url = 'http://10.5.60.77:8088/img/img_data'
-    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    # ****************************************************************
-
-    url = 'http://127.0.0.1:5000/img/img_data'
-    res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    # url = 'http://127.0.0.1:5000/img/img_data/261fd1908e4f11e99ea75800e36a34d8'
-    # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
-
-    # url = 'http://127.0.0.1:5000/img/app_sys'
-    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    # url = 'http://127.0.0.1:5000/img/img_Type'
-    # res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    # url = 'http://127.0.0.1:5000/img/img_detail/type'
-    # res = requests.patch(url, json=data, headers=ContentType.JSON_UTF8.value)
-
-    print(res)
-    print(res.status_code)
-    print(json.dumps(res.json(), indent=4, ensure_ascii=False))
 
 
