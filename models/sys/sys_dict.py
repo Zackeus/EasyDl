@@ -104,7 +104,7 @@ class SysDict(BasicModel):
             types.append(dict_type[0])
         return types
 
-    @cache.delete_cache([dao_get, dao_get_all, dao_get_types, dao_get_type_value])
+    @cache.delete_cache([dao_get, dao_get_all, dao_get_types, dao_get_type_value, dao_get_type_values])
     def dao_add(self, **kwargs):
         """
         添加字典
@@ -115,7 +115,7 @@ class SysDict(BasicModel):
         with db.auto_commit_db(**kwargs) as s:
             s.add(self)
 
-    @cache.delete_cache([dao_get, dao_get_all, dao_get_types, dao_get_type_value])
+    @cache.delete_cache([dao_get, dao_get_all, dao_get_types, dao_get_type_value, dao_get_type_values])
     def dao_delete(self, **kwargs):
         """
         删除字典
