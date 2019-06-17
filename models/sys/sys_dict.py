@@ -76,6 +76,15 @@ class SysDict(BasicModel):
         return self.query.filter(SysDict.type == type, SysDict.value == value).first()
 
     @cache.memoize()
+    def dao_get_type_values(self, type):
+        """
+        根据类型查询全部value
+        :param type:
+        :return:
+        """
+        return self.query.filter(SysDict.type == type).order_by(SysDict.sort.asc()).all()
+
+    @cache.memoize()
     def dao_get_all(self):
         """
         获取全部字典

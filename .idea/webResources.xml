@@ -47,6 +47,8 @@
             <path value="file://$PROJECT_DIR$/static/css/plugins/font" />
             <path value="file://$PROJECT_DIR$/static/js/plugins/layui-extend" />
             <path value="file://$PROJECT_DIR$/static/json" />
+            <path value="file://$PROJECT_DIR$/static/js/ai" />
+            <path value="file://$PROJECT_DIR$/static/js/ai/img" />
           </resourceRoots>
         </entryData>
       </entry>

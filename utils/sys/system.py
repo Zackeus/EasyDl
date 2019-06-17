@@ -10,9 +10,14 @@
 import html
 from utils.digests import get_salt, digest
 
+from models.sys import SysDict
+
 HASH_ALGORITHM = 'sha1'
 HASH_INTERATIONS = 1024
 SALT_SIZE = 8
+
+# 来源系统字典类型
+APP_SYS_TYPE = 'APP_SYS'
 
 
 def entrypt_password(plain_password):
@@ -39,6 +44,23 @@ def validate_password(plain_password, hash_password):
     salt = bytes.fromhex(hash_password[0:16])
     new_hash_password = digest(plain_password, salt, HASH_ALGORITHM, HASH_INTERATIONS)
     return hash_password == (salt.hex() + new_hash_password.hex())
+
+
+def get_app_sys(app_sys_code):
+    """
+    根据系统代号查询来源系统
+    :param app_sys_code:
+    :return:
+    """
+    return SysDict().dao_get_type_value(APP_SYS_TYPE, app_sys_code)
+
+
+def get_app_sys_types():
+    """
+    查询全部来源系统类型
+    :return:
+    """
+    return SysDict().dao_get_type_values(APP_SYS_TYPE)
 
 
 if __name__ == '__main__':

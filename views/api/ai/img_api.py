@@ -16,6 +16,7 @@ from models.img import ImgDataModel, ImgDataSchema, ImgTypeModel, ImgTypeSchema,
 from utils import Method, ContentType, render_info, MyResponse, validated, Locations, file_to_base64, \
     Assert, is_not_empty, is_empty, codes
 from utils.file import FileUtil
+from utils.sys import get_app_sys
 
 
 img_api_bp = Blueprint('img_api', __name__)
@@ -30,7 +31,7 @@ def add_img(img_data):
     :return:
     """
     img_data.dao_create()
-    app_sys = img_data.dao_get_app_sys(img_data.app_sys_code)
+    app_sys = get_app_sys(img_data.app_sys_code)
     Assert.is_true(is_not_empty(app_sys), '无效的应用系统：{0}'.format(img_data.app_sys_code), codes.unprocessable)
 
     # 通过外键添加
@@ -129,7 +130,7 @@ if __name__ == '__main__':
         'appSysCode': 'OP_LOAN_H',
         'createBy': '17037',
         'remarks': '备注信息...........',
-        'pushUrl': 'http://127.0.0.1:5000/img/push_info'
+        'pushUrl': 'http://127.0.0.1:5000/api/img/push_info'
     }
 
     # data = {
@@ -170,7 +171,7 @@ if __name__ == '__main__':
     url = 'http://127.0.0.1:5000/api/img/img_data'
     res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
 
-    # url = 'http://127.0.0.1:5000/api/img/img_data/261fd1908e4f11e99ea75800e36a34d8'
+    # url = 'http://127.0.0.1:5000/api/img/img_data/6c20590c90d411e9aea85800e36a34d8'
     # res = requests.get(url=url, headers=ContentType.JSON_UTF8.value)
 
     # url = 'http://127.0.0.1:5000/api/img/app_sys'

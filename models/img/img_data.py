@@ -15,7 +15,7 @@ from models.file import FileModel, FileSchema
 from models.img.img_detail import ImgDetailModel, ImgDetailSchema
 from models.sys import SysDict
 
-from utils import validates as MyValidates, base64_to_file, is_empty, is_not_empty
+from utils import validates as MyValidates, base64_to_file, is_empty, is_not_empty, Assert
 from utils.file import FileUtil, FileFormat, PDFUtil
 from marshmallow import fields, validate, validates, ValidationError
 
@@ -25,8 +25,6 @@ class ImgDataModel(BasicModel):
     图片资料流水
     """
     __tablename__ = 'IMG_DATA'
-    # 来源系统字典类型
-    __app_sys_type__ = 'APP_SYS'
 
     __table_args__ = (
         db.Index('ix_IMG_DATA_APP_ID_APP_SYS_ID', 'APP_ID', 'APP_SYS_ID', unique=True),
@@ -77,14 +75,29 @@ class ImgDataModel(BasicModel):
         self.file_data = file_data
         self._app_sys_code = app_sys_code
 
-    def dao_get_app_sys(self, app_sys_code):
+    def dao_find_page(self, page, error_out=False):
         """
-        根据系统代号查询来源系统
-        :param app_sys_code:
-        :rtype: SysDict
+        分页条件查询
+        :param page:
+        :param error_out:
         :return:
         """
-        return SysDict().dao_get_type_value(self.__app_sys_type__, app_sys_code)
+        # 条件查询
+        filter = []
+
+        if is_not_empty(self.app_sys_id):
+            filter.append(ImgDataModel.app_sys_id == self.app_sys_id)
+
+        pagination = self.query.filter(*filter).\
+            order_by(ImgDataModel.create_date.asc()).\
+            paginate(page=page.page, per_page=page.page_size, error_out=error_out)
+        page.init_pagination(pagination)
+
+        # 数据序列化 json
+        img_data_dict, errors = ImgDataSchema(only=ImgDataSchema().dump_only_page()).dump(page.data, many=True)
+        Assert.is_true(is_empty(errors), errors)
+        page.data = img_data_dict
+        return page, pagination.query
 
     def dao_get_todo(self, limit=10):
         """
@@ -184,13 +197,20 @@ class ImgDataSchema(BaseSchema):
         validate=MyValidates.MyLength(min=1, max=64, not_empty=False),
         load_from='appId'
     )
+
+    app_sys_id = fields.Str(
+        required=True,
+        validate=MyValidates.MyLength(min=1, max=64, not_empty=False),
+        load_from='appSysId'
+    )
+
     page_num = fields.Integer(load_from='pageNum')
     success_num = fields.Integer(load_from='successNum')
     fail_num = fields.Integer(load_from='failNum')
-    is_handle = fields.Boolean(load_only=True, load_from='isHandle')
-    push_url = fields.Str(load_only=True, validate=validate.URL(), load_from='pushUrl')
-    push_times = fields.Integer(load_only=True, load_from='pushTimes')
-    is_push = fields.Boolean(load_only=True, load_from='isPush')
+    is_handle = fields.Boolean(load_from='isHandle')
+    push_url = fields.Str(validate=validate.URL(), load_from='pushUrl')
+    push_times = fields.Integer(load_from='pushTimes')
+    is_push = fields.Boolean(load_from='isPush')
 
     app_sys_code = fields.Str(
         required=True,
@@ -248,6 +268,14 @@ class ImgDataSchema(BaseSchema):
         return super().only_create() + \
                ('app_id', 'app_sys_code',
                 'file_data.file_name', 'file_data.file_format', 'file_data.file_base64', 'push_url')
+
+    def only_page(self):
+        return super().only_page() + ('app_sys_id', )
+
+    def dump_only_page(self):
+        return super().dump_only_page() + \
+               ('app_id', 'app_sys_code', 'page_num', 'success_num', 'fail_num', 'is_handle', 'push_url',
+                'push_times', 'is_push')
 
 
 
