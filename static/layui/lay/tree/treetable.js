@@ -205,7 +205,7 @@ layui.define(['layer', 'table', 'requests'], function (exports) {
         }
     };
 
-    layui.link(ctxStatic + '/layui/css/tree/treetable.css');
+    layui.link(ctxStatic + 'layui/css/tree/treetable.css');
 
     // 给图标列绑定事件
     $('body').on('click', '.treeTable .treeTable-icon', function () {

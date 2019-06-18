@@ -1,5 +1,5 @@
 layui.extend({
-	requests: '{/}' + ctxStatic + '/layui/requests'
+	requests: '{/}' + ctxStatic + 'layui/requests'
 });
 
 layui.use(['form', 'layer', 'table', 'requests'],function(){
@@ -12,9 +12,9 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
     layer.load();
     var imgDataListIns =  table.render({
         elem: '#imgDataList',
-        title: '字典表',								//  定义 table 的大标题（在文件导出等地方会用到）layui 2.4.0 新增
+        title: '图片流水',							//  定义 table 的大标题（在文件导出等地方会用到）layui 2.4.0 新增
         method : 'GET',							    // 	接口http请求类型，默认：get
-        url : ctx + 'img/img_data/page',
+        url : ctx + 'ai/img/img_data/page',
         toolbar: '#imgDataListToolBar',
         contentType: 'application/json',			// 	发送到服务端的内容编码类型
         cellMinWidth : 50, 							//	（layui 2.2.1 新增）全局定义所有常规单元格的最小宽度（默认：60），一般用于列宽自动分配的情况。其优先级低于表头参数中的 minWidth
@@ -52,7 +52,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
             {field: 'updateDate', title: '更新时间', align:'center', sort: 'true', templet: function(d) {
                 return new Date(d.updateDate).toLocaleString();
             }},
-            {field: 'remarks', title: '备注', align:'center', sort: 'true'},
+            {field: 'remarks', title: '备注', align:'center'},
             {templet:'#imgDataListBar', title: '操作', fixed:"right", align: 'center'}
         ]],
         done: function(res, curr, count) {
@@ -94,13 +94,55 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 			break;
 
         case "browse":
-            console.log('浏览：' + obj.data.id);
+            browseImg(obj.data.id);
             break;
 
 		default:
 			break;
 		}
     });
+
+    // 浏览图片
+    function browseImg(data) {
+    	var url = data === "" || data == null || data === undefined ?
+            (ctx + 'ai/img/img_data') : (ctx + 'ai/img/img_data/' + data);
+
+    	var browseImgIndex = layui.layer.open({
+            type: 2,
+            title: '图片浏览', 		// 不显示标题栏
+            closeBtn: 1,			// 关闭按钮
+            shade: 0, 				// 遮罩
+            shadeClose: false, 		// 是否点击遮罩关闭
+            anim: 0, 				// 弹出动画
+            isOutAnim: true, 		// 关闭动画
+            scrollbar: false, 		// 是否允许浏览器出现滚动条
+            maxmin: true, 			// 最大最小化
+            id: 'LAY_IMG', 		    // 用于控制弹层唯一标识
+            moveType: 1,
+            content: [url],
+            success : function(layero, index) {
+                //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+                $(window).on("resize", browseImgResize = function() {
+                    layui.layer.full(window.sessionStorage.getItem("browseImgIndex"));
+                });
+
+                var body = layui.layer.getChildFrame('body', index);
+                setTimeout(function() {
+                    layui.layer.tips('点击此处返回字典列表', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                }, 500)
+            },
+            cancel: function(index, layero) {
+            },
+            end:function(index) {
+                $(window).unbind("resize", browseImgResize);
+            	// dictListtIns.reload();
+           }
+    	});
+    	layui.layer.full(browseImgIndex);
+        window.sessionStorage.setItem("browseImgIndex", browseImgIndex);
+	}
 
     // // 添加字典
     // function addDict(data) {
@@ -162,5 +204,4 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
     $("body").on("click",".layui-table-body.layui-table-main tbody tr td",function() {
         $(this).find(".layui-table-edit").addClass("layui-"+$(this).attr("align"));
     });
-
 });

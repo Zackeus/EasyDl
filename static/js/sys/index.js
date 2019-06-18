@@ -1,8 +1,8 @@
 var $,tab,dataStr,layer;
 
 layui.extend({
-	bodyTab: '{/}' + ctxStatic + '/js/sys/bodyTab',
-	requests: '{/}' + ctxStatic + '/layui/requests'
+	bodyTab: '{/}' + ctxStatic + 'js/sys/bodyTab',
+	requests: '{/}' + ctxStatic + 'layui/requests'
 });
 
 layui.use(['bodyTab','form','element','layer','jquery', 'requests'],function(){

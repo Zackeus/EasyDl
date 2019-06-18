@@ -1,5 +1,5 @@
 layui.extend({
-	requests: '{/}' + ctxStatic + '/layui/requests'
+	requests: '{/}' + ctxStatic + 'layui/requests'
 });
 
 layui.use(['form', 'layer', 'table', 'requests'],function(){
@@ -44,6 +44,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
             {field: 'type', title: '类型', align:'center'},
             {field: 'description', title: '描述', align:'center'},
             {field: 'sort', title: '排序', sort: 'true', align:'center'},
+            {field: 'remarks', title: '备注', align:'center'},
             {title: '操作', fixed:"right", align: 'center', templet:'#dictListBar'}
         ]],
         done: function(res, curr, count) {

@@ -49,6 +49,7 @@
             <path value="file://$PROJECT_DIR$/static/json" />
             <path value="file://$PROJECT_DIR$/static/js/ai" />
             <path value="file://$PROJECT_DIR$/static/js/ai/img" />
+            <path value="file://$PROJECT_DIR$/static/images/test" />
           </resourceRoots>
         </entryData>
       </entry>

@@ -15,7 +15,7 @@
 
     <script type="text/javascript">
         let ctx = "{{ request.host_url }}",
-            ctxStatic = "{{ request.host_url }}static";
+            ctxStatic = "{{ request.host_url }}static/";
     </script>
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='layui/css/layui.css') }}"/>

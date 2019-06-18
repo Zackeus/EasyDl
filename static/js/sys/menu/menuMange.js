@@ -1,6 +1,6 @@
 layui.extend({
-	treetable: '{/}' + ctxStatic + '/layui/lay/tree/treetable',
-	requests: '{/}' + ctxStatic + '/layui/requests'
+	treetable: '{/}' + ctxStatic + 'layui/lay/tree/treetable',
+	requests: '{/}' + ctxStatic + 'layui/requests'
 });	
 	    
 layui.use(['table', 'treetable', 'requests', 'layer'], function() {

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}图片浏览{% endblock %}
+
+{% block head %}
+{% endblock head %}
+
+{% block bodyClass %}"childrenBody"{% endblock bodyClass %}
+
+{% block body %}
+    <form class="layui-form">
+{#        <blockquote class="layui-elem-quote news_search">#}
+{#            <div class="layui-inline">#}
+{#                <input type="checkbox" name="selectAll" id="selectAll" lay-filter="selectAll" lay-skin="primary" title="全选">#}
+{#            </div>#}
+{#            <div class="layui-inline">#}
+{#                <a class="layui-btn layui-btn-sm layui-btn-danger batchDel">批量删除</a>#}
+{#            </div>#}
+{#            <div class="layui-inline">#}
+{#                <a class="layui-btn layui-btn-sm uploadNewImg">上传新图片</a>#}
+{#            </div>#}
+{#        </blockquote>#}
+        <ul class="layer-photos-demo" id="Images"></ul>
+    </form>
+{% endblock body %}
+
+{% block footer %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/ai/img/images.js') }}"></script>
+{% endblock footer %}

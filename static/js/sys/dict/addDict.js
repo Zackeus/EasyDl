@@ -1,5 +1,5 @@
 layui.extend({
-	requests: '{/}' + ctxStatic + '/layui/requests'
+	requests: '{/}' + ctxStatic + 'layui/requests'
 });
 
 layui.use(['requests', 'form'],function(){

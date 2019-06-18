@@ -69,7 +69,7 @@ def register_blueprints(app):
     app.register_blueprint(blueprint=menu_bp, url_prefix='/sys/menu')
     app.register_blueprint(blueprint=dict_bp, url_prefix='/sys/dict')
 
-    app.register_blueprint(blueprint=img_bp, url_prefix='/img')
+    app.register_blueprint(blueprint=img_bp, url_prefix='/ai/img')
     app.register_blueprint(blueprint=audio_bp, url_prefix='/audio')
     app.register_blueprint(blueprint=test_bp, url_prefix='/test')
 
