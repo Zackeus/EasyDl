@@ -7,6 +7,7 @@
 # @Time : 2019/4/22 16:27
 
 
+from threading import Thread
 from functools import wraps
 from marshmallow.compat import basestring
 from flask import current_app
@@ -109,6 +110,38 @@ def auto_wired(key):
     return decorator
 
 
+class TimeoutException(Exception):
+    pass
+
+
+def set_timeout(timeout):
+    def decorator(func):
+        @wraps(func)
+        def to_do(*args, **kwargs):
+            class TimeLimited(Thread):
+                def __init__(self, _error=None, ):
+                    Thread.__init__(self)
+                    self._error = _error
+
+                def run(self):
+                    try:
+                        func(*args, **kwargs)
+                    except Exception as e:
+                        self._error = e
+
+            t = TimeLimited()
+            # t.daemon = True
+            t.start()
+
+            t.join(timeout)
+
+            if t._error:
+                raise t._error
+
+            if t.is_alive():
+                raise TimeoutException('timeout for %s' % (repr(func)))
+        return to_do
+    return decorator
 
 
 

@@ -32,7 +32,6 @@ layui.define(['flow','form','layer'], function (exports) {
 
             //弹出层
             $("body").on("click", param.elem + " img", function() {
-                console.log(param.elem + " img");
                 var photos = {
                     "title": "图片管理",
                     "id": param.elem,
