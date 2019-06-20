@@ -8,6 +8,7 @@ layui.define(['flow','form','layer'], function (exports) {
     var imgflow = {
         // 加载数据
         load: function (param) {
+            $(param.elem).addClass('flow-img');
             flow.load({
                 elem: param.elem,                                           //流加载容器
                 done: function(page, next) {
@@ -22,11 +23,10 @@ layui.define(['flow','form','layer'], function (exports) {
                             // before && before();
                         },
                         success : function(res) {
-                            console.log(res);
                             var imgList = [];
                                 imgData = res.data;
                             var maxPage = param.imgNums*page < imgData.length ? param.imgNums*page : imgData.length;
-                            setTimeout(function(){
+                            setTimeout(function() {
                                 for(var i= param.imgNums*(page-1); i< maxPage; i++){
                                     imgList.push('<li>' +
                                         '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
@@ -36,31 +36,13 @@ layui.define(['flow','form','layer'], function (exports) {
                                 }
                                 next(imgList.join(''), page < (imgData.length/param.imgNums));
                                 form.render();
+                                $(param.elem + " li img").height($(param.elem + " li img").width() * 1.3);
                             }, 500);
                         },
                         error : function(event) {
                             // error && error(event);
                         }
                     });
-
-                    //加载下一页
-                    // $.getJSON(param.url, function(res) {
-                    //     console.log(res);
-                    //     var imgList = [];
-                    //         imgData = res.data;
-                    //     var maxPage = param.imgNums*page < imgData.length ? param.imgNums*page : imgData.length;
-                    //     setTimeout(function(){
-                    //         for(var i= param.imgNums*(page-1); i< maxPage; i++){
-                    //             imgList.push('<li>' +
-                    //                 '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
-                    //                 '<div class="operate"><div class="check">' +
-                    //                 '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" title="'+imgData[i].alt+'">' +
-                    //                 '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
-                    //         }
-                    //         next(imgList.join(''), page < (imgData.length/param.imgNums));
-                    //         form.render();
-                    //     }, 500);
-                    // });
                 }
             });
 
@@ -76,6 +58,11 @@ layui.define(['flow','form','layer'], function (exports) {
                     photos: photos,
                     anim: 5
                 });
+            });
+
+            //设置图片的高度
+            $(window).resize(function() {
+                $(param.elem + " li img").height($(param.elem + " li img").width() * 1.3);
             });
         }
     };

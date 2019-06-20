@@ -71,7 +71,7 @@ def process_img(app, baidu, img_split_details):
 
                 with db.auto_commit_db():
                     # 图片压缩转 base64
-                    img_base64 = ImgUtil.img_compress(img_file.file_path, threshold=0.5)
+                    img_base64 = ImgUtil.img_compress(img_file.file_path)
                     class_info = baidu.to_class(image_bs64=img_base64)
 
                     # 分类失败

@@ -76,7 +76,7 @@ class PDFUtil(object):
 
 
 if __name__ == '__main__':
-    print(PDFUtil.pdf_to_pic('D:/FileData/e537648a923b11e9bb009032c5b02716/陈秀祥贷后资料.pdf',
-                             'D:/FileData/e537648a923b11e9bb009032c5b02716/test'))
+    print(PDFUtil.pdf_to_pic('D:/FileData/ee72e06e8b1e11e9b7c79032c5b02716/1.pdf',
+                             'D:/FileData/ee72e06e8b1e11e9b7c79032c5b02716/test'))
 
 

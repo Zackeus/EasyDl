@@ -138,15 +138,15 @@ h2.method{ font-size:18px; line-height:45px; padding-left:5px;}
 .thumbImg{ max-width:100%; max-height:100%; border:none;}
 .thumbBox:after{ position:absolute; width:100%; height:100%;line-height:153px; z-index:-1; text-align:center; font-size:20px; content:"缩略图"; left:0; top:0; color:#9F9F9F;}
 /*图片管理*/
-#Images li{ width:19%; margin:0.5% 0.5%; float: left; overflow:hidden;}
-#Images li img{ width:100%; cursor:pointer; }
-#Images li .operate{ display: block; height: 40px; width:100%; background:#f4f5f9; }
-#Images li .operate .check{ float:left; margin-left:11px; height:18px; padding:11px 0; width:74%; position:relative;}
-#Images li .operate .check .layui-form-checkbox[lay-skin=primary]{ width:100%;}
-#Images li .operate .check .layui-form-checkbox[lay-skin=primary] span{ padding:0 5px 0 25px; width:100%; box-sizing:border-box;}
-#Images li .operate .check .layui-form-checkbox[lay-skin=primary] i{position:absolute; left:0; top:0;}
-#Images li .operate .img_del{ float:right; margin:9px 11px 0 0; font-size: 22px !important; cursor:pointer; }
-#Images li .operate .img_del:hover{ color:#f00; }
+.flow-img li{width:19%; margin:0.5% 0.5%; float: left; overflow:hidden;}
+.flow-img li img{width:100%; cursor:pointer; }
+.flow-img li .operate{ display: block; height: 40px; width:100%; background:#f4f5f9; }
+.flow-img li .operate .check{ float:left; margin-left:11px; height:18px; padding:11px 0; width:74%; position:relative;}
+.flow-img li .operate .check .layui-form-checkbox[lay-skin=primary]{ width:100%;}
+.flow-img li .operate .check .layui-form-checkbox[lay-skin=primary] span{ padding:0 5px 0 25px; width:100%; box-sizing:border-box;}
+.flow-img li .operate .check .layui-form-checkbox[lay-skin=primary] i{position:absolute; left:0; top:0;}
+.flow-img li .operate .img_del{ float:right; margin:9px 11px 0 0; font-size: 22px !important; cursor:pointer; }
+.flow-img li .operate .img_del:hover{ color:#f00; }
 @media screen and (max-width:1050px){#Images li{ width:24%;}}
 @media screen and (max-width: 750px){#Images li{ width:49%;}}
 @media screen and (max-width:432px){#Images li{ width:99%;}}

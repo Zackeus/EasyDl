@@ -20,6 +20,17 @@ from utils.file import FileFormat
 class ImgUtil(object):
 
     @staticmethod
+    def get_img_pixel(path):
+        """
+        获取图片像素大小
+        :param path:
+        :return:
+        """
+        Assert.is_true(os.path.isfile(path), '图片不存在：{0}'.format(path))
+        with Image.open(filename) as i:
+            return i.size
+
+    @staticmethod
     def img_compress(path, threshold=4):
         """
         将图片压缩到指定阀值大小的 base64
@@ -27,15 +38,15 @@ class ImgUtil(object):
         :param threshold:阀值大小(单位：M)
         :return:
         """
-        Assert.is_true(assert_condition=os.path.isfile(path),
-                       assert_msg='图片不存在：{0}'.format(path))
         # 阈值换算成比特
-        threshold = threshold*1024*1024
+        _threshold = threshold * 1024 * 1024
+        Assert.is_true(os.path.isfile(path), '图片不存在：{0}'.format(path))
+        w, h = ImgUtil.get_img_pixel(filename)
+
         with Image.open(path) as im:
-            if os.path.getsize(path) > threshold:
-                width, height = im.size
+            if w * h > threshold:
                 new_width = 1024
-                new_height = int(new_width * height * 1.0 / width)
+                new_height = int(new_width * h * 1.0 / w)
                 resized_im = im.resize((new_width, new_height))
                 return encodes.pil_to_base64(resized_im)
             return encodes.pil_to_base64(im)
@@ -66,11 +77,10 @@ class ImgChannel(Enum):
 
 
 if __name__ == '__main__':
-    filename = 'D:/FileData/c60d0388932211e9a11a5800e36a34d8/Img/c634fdec932211e994335800e36a34d8/1.JPG'
-    # base_str = ImgUtil.img_compress(filename)
-    # print(base_str)
+    filename = 'D:/FileData/d03544f8932a11e9b7219032c5b02716/Img/d056a5da932a11e9a5d19032c5b02716/10.JPG'
+    base_str = ImgUtil.img_compress(filename)
+    print(base_str)
     # encodes.base64_to_file(base_str,
     #                        'D:/FileData/c60d0388932211e9a11a5800e36a34d8/Img/c634fdec932211e994335800e36a34d8/',
     #                        'zz',
     #                        'JPG')
-    ImgUtil.loss_less(filename, filename)
