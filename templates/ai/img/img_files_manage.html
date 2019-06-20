@@ -3,6 +3,7 @@
 {% block title %}图片浏览{% endblock %}
 
 {% block head %}
+    <meta name="img_data_id" content="{{ img_data_id }}">
 {% endblock head %}
 
 {% block bodyClass %}"childrenBody"{% endblock bodyClass %}
@@ -25,5 +26,5 @@
 {% endblock body %}
 
 {% block footer %}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/ai/img/images.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/ai/img/imgFilesManage.js') }}"></script>
 {% endblock footer %}

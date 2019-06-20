@@ -125,6 +125,7 @@ class Unicode(Enum):
     GBK = 'GBK'
     UTF_8 = 'UTF-8'
     UTF_16 = 'UTF-16'
+    LATIN_1 = 'latin-1'
 
 
 class AESUtil(object):

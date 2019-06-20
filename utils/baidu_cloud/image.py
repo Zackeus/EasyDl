@@ -118,15 +118,22 @@ if __name__ == '__main__':
 
     # image = Image(baidu_cloud=baidu)
 
-    image = Image('ijGkwuoHcLtEYsmd32C0R2ga', 'eVGhrdZhfLRbVTHvHuZM19vHOAlbYfx6')
+    image = Image('vqxa46w07EWb5UpMQuQ1pKLz', 'RPYI6LZnFSU8331umUcnA0G8bewrZjFX')
     print(image.token)
 
-    base_str = ImgUtil.img_compress(path='D:/AIData/1.PNG')
+    base_str = ImgUtil.img_compress(
+        path='D:/FileData/c60d0388932211e9a11a5800e36a34d8/Img/c634fdec932211e994335800e36a34d8/1.jpg',
+        threshold=0.5
+    )
+    print(base_str)
+    print(len(base_str))
     info = image.to_class(
         'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/classification/post_loan?access_token={access_token}',
         base_str
     )
-    print(info.error_code)
-    for r in info.results:
-        print(r.name, r.score)
+    if is_not_empty(info.error_code):
+        print(info.error_code)
+    else:
+        for r in info.results:
+            print(r.name, r.score)
 

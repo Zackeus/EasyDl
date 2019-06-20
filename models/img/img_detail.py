@@ -52,6 +52,16 @@ class ImgDetailModel(BasicModel):
     err_msg = db.Column(db.String(length=100), name='ERR_MSG', comment='错误信息')
 
     @property
+    def file_md5(self):
+        """
+        图片文件md5值
+        :return:
+        """
+        from models.file import FileModel
+        file_model = FileModel().dao_get(self.file_id)  # type: FileModel
+        return file_model.md5_id if is_not_empty(file_model) else None
+
+    @property
     def file_data(self):
         """
         图片文件的base64字符
@@ -162,6 +172,7 @@ class ImgDetailSchema(BaseSchema):
     err_msg = fields.Str(validate=validate.Length(max=100))
     file_data = fields.Str(required=True, dump_only=True)
     file_path = fields.Str(required=True, dump_only=True)
+    file_md5 = fields.Str(required=True, dump_only=True)
     img_type_code = fields.Str(
         required=True,
         validate=MyValidates.MyLength(min=1, max=10, not_empty=False),
@@ -177,3 +188,8 @@ class ImgDetailSchema(BaseSchema):
 
     def only_patch_type(self):
         return super().only_update() + ('id', 'img_type_code', )
+
+    def dump_only_page(self):
+        return super().dump_only_page() + \
+               ('img_data_id', 'parent_file_id', 'file_id', 'img_type_id', 'is_handle', 'err_code', 'err_msg',
+                'img_type', 'file_md5', )

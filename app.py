@@ -6,7 +6,7 @@ from flask_wtf.csrf import CSRFError
 from utils import is_empty, render_info, MyResponse
 from views import test_bp
 from views.ai import img_bp, audio_bp
-from views.sys import user_bp, area_bp, menu_bp, dict_bp
+from views.sys import user_bp, area_bp, menu_bp, dict_bp, file_bp
 from views.api import img_api_bp
 from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
 from utils.request import codes
@@ -68,6 +68,7 @@ def register_blueprints(app):
     app.register_blueprint(blueprint=user_bp, url_prefix='/sys/user')
     app.register_blueprint(blueprint=menu_bp, url_prefix='/sys/menu')
     app.register_blueprint(blueprint=dict_bp, url_prefix='/sys/dict')
+    app.register_blueprint(blueprint=file_bp, url_prefix='/sys/file')
 
     app.register_blueprint(blueprint=img_bp, url_prefix='/ai/img')
     app.register_blueprint(blueprint=audio_bp, url_prefix='/audio')

@@ -6,10 +6,11 @@
 # @Software: PyCharm
 # @Time : 2019/3/21 10:23
 
-
 import os
 import logging
-import time
+import re
+import datetime
+import codecs
 from functools import wraps
 from contextlib import contextmanager
 from flask import Blueprint
@@ -96,6 +97,111 @@ class Cache(BaseCache):
         return decorator
 
 
+class MyLoggerHandler(logging.FileHandler):
+
+    def __init__(self, filename, when='D', backupCount=0, encoding=None, delay=False, suffix=None, extMatch=None):
+        """
+        日志
+        :param filename: 文件路径
+        :param when: 日期 ('M': 一分钟一个文件; 'D': 一天一个文件)
+        :param backupCount: 最新保留数; 0为不删除
+        :param encoding:
+        :param delay:
+        :param suffix: 文件名后缀
+        :param extMatch: 文件名正则
+        """
+        self.prefix = filename
+        self.when = when.upper()
+        # S - Every second a new file
+        # M - Every minute a new file
+        # H - Every hour a new file
+        # D - Every day a new file
+        if self.when == 'S':
+            self.suffix = "%Y-%m-%d_%H-%M-%S"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$"
+        elif self.when == 'M':
+            self.suffix = "%Y-%m-%d_%H-%M"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$"
+        elif self.when == 'H':
+            self.suffix = "%Y-%m-%d_%H"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}_\d{2}$"
+        elif self.when == 'D':
+            self.suffix = "%Y-%m-%d"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}$"
+        else:
+            raise ValueError("Invalid rollover interval specified: %s" % self.when)
+
+        if suffix:
+            self.suffix = suffix
+        if extMatch:
+            self.extMatch = extMatch
+
+        self.filefmt = os.path.join("logs", "%s%s" % (self.prefix, self.suffix))
+        self.filePath = datetime.datetime.now().strftime(self.filefmt)
+        _dir = os.path.dirname(self.filePath)
+
+        # noinspection PyBroadException
+        try:
+            if os.path.exists(_dir) is False:
+                os.makedirs(_dir)
+        except Exception:
+            print('can not make dirs')
+            print('"filepath is " + self.filePath')
+            pass
+
+        self.backupCount = backupCount
+        if codecs is None:
+            encoding = None
+        logging.FileHandler.__init__(self, self.filePath, 'a', encoding, delay)
+
+    def shouldChangeFileToWrite(self):
+        _filePath = datetime.datetime.now().strftime(self.filefmt)
+        if _filePath != self.filePath:
+            self.filePath = _filePath
+            return 1
+        return 0
+
+    def doChangeFile(self):
+        self.baseFilename = os.path.abspath(self.filePath)
+        if self.stream is not None:
+            self.stream.flush()
+            self.stream.close()
+        if not self.delay:
+            self.stream = self._open()
+        if self.backupCount > 0:
+            for s in self.getFilesToDelete():
+                os.remove(s)
+
+    def getFilesToDelete(self):
+        dirName, baseName = os.path.split(self.baseFilename)
+        fileNames = os.listdir(dirName)
+        result = []
+        prefix = self.prefix + "."
+        plen = len(prefix)
+        for fileName in fileNames:
+            if fileName[:plen] == prefix:
+                suffix = fileName[plen:]
+                if re.compile(self.extMatch).match(suffix):
+                    result.append(os.path.join(dirName, fileName))
+        result.sort()
+        if len(result) < self.backupCount:
+            result = []
+        else:
+            result = result[:len(result) - self.backupCount]
+        return result
+
+    def emit(self, record):
+        """
+        Emit a record.
+        """
+        try:
+            if self.shouldChangeFileToWrite():
+                self.doChangeFile()
+            logging.FileHandler.emit(self, record)
+        except (KeyboardInterrupt, SystemExit):
+            self.handleError(record)
+
+
 def init_log(project_name, lever, log_dir_name='logs'):
     """
     初始化日志
@@ -105,18 +211,38 @@ def init_log(project_name, lever, log_dir_name='logs'):
     :return:
     """
     Assert.is_true(is_not_empty(project_name), '初始化日志。项目名不可为空.')
-    log_file_name = 'logger-' + time.strftime('%Y-%m-%d', time.localtime(time.time())) + '.log'
+    log_file_name = 'logger'
     log_file_folder = os.path.abspath(
         os.path.join(os.path.dirname(__file__), os.pardir, os.pardir)) + os.sep + log_dir_name + os.sep + project_name
     FileUtil.creat_dirs(log_file_folder)
-    log_file_str = log_file_folder + os.sep + log_file_name
+    log_file = log_file_folder + os.sep + log_file_name
 
-    handler = logging.FileHandler(log_file_str, encoding=Unicode.UTF_8.value)
-    handler.setLevel(lever)
-    logging_format = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
-    handler.setFormatter(logging_format)
-    return handler
+    file_handler = MyLoggerHandler(log_file, when='D', encoding=Unicode.UTF_8.value,
+                                   suffix='_%Y-%m-%d.log',
+                                   extMatch=r'^_\d{4}-\d{2}-\d{2}.log$')
+    file_handler.setLevel(lever)  # 日志输出级别
+
+    fmt = '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s'
+    formatter = logging.Formatter(fmt)
+    file_handler.setFormatter(formatter)
+    return file_handler
+
+    # ******************************************
+
+    # Assert.is_true(is_not_empty(project_name), '初始化日志。项目名不可为空.')
+    # log_file_name = 'logger-' + time.strftime('%Y-%m-%d', time.localtime(time.time())) + '.log'
+    # log_file_folder = os.path.abspath(
+    #     os.path.join(os.path.dirname(__file__), os.pardir, os.pardir)) + os.sep + log_dir_name + os.sep + project_name
+    # FileUtil.creat_dirs(log_file_folder)
+    # log_file_str = log_file_folder + os.sep + log_file_name
+    # print(log_file_folder, os.sep, log_file_name, log_file_str)
+    #
+    # handler = logging.FileHandler(log_file_str, encoding=Unicode.UTF_8.value)
+    # handler.setLevel(lever)
+    # logging_format = logging.Formatter(
+    #     '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
+    # handler.setFormatter(logging_format)
+    # return handler
 
 
 class CSRFProtect(BaseCSRFProtect):

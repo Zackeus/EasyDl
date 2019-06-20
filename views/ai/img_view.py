@@ -6,44 +6,16 @@
 # @Software: PyCharm
 # @Time : 2019/3/21 9:50
 
-from flask import Blueprint, render_template, url_for, jsonify
+from flask import Blueprint, render_template, url_for
 
 from models import PageSchema
-from models.img import ImgDataSchema
+from models.img import ImgDataModel, ImgDataSchema
 
-from utils import Method, ContentType, render_info, validated, Locations
+from utils import Method, ContentType, render_info, validated, Locations, Assert, is_not_empty, codes, MyResponse
 from utils.sys import get_app_sys_types
 
 
 img_bp = Blueprint('img', __name__)
-
-
-@img_bp.route('/img_data/<string:id>', methods=[Method.GET.value])
-@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
-def get_img_data(img_data, id):
-    """
-    根据流水号查询明细
-    :param img_data:
-    :param id:
-    :return:
-    """
-    print(img_data)
-    return render_template('ai/img/images.html')
-
-
-@img_bp.route('/img_datas', methods=[Method.GET.value])
-def get_img_datas():
-    img_datas = []
-
-    for i in range(1, 17):
-        data = {
-            'src': url_for('static', filename='images/test/{0}.PNG'.format(i)),
-            'thumb': url_for('static', filename='images/test/{0}.PNG'.format(i)),
-            'alt': '贷后资料{0}'.format(i),
-            'pid': i
-        }
-        img_datas.append(data)
-    return jsonify(img_datas)
 
 
 @img_bp.route('/img_data/manage', methods=[Method.GET.value])
@@ -70,6 +42,51 @@ def img_data_page(page, img_data):
     """
     page, _ = img_data.dao_find_page(page)
     return render_info(page)
+
+
+@img_bp.route('/img_files/manage/<string:id>', methods=[Method.GET.value])
+@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
+def img_files_manage(img_data, id):
+    """
+    图片文件管理
+    :param img_data:
+    :param id: 图片流水号
+    :return:
+    """
+    print(img_data)
+    return render_template('ai/img/img_files_manage.html', img_data_id=img_data.id)
+
+
+@img_bp.route('/img_files/<string:id>', methods=[Method.GET.value])
+@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ),
+           consumes=ContentType.JSON.value)
+def img_files(img_data, id):
+    """
+    图片文件浏览
+    :param img_data:
+    :param id:
+    :return:
+    """
+    img_data = ImgDataModel().dao_get(img_data.id)  # type: ImgDataModel
+    Assert.is_true(is_not_empty(img_data), '查无此数据', codes.no_data)
+
+    img_datas = []
+    for img_detail in img_data.img_details:
+        url = url_for('file.file_download', id=img_detail.file_id, md5_id=img_detail.file_md5)
+        if not img_detail.is_handle:
+            alt = '待处理'
+        elif is_not_empty(img_detail.img_type):
+            alt = img_detail.img_type.type_explain
+        else:
+            alt = img_detail.err_msg
+        data = {
+            'src': url,
+            'thumb': url,
+            'alt': alt,
+            'pid': img_detail.file_id
+        }
+        img_datas.append(data)
+    return render_info(MyResponse('查询成功', data=img_datas))
 
 
 

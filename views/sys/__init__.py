@@ -10,5 +10,6 @@ from .area_view import (area_bp, )
 from .menu_view import (menu_bp, )
 from .user_view import (user_bp, )
 from .dict_view import (dict_bp, )
+from .file_view import (file_bp, )
 
 

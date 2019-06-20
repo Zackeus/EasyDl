@@ -11,7 +11,7 @@ import os
 import fitz
 from fitz.fitz import Page
 
-from utils.file.file import FileUtil, FileFormat
+from utils.file import FileUtil, FileFormat, ImgUtil
 from utils.object_util import is_not_empty
 from utils.assert_util import Assert
 
@@ -19,12 +19,13 @@ from utils.assert_util import Assert
 class PDFUtil(object):
 
     @staticmethod
-    def pdf_to_pic(path, pic_dir, format=FileFormat.PNG.value, zoom=150):
+    def pdf_to_pic(path, pic_dir, format=FileFormat.JPG.value, loss=True, zoom=300):
         """
         从pdf中提取图片
         :param path: pdf的路径
         :param pic_dir: 图片保存的路径
         :param format: 图片格式
+        :param bool loss: 是否压缩
         :param int zoom: 保存图片分辨率
         :return: {page_num, success_num, fail_num, msg}
         """
@@ -46,6 +47,10 @@ class PDFUtil(object):
                     pm = page.getPixmap(matrix=trans, alpha=True)                                 # 获得每一页的流对象
                     page_path = FileUtil.path_join(pic_dir, '{0}.{1}'.format((pg + 1), format))   # 图片路径
                     pm.writePNG(page_path)                                                        # 保存图片
+
+                    if loss:
+                        # 对图片进行近无损压缩
+                        ImgUtil.loss_less(page_path, page_path)
 
                     pm_dict['img_path'] = page_path
                     success_num = success_num + 1
@@ -71,6 +76,7 @@ class PDFUtil(object):
 
 
 if __name__ == '__main__':
-    print(PDFUtil.pdf_to_pic('D:/AIData/test/1.pdf', 'D:/AIData/test'))
+    print(PDFUtil.pdf_to_pic('D:/FileData/e537648a923b11e9bb009032c5b02716/陈秀祥贷后资料.pdf',
+                             'D:/FileData/e537648a923b11e9bb009032c5b02716/test'))
 
 

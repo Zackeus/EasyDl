@@ -10,23 +10,57 @@ layui.define(['flow','form','layer'], function (exports) {
         load: function (param) {
             flow.load({
                 elem: param.elem,                                           //流加载容器
-                done: function(page, next){                                 //加载下一页
-                    $.getJSON(param.url, function(res) {
-                        var imgList = [];
-                            imgData = res;
-                        var maxPage = param.imgNums*page < imgData.length ? param.imgNums*page : imgData.length;
-                        setTimeout(function(){
-                            for(var i= param.imgNums*(page-1); i< maxPage; i++){
-                                imgList.push('<li>' +
-                                    '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
-                                    '<div class="operate"><div class="check">' +
-                                    '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" title="'+imgData[i].alt+'">' +
-                                    '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
-                            }
-                            next(imgList.join(''), page < (imgData.length/param.imgNums));
-                            form.render();
-                        }, 500);
+                done: function(page, next) {
+                    $.ajax({
+                        method: 'GET',
+                        url : param.url,
+                        // data : typeof(data) === 'string' ? data : JSON.stringify(data),
+                        headers:{'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
+                        contentType : 'application/json',
+                        dataType : 'json',
+                        beforeSend: function() {
+                            // before && before();
+                        },
+                        success : function(res) {
+                            console.log(res);
+                            var imgList = [];
+                                imgData = res.data;
+                            var maxPage = param.imgNums*page < imgData.length ? param.imgNums*page : imgData.length;
+                            setTimeout(function(){
+                                for(var i= param.imgNums*(page-1); i< maxPage; i++){
+                                    imgList.push('<li>' +
+                                        '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
+                                        '<div class="operate"><div class="check">' +
+                                        '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" title="'+imgData[i].alt+'">' +
+                                        '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
+                                }
+                                next(imgList.join(''), page < (imgData.length/param.imgNums));
+                                form.render();
+                            }, 500);
+                        },
+                        error : function(event) {
+                            // error && error(event);
+                        }
                     });
+
+                    //加载下一页
+                    // $.getJSON(param.url, function(res) {
+                    //     console.log(res);
+                    //     var imgList = [];
+                    //         imgData = res.data;
+                    //     var maxPage = param.imgNums*page < imgData.length ? param.imgNums*page : imgData.length;
+                    //     setTimeout(function(){
+                    //         for(var i= param.imgNums*(page-1); i< maxPage; i++){
+                    //             imgList.push('<li>' +
+                    //                 '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
+                    //                 '<div class="operate"><div class="check">' +
+                    //                 '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" title="'+imgData[i].alt+'">' +
+                    //                 '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
+                    //         }
+                    //         next(imgList.join(''), page < (imgData.length/param.imgNums));
+                    //         form.render();
+                    //     }, 500);
+                    // });
                 }
             });
 

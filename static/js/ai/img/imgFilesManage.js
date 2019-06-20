@@ -10,7 +10,7 @@ layui.use(['form', 'layer', 'imgflow'], function() {
 
     //流加载图片
     imgflow.load({
-        url: ctx + 'ai/img/img_datas',
+        url: ctx + 'ai/img/img_files/' + $("meta[name=img_data_id]").attr("content"),
         elem: '#Images',                //流加载容器
         imgNums: 10
     });

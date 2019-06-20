@@ -105,11 +105,11 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
     // 浏览图片
     function browseImg(data) {
     	var url = data === "" || data == null || data === undefined ?
-            (ctx + 'ai/img/img_data') : (ctx + 'ai/img/img_data/' + data);
+            (ctx + 'ai/img/img_files/manage') : (ctx + 'ai/img/img_files/manage/' + data);
 
     	var browseImgIndex = layui.layer.open({
             type: 2,
-            title: '图片浏览', 		// 不显示标题栏
+            title: '图片管理', 		// 不显示标题栏
             closeBtn: 1,			// 关闭按钮
             shade: 0, 				// 遮罩
             shadeClose: false, 		// 是否点击遮罩关闭

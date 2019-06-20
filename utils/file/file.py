@@ -316,6 +316,7 @@ class FileFormat(Enum):
     """
     PNG = 'PNG'
     JPG = 'JPG'
+    JPEG = 'JPEG'
     PDF = 'PDF'
 
     PCM = 'PCM'

@@ -54,6 +54,15 @@ class FileModel(BasicModel):
         super(FileModel, self).__init__(**kwargs)
         self.file_base64 = file_base64
 
+    def dao_down_file(self, id, md5_id):
+        """
+        文件查询
+        :param id: 文件ID
+        :param md5_id:
+        :return:
+        """
+        return self.query.filter(FileModel.id == id, FileModel.md5_id == md5_id).first()
+
     def dao_init_file(self, file_path, id=None, subtransactions=False, nested=False):
         """
         根据路径解析入库
