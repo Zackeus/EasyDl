@@ -27,7 +27,7 @@ class ImgUtil(object):
         :return:
         """
         Assert.is_true(os.path.isfile(path), '图片不存在：{0}'.format(path))
-        with Image.open(filename) as i:
+        with Image.open(path) as i:
             return i.size
 
     @staticmethod
@@ -41,7 +41,7 @@ class ImgUtil(object):
         # 阈值换算成比特
         _threshold = threshold * 1024 * 1024
         Assert.is_true(os.path.isfile(path), '图片不存在：{0}'.format(path))
-        w, h = ImgUtil.get_img_pixel(filename)
+        w, h = ImgUtil.get_img_pixel(path)
 
         with Image.open(path) as im:
             if w * h > threshold:
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     filename = 'D:/FileData/d03544f8932a11e9b7219032c5b02716/Img/d056a5da932a11e9a5d19032c5b02716/10.JPG'
     base_str = ImgUtil.img_compress(filename)
     print(base_str)
-    # encodes.base64_to_file(base_str,
-    #                        'D:/FileData/c60d0388932211e9a11a5800e36a34d8/Img/c634fdec932211e994335800e36a34d8/',
-    #                        'zz',
-    #                        'JPG')
+    encodes.base64_to_file(base_str,
+                           'D:/FileData/c60d0388932211e9a11a5800e36a34d8/Img/c634fdec932211e994335800e36a34d8/',
+                           'zz',
+                           'JPG')

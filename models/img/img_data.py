@@ -89,7 +89,7 @@ class ImgDataModel(BasicModel):
             filter.append(ImgDataModel.app_sys_id == self.app_sys_id)
 
         pagination = self.query.filter(*filter).\
-            order_by(ImgDataModel.create_date.asc()).\
+            order_by(ImgDataModel.create_date.desc()).\
             paginate(page=page.page, per_page=page.page_size, error_out=error_out)
         page.init_pagination(pagination)
 
