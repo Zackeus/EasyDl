@@ -119,6 +119,18 @@ class ImgDataModel(BasicModel):
                                  ImgDataModel.push_url.isnot(None)).\
             order_by(ImgDataModel.create_date.asc()).all()
 
+    def dao_get_source_files(self, id):
+        """
+        查询流水源文件
+        :param id:
+        :return:
+        """
+        return FileModel().query.\
+            join(ImgDetailModel, ImgDetailModel.parent_file_id == FileModel.id).\
+            join(ImgDataModel, ImgDataModel.id == ImgDetailModel.img_data_id).\
+            filter(ImgDataModel.id == id).\
+            distinct().all()
+
     def dao_add_info(self, loan_dir, subtransactions=False, nested=False):
         """
         信息入库

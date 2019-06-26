@@ -8,14 +8,14 @@ layui.use(['form', 'layer', 'fileflow'], function() {
         fileflow = layui.fileflow,
         $ = layui.jquery;
 
-    //流加载图片
+    //流加载文件
     fileflow.file({
         url: ctx + 'ai/img/img_source_files/' + $("meta[name=img_data_id]").attr("content"),
         headers: {'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
         method: 'GET',
         contentType: 'application/json',
         elem: '#files',
-        imgNums: 10,
+        imgNums: 50,
         done: function() {
             $("#files img").EZView();
         }

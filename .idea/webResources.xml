@@ -56,6 +56,7 @@
             <path value="file://$PROJECT_DIR$/static/js/demo" />
             <path value="file://$PROJECT_DIR$/static/pdf" />
             <path value="file://$PROJECT_DIR$/static/js/EZView" />
+            <path value="file://$PROJECT_DIR$/static/js/uploader" />
           </resourceRoots>
         </entryData>
       </entry>

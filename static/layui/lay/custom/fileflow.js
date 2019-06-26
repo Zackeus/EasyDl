@@ -47,7 +47,7 @@ layui.define(['flow','form','layer'], function (exports) {
                             }
                         },
                         error : function(event) {
-                            // error && error(event);
+                            layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
                         }
                     });
                 }
@@ -97,7 +97,7 @@ layui.define(['flow','form','layer'], function (exports) {
                                         switch (imgData[i].format.toUpperCase()) {
                                             case 'PDF':
                                                 imgList.push('<li>' +
-                                                    '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" ' +
+                                                    '<img layer-src="'+ imgData[i].src +'" src="/static/images/pdf.jpg" ' +
                                                     'href="'+ imgData[i].src +'" alt="'+ imgData[i].alt+'" ' +
                                                     'data-sort="' + i + '">' +
                                                     '<div class="operate"><div class="check">' +
@@ -131,6 +131,7 @@ layui.define(['flow','form','layer'], function (exports) {
 
                         },
                         error : function(event) {
+                            layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
                         }
                     });
                 }

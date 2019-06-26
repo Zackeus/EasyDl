@@ -7,7 +7,7 @@
 # @Time : 2019/6/19 15:13
 
 
-from flask import make_response, send_from_directory, Response
+from flask import make_response, send_from_directory
 
 from utils import Unicode
 from utils.file import FileUtil

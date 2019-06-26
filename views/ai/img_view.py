@@ -8,10 +8,11 @@
 
 from flask import Blueprint, render_template, url_for
 
-from models import PageSchema, FileModel
-from models.img import ImgDataModel, ImgDataSchema, ImgDetailModel
+from models import PageSchema, FlowInfo, FlowInfoSchema
+from models.img import ImgDataModel, ImgDataSchema
 
-from utils import Method, ContentType, render_info, validated, Locations, Assert, is_not_empty, codes, MyResponse
+from utils import Method, ContentType, render_info, validated, Locations, Assert, \
+    is_empty, is_not_empty, codes, MyResponse
 from utils.sys import get_app_sys_types
 from utils.file import FileFormat
 
@@ -79,14 +80,12 @@ def img_files(img_data, id):
             alt = img_detail.img_type.type_explain
         else:
             alt = img_detail.err_msg
-        data = {
-            'src': url,
-            'thumb': url,
-            'alt': alt,
-            'pid': img_detail.file_id
-        }
-        img_datas.append(data)
-    return render_info(MyResponse('查询成功', data=img_datas))
+        flow_info = FlowInfo(url, url, alt, img_detail.file_id)
+        img_datas.append(flow_info)
+
+    img_datas_dict, errors = FlowInfoSchema().dump(img_datas, many=True)
+    Assert.is_true(is_empty(errors), errors)
+    return render_info(MyResponse('查询成功', data=img_datas_dict))
 
 
 @img_bp.route('/img_source_files/manage/<string:id>', methods=[Method.GET.value])
@@ -111,27 +110,20 @@ def img_source_files(img_data, id):
     :param id:
     :return:
     """
-    source_files = FileModel().query.\
-        join(ImgDetailModel, ImgDetailModel.parent_file_id == FileModel.id).\
-        join(ImgDataModel, ImgDataModel.id == ImgDetailModel.img_data_id).\
-        filter(ImgDataModel.id == img_data.id).\
-        distinct().all()
+    source_files = img_data.dao_get_source_files(img_data.id)
+    Assert.is_true(is_not_empty(source_files), '查无此数据', codes.no_data)
 
     file_datas = []
     for source_file in source_files:
         url = url_for('file.file_download', id=source_file.id, md5_id=source_file.md5_id)
         if source_file.file_format.upper() == FileFormat.PDF.value:
             url = url + '/true'
-        data = {
-            'src': url,
-            'thumb': url,
-            'alt': source_file.file_name,
-            'format': source_file.file_format,
-            'pid': source_file.id
-        }
-        file_datas.append(data)
+        flow_info = FlowInfo(url, url, source_file.file_name, source_file.id, source_file.file_format)
+        file_datas.append(flow_info)
 
-    return render_info(MyResponse('查询成功', data=file_datas))
+    file_datas_dict, errors = FlowInfoSchema().dump(file_datas, many=True)
+    Assert.is_true(is_empty(errors), errors)
+    return render_info(MyResponse('查询成功', data=file_datas_dict))
 
 
 
