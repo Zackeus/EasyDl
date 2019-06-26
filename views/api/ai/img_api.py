@@ -114,7 +114,7 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
-        'appId': '67815',
+        'appId': 'test-67815551',
         'fileData': [
             {
                 'fileName': 'pdf',

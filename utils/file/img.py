@@ -13,6 +13,7 @@ import os
 import piexif
 from PIL import Image, ImageEnhance
 from enum import Enum, unique
+from pngquant.main import PngQuant as BasePngQuant
 
 from utils.assert_util import Assert
 from utils import encodes
@@ -107,37 +108,111 @@ class ImgUtil(object):
         return pre1_picture  # 返回图片数据
 
 
+class PngQuant(BasePngQuant):
+
+    def __init__(self,
+                 quant_file=None,
+                 min_quality=None,
+                 max_quality=None,
+                 ndeep=None,
+                 ndigits=None,
+                 tmp_file=None):
+        """
+        png 图片无损压缩
+        :param quant_file:
+        :param min_quality:
+        :param max_quality:
+        :param ndeep:
+        :param ndigits:
+        :param tmp_file:
+        """
+        super(self.__class__, self).__init__()
+        super().config(quant_file, min_quality, max_quality, ndeep, ndigits, tmp_file)
+
+
 class Enhancer:
 
-    def bright(self, image, brightness):
+    def enhance(self, path, bright=True, color=True, contrast=True, sharp=True, gamma=True):
+        """
+        图片增强
+        :param path:
+        :param bool bright:
+        :param bool color:
+        :param bool contrast:
+        :param bool sharp:
+        :param bool gamma:
+        :return:
+        """
+        im = cv2.imread(filename=path)
+        if bright:
+            im = self.bright(im)
+        if color:
+            im = self.color(im)
+        if contrast:
+            im = self.contrast(im)
+        if sharp:
+            im = self.sharp(im)
+        if gamma:
+            im = self.gamma(im)
+        cv2.imwrite(filename=path, img=im)
+
+    def bright(self, image, brightness=0.8):
+        """
+        调整图像宽度
+        :param image:
+        :param float brightness: 亮度增强因子(0.0将产生黑色图像；为1.0将保持原始图像)
+        :return:
+        """
         enh_bri = ImageEnhance.Brightness(image)
-        brightness = brightness
         imageBrightend = enh_bri.enhance(brightness)
         return imageBrightend
 
-    def color(self, image, color):
+    def color(self, image, color=0.8):
+        """
+        调整图像颜色
+        :param image:
+        :param float color: 颜色增强因子(1.0为原始图像)
+        :return:
+        """
         enh_col = ImageEnhance.Color(image)
         color = color
         imageColored = enh_col.enhance(color)
         return imageColored
 
-    def contrast(self, image, contrast):
+    def contrast(self, image, contrast=0.8):
+        """
+        调整图像对比度
+        :param image:
+        :param float contrast: 0.0将产生纯灰色图像；为1.0将保持原始图像
+        :return:
+        """
         enh_con = ImageEnhance.Contrast(image)
         contrast = contrast
         image_contrasted = enh_con.enhance(contrast)
         return image_contrasted
 
-    def sharp(self, image, sharpness):
+    def sharp(self, image, sharpness=2.0):
+        """
+        调整图像锐度
+        :param image:
+        :param float sharpness: 0.0将产生模糊图像；为1.0将保持原始图像，为2.0将产生锐化过的图像
+        :return:
+        """
         enh_sha = ImageEnhance.Sharpness(image)
         sharpness = sharpness
         image_sharped = enh_sha.enhance(sharpness)
         return image_sharped
 
     def gamma(self, image, gamma=1.63):
-        im = cv2.imread(filename=image)
+        """
+        图像伽马矫正
+        :param image:
+        :param float gamma:
+        :return:
+        """
         gamma_table = [np.power(x / 255.0, gamma) * 255.0 for x in range(256)]
         gamma_table = np.round(np.array(gamma_table)).astype(np.uint8)
-        cv2.imwrite(filename=image, img=cv2.LUT(im, gamma_table))
+        return cv2.LUT(image, gamma_table)
 
 
 @unique
@@ -174,12 +249,7 @@ if __name__ == '__main__':
     #     print("裁剪数量:", i)
 
     # *********** PNG 图片压缩, 需要配置pngquant.exe 环境变量
-    # from pngquant.main import PngQuant
-    #
-    # pngquant = PngQuant()
-    # pngquant.config(min_quality=90, max_quality=100)
-    # pngquant.quant_image('D:/FileData/b581429296fe11e9bab69032c5b02716/9.PNG')
+    pngquant = PngQuant(min_quality=80, max_quality=100)
+    pngquant.quant_image('D:/FileData/b581429296fe11e9bab69032c5b02716/8.PNG')
 
-    # *******图片 gamma 矫正
-    Enhancer().gamma('D:/FileData/84c977f097bb11e980ca5800e36a34d8/Img/5.PNG')
 

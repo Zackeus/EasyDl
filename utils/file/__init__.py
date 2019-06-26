@@ -8,6 +8,6 @@
 
 
 from .file import (FileUtil, FileFormat, )
-from .img import (ImgUtil, ImgChannel, Enhancer, )
+from .img import (ImgUtil, ImgChannel, Enhancer, PngQuant, )
 from .pdf import (PDFUtil, )
 from .media import (AudioFormat, AudioCodecs, Audio, AudioAsrNlp, )

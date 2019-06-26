@@ -10,9 +10,8 @@
 import os
 import fitz
 from fitz.fitz import Page
-from pngquant.main import PngQuant
 
-from utils.file import FileUtil, FileFormat, Enhancer
+from utils.file import FileUtil, FileFormat, Enhancer, PngQuant
 from utils.object_util import is_not_empty
 from utils.assert_util import Assert
 
@@ -36,8 +35,7 @@ class PDFUtil(object):
         detail_info = {'images': []}
         pdf = None
         # 初始化图片压缩
-        pngquant = PngQuant()
-        pngquant.config(min_quality=90, max_quality=100)
+        pngquant = PngQuant(min_quality=80, max_quality=100)
 
         try:
             FileUtil.creat_dirs(pic_dir)
@@ -55,7 +53,7 @@ class PDFUtil(object):
 
                     if gamma:
                         # gamma 矫正
-                        Enhancer().gamma(page_path)
+                        Enhancer().enhance(page_path, False, False, False, False, True)
 
                     if loss:
                         # 对图片进行近无损压缩
