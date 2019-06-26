@@ -41,6 +41,7 @@
         <option value="$MODULE_DIR$/templates/sys/dict" />
         <option value="$MODULE_DIR$/templates/ai" />
         <option value="$MODULE_DIR$/templates/ai/img" />
+        <option value="$MODULE_DIR$/templates/demo" />
       </list>
     </option>
   </component>

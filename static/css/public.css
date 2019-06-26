@@ -147,9 +147,9 @@ h2.method{ font-size:18px; line-height:45px; padding-left:5px;}
 .flow-img li .operate .check .layui-form-checkbox[lay-skin=primary] i{position:absolute; left:0; top:0;}
 .flow-img li .operate .img_del{ float:right; margin:9px 11px 0 0; font-size: 22px !important; cursor:pointer; }
 .flow-img li .operate .img_del:hover{ color:#f00; }
-@media screen and (max-width:1050px){#Images li{ width:24%;}}
-@media screen and (max-width: 750px){#Images li{ width:49%;}}
-@media screen and (max-width:432px){#Images li{ width:99%;}}
+@media screen and (max-width:1050px){.flow-img li{ width:24%;}}
+@media screen and (max-width: 750px){.flow-img li{ width:49%;}}
+@media screen and (max-width:432px){.flow-img li{ width:99%;}}
 /*系统日志*/
 .layui-btn-green{ background-color:#5FB878 !important;}
 /*友情链接*/

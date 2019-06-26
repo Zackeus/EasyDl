@@ -7,4 +7,4 @@
 # @Time : 2019/3/21 9:50
 
 
-from .test_view import (test_bp, )
+from .demo_view import (demo_bp, )

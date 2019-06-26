@@ -4,7 +4,7 @@ from flask import Flask as BasicFlask, current_app
 from flask_wtf.csrf import CSRFError
 
 from utils import is_empty, render_info, MyResponse
-from views import test_bp
+from views import demo_bp
 from views.ai import img_bp, audio_bp
 from views.sys import user_bp, area_bp, menu_bp, dict_bp, file_bp
 from views.api import img_api_bp
@@ -72,7 +72,7 @@ def register_blueprints(app):
 
     app.register_blueprint(blueprint=img_bp, url_prefix='/ai/img')
     app.register_blueprint(blueprint=audio_bp, url_prefix='/audio')
-    app.register_blueprint(blueprint=test_bp, url_prefix='/test')
+    app.register_blueprint(blueprint=demo_bp, url_prefix='/demo')
 
     app.register_blueprint(blueprint=img_api_bp, url_prefix='/api/img')
 
@@ -90,13 +90,13 @@ def register_extensions(app):
 
     login_manager.init_app(app)
     # 登录过滤保护
-    login_manager.exempt_views((user_bp, test_bp, audio_bp, img_api_bp))
+    login_manager.exempt_views((user_bp, demo_bp, audio_bp, img_api_bp))
 
     session.init_app(app)
 
     csrf.init_app(app)
     # csrf过滤保护
-    csrf.exempt_views((test_bp, audio_bp, img_api_bp))
+    csrf.exempt_views((demo_bp, audio_bp, img_api_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':

@@ -122,31 +122,31 @@ class BaseConfig(object):
     # 图片资料文件夹
     DATA_DIR_IMG = 'Img'
 
-    JOBS = [
-        {
-            'id': 'img_ocr',
-            'func': 'jobs.img:img_ocr',
-            'args': (8, ),
-            'trigger': 'cron',
-            # 'second': '0/10',
-            'minute': '0/3',
-            # 'hour': '8-20',
-            'max_instances': 1,
-            'coalesce': True,
-            'misfire_grace_time': 1800
-        },
-        {
-            'id': 'img_push',
-            'func': 'jobs.img:img_push',
-            'trigger': 'cron',
-            # 'second': '0/10',
-            'minute': '0/3',
-            # 'hour': '8-20',
-            'max_instances': 1,
-            'coalesce': True,
-            'misfire_grace_time': 1800
-        }
-    ]
+    # JOBS = [
+    #     {
+    #         'id': 'img_ocr',
+    #         'func': 'jobs.img:img_ocr',
+    #         'args': (8, ),
+    #         'trigger': 'cron',
+    #         # 'second': '0/10',
+    #         'minute': '0/3',
+    #         # 'hour': '8-20',
+    #         'max_instances': 1,
+    #         'coalesce': True,
+    #         'misfire_grace_time': 1800
+    #     },
+    #     {
+    #         'id': 'img_push',
+    #         'func': 'jobs.img:img_push',
+    #         'trigger': 'cron',
+    #         # 'second': '0/10',
+    #         'minute': '0/3',
+    #         # 'hour': '8-20',
+    #         'max_instances': 1,
+    #         'coalesce': True,
+    #         'misfire_grace_time': 1800
+    #     }
+    # ]
 
 
 class DevelopmentConfig(BaseConfig):
@@ -159,7 +159,8 @@ class DevelopmentConfig(BaseConfig):
 
     # 输出sql语句
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL',
+                                        'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL_BACKUP')
     SQLALCHEMY_BINDS = {
         'YFC_UCL_PRD': 'oracle://YFC_UCL_PRD:yulon2016@10.5.60.132:1521/credit',
         'JEESITE-YFC': 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.80:1433/jeesite-yfc'
@@ -180,7 +181,8 @@ class TestingConfig(BaseConfig):
 
     TESTING = True
     # WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL',
+                                        'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL_BACKUP')
     SQLALCHEMY_BINDS = {
         'YFC_UCL_PRD': 'oracle://YFC_UCL_PRD:yulon2016@10.5.60.132:1521/credit',
         'JEESITE-YFC': 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.80:1433/jeesite-yfc'

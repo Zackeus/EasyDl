@@ -10,8 +10,9 @@
 import os
 import fitz
 from fitz.fitz import Page
+from pngquant.main import PngQuant
 
-from utils.file import FileUtil, FileFormat, ImgUtil
+from utils.file import FileUtil, FileFormat, Enhancer
 from utils.object_util import is_not_empty
 from utils.assert_util import Assert
 
@@ -19,13 +20,14 @@ from utils.assert_util import Assert
 class PDFUtil(object):
 
     @staticmethod
-    def pdf_to_pic(path, pic_dir, format=FileFormat.JPG.value, loss=True, zoom=300):
+    def pdf_to_pic(path, pic_dir, format=FileFormat.PNG.value, loss=True, gamma=True, zoom=200):
         """
         从pdf中提取图片
         :param path: pdf的路径
         :param pic_dir: 图片保存的路径
         :param format: 图片格式
         :param bool loss: 是否压缩
+        :param bool gamma: 是否 gamma 矫正
         :param int zoom: 保存图片分辨率
         :return: {page_num, success_num, fail_num, msg}
         """
@@ -33,6 +35,9 @@ class PDFUtil(object):
         page_num, success_num, fail_num = 0, 0, 0
         detail_info = {'images': []}
         pdf = None
+        # 初始化图片压缩
+        pngquant = PngQuant()
+        pngquant.config(min_quality=90, max_quality=100)
 
         try:
             FileUtil.creat_dirs(pic_dir)
@@ -48,9 +53,13 @@ class PDFUtil(object):
                     page_path = FileUtil.path_join(pic_dir, '{0}.{1}'.format((pg + 1), format))   # 图片路径
                     pm.writePNG(page_path)                                                        # 保存图片
 
+                    if gamma:
+                        # gamma 矫正
+                        Enhancer().gamma(page_path)
+
                     if loss:
                         # 对图片进行近无损压缩
-                        ImgUtil.loss_less(page_path, page_path)
+                        pngquant.quant_image(page_path)
 
                     pm_dict['img_path'] = page_path
                     success_num = success_num + 1
@@ -76,7 +85,9 @@ class PDFUtil(object):
 
 
 if __name__ == '__main__':
-    print(PDFUtil.pdf_to_pic('D:/FileData/ee72e06e8b1e11e9b7c79032c5b02716/1.pdf',
-                             'D:/FileData/ee72e06e8b1e11e9b7c79032c5b02716/test'))
+    print(PDFUtil.pdf_to_pic('D:/FileData/b581429296fe11e9bab69032c5b02716/1.pdf',
+                             'D:/FileData/b581429296fe11e9bab69032c5b02716/png',
+                             format=FileFormat.PNG.value,
+                             zoom=120))
 
 

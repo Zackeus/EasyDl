@@ -8,11 +8,12 @@
 
 from flask import Blueprint, render_template, url_for
 
-from models import PageSchema
-from models.img import ImgDataModel, ImgDataSchema
+from models import PageSchema, FileModel
+from models.img import ImgDataModel, ImgDataSchema, ImgDetailModel
 
 from utils import Method, ContentType, render_info, validated, Locations, Assert, is_not_empty, codes, MyResponse
 from utils.sys import get_app_sys_types
+from utils.file import FileFormat
 
 
 img_bp = Blueprint('img', __name__)
@@ -53,7 +54,6 @@ def img_files_manage(img_data, id):
     :param id: 图片流水号
     :return:
     """
-    print(img_data)
     return render_template('ai/img/img_files_manage.html', img_data_id=img_data.id)
 
 
@@ -87,6 +87,51 @@ def img_files(img_data, id):
         }
         img_datas.append(data)
     return render_info(MyResponse('查询成功', data=img_datas))
+
+
+@img_bp.route('/img_source_files/manage/<string:id>', methods=[Method.GET.value])
+@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
+def img_source_files_manage(img_data, id):
+    """
+    源文件管理
+    :param img_data:
+    :param id: 图片流水号
+    :return:
+    """
+    return render_template('ai/img/img_source_files_manage.html', img_data_id=img_data.id)
+
+
+@img_bp.route('/img_source_files/<string:id>', methods=[Method.GET.value])
+@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ),
+           consumes=ContentType.JSON.value)
+def img_source_files(img_data, id):
+    """
+    源文件浏览
+    :param img_data:
+    :param id:
+    :return:
+    """
+    source_files = FileModel().query.\
+        join(ImgDetailModel, ImgDetailModel.parent_file_id == FileModel.id).\
+        join(ImgDataModel, ImgDataModel.id == ImgDetailModel.img_data_id).\
+        filter(ImgDataModel.id == img_data.id).\
+        distinct().all()
+
+    file_datas = []
+    for source_file in source_files:
+        url = url_for('file.file_download', id=source_file.id, md5_id=source_file.md5_id)
+        if source_file.file_format.upper() == FileFormat.PDF.value:
+            url = url + '/true'
+        data = {
+            'src': url,
+            'thumb': url,
+            'alt': source_file.file_name,
+            'format': source_file.file_format,
+            'pid': source_file.id
+        }
+        file_datas.append(data)
+
+    return render_info(MyResponse('查询成功', data=file_datas))
 
 
 

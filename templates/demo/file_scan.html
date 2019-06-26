@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}文件浏览{% endblock %}
+
+{% block head %}
+{% endblock head %}
+
+{% block bodyClass %}"childrenBody"{% endblock bodyClass %}
+
+{% block body %}
+
+    <form class="layui-form">
+        <ul class="layer-photos-demo flow-img" id="Images">
+            <li>
+                <img layer-src="{{ url_for('static', filename='images/userface1.jpg') }}"
+                     src="{{ url_for('static', filename='images/12345.jpg') }}"
+                     alt="11"
+                     data-sort="1">
+                 <div class="operate">
+                     <div class="check">
+                         <input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" title="11">
+                     </div>
+                     <i class="layui-icon img_del">&#xe640;</i>
+                 </div>
+            </li>
+
+            <li>
+                <img layer-src="{{ url_for('static', filename='images/pdf.jpg') }}"
+                     src="{{ url_for('static', filename='images/pdf.jpg') }}"
+{#                     href="{{ url_for('static', filename='pdf/test.pdf') }}"#}
+                     href="/sys/file/bdc4ec5c93c111e9b8489032c5b02716/9b70ceafcc99c0bf11c197a473ae0db5"
+                     alt="文件"
+                     data-sort="2">
+                 <div class="operate">
+                     <div class="check">
+                         <input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" title="文件">
+                     </div>
+                     <i class="layui-icon img_del">&#xe640;</i>
+                 </div>
+            </li>
+        </ul>
+    </form>
+{% endblock body %}
+
+{% block footer %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/EZView/EZView.js') }}"></script>
+    <script>
+        layui.use(['jquery', 'form'], function() {
+            var $ = layui.jquery,
+                form = layui.form;
+            $('#Images img').EZView();
+        });
+    </script>
+{% endblock footer %}

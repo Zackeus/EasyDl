@@ -50,6 +50,12 @@
             <path value="file://$PROJECT_DIR$/static/js/ai" />
             <path value="file://$PROJECT_DIR$/static/js/ai/img" />
             <path value="file://$PROJECT_DIR$/static/images/test" />
+            <path value="file://$PROJECT_DIR$/static/css/demo" />
+            <path value="file://$PROJECT_DIR$/static/fonts/demo" />
+            <path value="file://$PROJECT_DIR$/static/js/jquery" />
+            <path value="file://$PROJECT_DIR$/static/js/demo" />
+            <path value="file://$PROJECT_DIR$/static/pdf" />
+            <path value="file://$PROJECT_DIR$/static/js/EZView" />
           </resourceRoots>
         </entryData>
       </entry>
