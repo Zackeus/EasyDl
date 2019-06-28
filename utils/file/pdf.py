@@ -35,7 +35,7 @@ class PDFUtil(object):
         detail_info = {'images': []}
         pdf = None
         # 初始化图片压缩
-        pngquant = PngQuant(min_quality=80, max_quality=100)
+        pngquant = PngQuant(min_quality=80, max_quality=100, tmp_file=os.path.join(pic_dir, 'quant.tmp.png'))
 
         try:
             FileUtil.creat_dirs(pic_dir)
@@ -83,9 +83,7 @@ class PDFUtil(object):
 
 
 if __name__ == '__main__':
-    print(PDFUtil.pdf_to_pic('D:/FileData/b581429296fe11e9bab69032c5b02716/1.pdf',
-                             'D:/FileData/b581429296fe11e9bab69032c5b02716/png',
-                             format=FileFormat.PNG.value,
-                             zoom=120))
+    print(PDFUtil.pdf_to_pic('D:/FileData/1.pdf',
+                             'D:/FileData/png'))
 
 

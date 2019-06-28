@@ -7,10 +7,10 @@
 # @Time : 2019/6/19 14:16
 
 
-from flask import Blueprint
+from flask import Blueprint, request
 
 from models import FileModel
-from utils import Method, is_empty
+from utils import Method, is_empty, render_json, MyResponse
 from utils.sys import download_file
 
 
@@ -32,3 +32,18 @@ def file_download(id, md5_id, as_attachment=None):
     return download_file(file.file_path,
                          '{0}.{1}'.format(file.file_name, file.file_format),
                          as_attachment=as_attachment)
+
+
+@file_bp.route('', methods=[Method.POST.value])
+def file_upload():
+    """
+    文件上传
+    :return:
+    """
+    file = request.files.get('file')
+    print(type(file))
+    print(file.filename)
+
+    if file.filename == '4.JPG':
+        return render_json(MyResponse('上传成功', code='22'))
+    return render_json(MyResponse('上传成功'))

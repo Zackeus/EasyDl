@@ -112,6 +112,18 @@ def render_info(info, template=None, status=codes.ok, **kwargs):
     ), codes.not_allowed
 
 
+def render_json(info, status=codes.ok):
+    """
+    客户端返回json信息
+    :param status: 请求状态码
+    :param info: 信息体(字典格式)
+    :return:
+    """
+    if codes.ok != status and hasattr(info, 'code'):
+        info.code = str(status)
+    return jsonify(info.__dict__), status
+
+
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))

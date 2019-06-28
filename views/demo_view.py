@@ -23,6 +23,11 @@ def file_scan():
     return render_template('demo/file_scan.html')
 
 
+@demo_bp.route('/upload_md5', methods=[Method.GET.value])
+def upload_md5():
+    return render_template('demo/upload_md5.html')
+
+
 @demo_bp.route('/data/<string:date>')
 def data(date):
     """

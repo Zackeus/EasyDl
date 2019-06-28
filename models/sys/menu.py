@@ -42,7 +42,8 @@ class Menu(BasicModel):
     children = db.relationship(
         argument='Menu',
         back_populates='menu',
-        cascade='all'
+        cascade='all',
+        order_by='Menu.sort.asc()'
     )
 
     @cache.memoize()

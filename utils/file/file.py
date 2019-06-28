@@ -326,13 +326,15 @@ class FileFormat(Enum):
 
 
 if __name__ == '__main__':
-    # from utils.encodes import file_to_base64
-    # base_str = file_to_base64('D:/AIData/1.pdf')
-    # print(FileUtil.get_md5_b64(base_str))
+    from utils.encodes import file_to_base64
+    base_str = file_to_base64('D:/FileData/b581429296fe11e9bab69032c5b02716/Img/b606c64696fe11e9848b9032c5b02716/1.JPG')
+    print(FileUtil.get_md5_b64(base_str))
 
     # print(FileUtil.get_path_name_ext('D:/AIData/1.pdf'))
 
-    FileUtil.rename('D:/AIData/1.pdf', '测试')
+    # FileUtil.rename('D:/AIData/1.pdf', '测试')
+    # FileUtil.del_file('D:/FileData/1.PNG')
+
 
 
 

@@ -203,7 +203,7 @@ class Enhancer:
         image_sharped = enh_sha.enhance(sharpness)
         return image_sharped
 
-    def gamma(self, image, gamma=1.63):
+    def gamma(self, image, gamma=1.25):
         """
         图像伽马矫正
         :param image:
@@ -249,7 +249,10 @@ if __name__ == '__main__':
     #     print("裁剪数量:", i)
 
     # *********** PNG 图片压缩, 需要配置pngquant.exe 环境变量
-    pngquant = PngQuant(min_quality=80, max_quality=100)
-    pngquant.quant_image('D:/FileData/b581429296fe11e9bab69032c5b02716/8.PNG')
+    # pngquant = PngQuant(min_quality=80, max_quality=100)
+    # pngquant.quant_image('D:/FileData/b581429296fe11e9bab69032c5b02716/8.PNG')
+
+    # *********** 图片增强
+    Enhancer().enhance('D:/FileData/13.PNG', False, False, False, False, True)
 
 
