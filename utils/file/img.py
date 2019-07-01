@@ -253,6 +253,6 @@ if __name__ == '__main__':
     # pngquant.quant_image('D:/FileData/b581429296fe11e9bab69032c5b02716/8.PNG')
 
     # *********** 图片增强
-    Enhancer().enhance('D:/FileData/13.PNG', False, False, False, False, True)
+    Enhancer().enhance('E:/FileData/1.png', False, False, False, False, True)
 
 

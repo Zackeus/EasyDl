@@ -152,7 +152,7 @@ class BaseConfig(object):
 class DevelopmentConfig(BaseConfig):
     """ 开发配置类 """
 
-    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379')
+    SESSION_REDIS = redis.Redis(host='127.0.0.1', port='6379', password='syr391592723*')
 
     # 日志级别
     LOGGER_LEVER = logging.DEBUG
@@ -168,6 +168,8 @@ class DevelopmentConfig(BaseConfig):
 
     # redis 度武器主机
     CACHE_REDIS_HOST = '127.0.0.1'
+    # redis 服务器密码
+    CACHE_REDIS_PASSWORD = 'syr391592723*'
 
     # 关闭CSRF保护
     # WTF_CSRF_ENABLED = False
