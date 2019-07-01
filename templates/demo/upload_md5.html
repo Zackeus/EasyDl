@@ -1,38 +1,3 @@
-{#{% extends 'base.html' %}#}
-{##}
-{#{% block title %}文件md5上传{% endblock %}#}
-{##}
-{#{% block head %}#}
-{#{% endblock head %}#}
-{##}
-{#{% block bodyClass %}"childrenBody"{% endblock bodyClass %}#}
-{##}
-{#{% block body %}#}
-{#    <input type="button" id="testdlg" value="更多"/>#}
-{#{% endblock body %}#}
-{##}
-{#{% block footer %}#}
-{#    <script>#}
-{#        layui.extend({#}
-{#            layUploader: '{/}' + ctxStatic + 'layui/lay/custom/layUploader'#}
-{#        });#}
-{##}
-{#        layui.use(['form', 'layUploader'], function() {#}
-{#            var $ = layui.jquery,#}
-{#                uploader = layui.layUploader;#}
-{##}
-{#            $('#testdlg').click(function () {#}
-{#                uploader.render({#}
-{#                    url: '',#}
-{#                    md5: '',#}
-{#                    size: 100*1024*1024#}
-{#                })#}
-{#            })#}
-{#        });#}
-{#    </script>#}
-{#{% endblock footer %}#}
-
-
 {% extends 'base.html' %}
 
 {% block title %}文件md5上传{% endblock %}
@@ -60,6 +25,7 @@
         </table>
       </div>
       <button type="button" class="layui-btn layui-btn-normal" id="fileList">添加附件</button>
+        <button type="button" class="layui-btn" id="md5Action">MD5上传</button>
       <button type="button" class="layui-btn" id="fileListAction">开始上传</button>
     </div>
 {% endblock body %}
@@ -163,11 +129,17 @@
                                 console.log(md5);
 
                                 if (!$.isEmptyObject(err)) {
+                                    // 文件md5 计算失败
                                     tr.children().eq(2).html('<span style="color: #ff5722;">验证失败</span>');
+                                    return;
                                 }
+                                // 添加 md5 属性
+                                file.md5 = md5;
 
                             }, function (progress) {
-                                element.progress('file-validat' + index, progress+'%');
+                                setTimeout(function () {
+                                    element.progress('file-validat' + index, progress+'%');
+                                }, 100);
                             });
                         });
                     },
@@ -189,9 +161,9 @@
                     },
                     allDone: function(obj) {
                         // 当文件全部被提交后，才触发
-                        console.log(obj.total); //得到总文件数
-                        console.log(obj.successful); //请求成功的文件数
-                        console.log(obj.aborted); //请求失败的文件数
+                        console.log(obj.total);         //得到总文件数
+                        console.log(obj.successful);    //请求成功的文件数
+                        console.log(obj.aborted);       //请求失败的文件数
                     },
                     error: function(index, upload){
                         var tr = fileListView.find('tr#upload-'+ index),
@@ -208,6 +180,20 @@
                         tds.eq(5).find('.file-reload').removeClass('layui-hide');
                     }
                 });
+            
+            $('#md5Action').click(function () {
+                var files = uploadListIns.config.files;
+                for (var fileIndex in files) {
+                    if (!$.isEmptyObject(files[fileIndex].md5)) {
+                        // MD5 不为空，先进行MD5校验
+                        {#delete files[fileIndex]#}
+                    }
+                }
+                $.when().then(function () {
+                    console.log(111);
+                    $('#fileListAction').trigger('click');
+                });
+            });
         });
     </script>
 {% endblock footer %}
