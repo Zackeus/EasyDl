@@ -10,10 +10,12 @@ layui.use(['form','layer','jquery'],function() {
     form.on('checkbox(lexer)',function(data) {
         if (data.elem.checked) {
             // 选中
-            $("font." + data.value).addClass("lexer_font_show").removeClass("lexer_font__hide");
+            $("font#" + data.value).addClass("lexer_font_show").removeClass("lexer_font__hide");
+            // $("font." + data.value).addClass("lexer_font_show").removeClass("lexer_font__hide");
         } else {
             // 关闭
-            $("font." + data.value).addClass("lexer_font__hide").removeClass("lexer_font_show");
+            $("font#" + data.value).addClass("lexer_font__hide").removeClass("lexer_font_show");
+            // $("font." + data.value).addClass("lexer_font__hide").removeClass("lexer_font_show");
         }
     });
 

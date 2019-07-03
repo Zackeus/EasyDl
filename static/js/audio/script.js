@@ -96,8 +96,24 @@
 				// }
 				// return false;
 				$(e)[0].style.visibility='hidden';
+
+				// 控制标签栏隐藏
+				let $font = $(e).children('.layim-chat-text').children('font');
+				if (!$.isEmptyObject($font.attr("id"))) {
+					$font.each(function (ii, ee) {
+						$('.' + $(ee).attr("id")).next().css('display', 'none');
+					});
+				}
 			} else {
 				$(e)[0].style.visibility='visible';
+
+				// 控制标签栏显示
+				let $font = $(e).children('.layim-chat-text').children('font');
+				if (!$.isEmptyObject($font.attr("id"))) {
+					$font.each(function (ii, ee) {
+						$('.' + $(ee).attr("id")).next().css('display', 'inline-block');
+					});
+				}
 			}
         });
 	};

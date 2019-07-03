@@ -32,6 +32,10 @@
     .lexer_font__hide {
         color: #333 !important;
     }
+
+    .layui-form-checkbox {
+        display: none;
+    }
     </style>
 {% endblock head %}
 
@@ -89,10 +93,6 @@
                         </div>
                     </div>
                 </div>
-                <script type="text/javascript"
-                        src="{{ url_for('static', filename='js/jquery/jquery-ui-1.8.17.custom.min.js') }}"></script>
-                <script type="text/javascript"
-                        src="{{ url_for('static', filename='js/audio/script.js') }}"></script>
             </div>
         </div>
 
@@ -105,7 +105,10 @@
                        <label class="layui-form-label">语义标签</label>
                        <div class="layui-input-block">
                            {% for audio_lexer in audio_lexers %}
-                               <input type="checkbox" value="{{ audio_lexer.code }}" title="{{ audio_lexer.title }}"
+{#                               <input type="checkbox" value="{{ audio_lexer.code }}" title="{{ audio_lexer.title }}"#}
+{#                                      lay-filter="lexer" checked>#}
+                               <input type="checkbox" class="lexer-input {{ audio_lexer.id }}"
+                                      value="{{ audio_lexer.id }}" title="{{ audio_lexer.title }}"
                                       lay-filter="lexer" checked>
                            {% endfor %}
                        </div>
@@ -171,5 +174,9 @@
 {% endblock body %}
 
 {% block footer %}
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='js/jquery/jquery-ui-1.8.17.custom.min.js') }}"></script>
+    <script type="text/javascript"
+            src="{{ url_for('static', filename='js/audio/script.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/audio/asr_nlp.js') }}"></script>
 {% endblock footer %}

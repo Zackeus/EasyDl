@@ -47,12 +47,20 @@ def asr_nlp(id):
     asr_nlp_datas, errors = AudioAsrNlp.AudioAsrNlpSchema().load(result, many=True)
     Assert.is_true(is_empty(errors), errors)
 
-    # 查询识别出的词性列表
-    ne_list = []
+    # 查询识别出的词性列表, 单词性
+    # ne_list = []
+    # for asr_nlp_data in asr_nlp_datas:
+    #     if is_not_empty(asr_nlp_data.ne_list):
+    #         ne_list.extend(asr_nlp_data.ne_list)
+    # audio_lexers = AudioLexerNeModel().dao_get_by_codes(ne_list)
+
+    # ***********************************
+    audio_lexers = []
     for asr_nlp_data in asr_nlp_datas:
-        if is_not_empty(asr_nlp_data.ne_list):
-            ne_list.extend(asr_nlp_data.ne_list)
-    audio_lexers = AudioLexerNeModel().dao_get_by_codes(ne_list)
+        for item in asr_nlp_data.items:
+            audio_lexer = AudioLexerNeModel().dao_get_by_code(item.ne)
+            audio_lexer.id = item.id
+            audio_lexers.append(audio_lexer)
     return render_template(
         'audio/asr_nlp.html',
         audio_src=url_for('static', filename='songs/{id}.wav'.format(id=id)),

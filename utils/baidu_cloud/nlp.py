@@ -11,7 +11,7 @@ import requests
 import json
 from marshmallow import Schema, fields, post_load
 
-from utils import encodes
+from utils import encodes, idgen
 from utils.errors import MyError
 from utils.request import codes, ContentType
 from utils.object_util import is_not_empty, is_empty, BaseObject
@@ -74,7 +74,7 @@ class NLP(BaseObject):
 class LexerItem(BaseObject):
 
     def __init__(self, item, ne, pos, byte_offset, byte_length,
-                 uri, basic_words, formal=''):
+                 uri, basic_words, formal='', id=None):
         """
         词性分析字符串
         :param str item: 词汇的字符串
@@ -86,6 +86,7 @@ class LexerItem(BaseObject):
         :param list basic_words: 基本词成分
         :param str formal: 词汇的标准化表达，主要针对时间、数字单位，没有归一化表达的，此项为空串
         """
+        self.id = id if id else idgen.IdGen.uuid()
         self.item = item
         self.ne = ne
         self.pos = pos

@@ -259,7 +259,7 @@ def register_template_filter(app):
         :param list items:
         :return:
         """
-        _item = '<font class="{ne} lexer_font_show" color="{color}" data-ne-title="{ne_title}">{item}</font>'
+        _item = '<font id="{id}" class="{ne} lexer_font_show" color="{color}" data-ne-title="{ne_title}">{item}</font>'
         _ne_key = 'ne_{0}'
 
         if is_empty(items):
@@ -273,6 +273,7 @@ def register_template_filter(app):
             text = text.replace(item.item, ne_key, 1)
             ne_dict.update(
                 {_ne_key.format(str(item.byte_offset)): _item.format(
+                    id=item.id,
                     ne=item.ne,
                     color=lexer.color,
                     ne_title=lexer.title,
