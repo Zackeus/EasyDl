@@ -27,6 +27,14 @@ class AudioLexerNeModel(BasicModel):
     color = db.Column(db.String(length=30), name='COLOR', nullable=False, default=default_color, comment='词性颜色')
 
     @cache.memoize()
+    def dao_get_all(self):
+        """
+        查询所有词性分析
+        :return:
+        """
+        return self.query.order_by(AudioLexerNeModel.create_date.desc()).all()
+
+    @cache.memoize()
     def dao_get_codes(self):
         """
         查询所有code列表
@@ -64,7 +72,7 @@ class AudioLexerNeModel(BasicModel):
             audio_lexer.color = self.default_color
         return audio_lexer
 
-    @cache.delete_cache([dao_get_codes, dao_get_by_code])
+    @cache.delete_cache([dao_get_codes, dao_get_by_code, dao_get_all])
     def dao_create(self, id=None, **kwargs):
         super().dao_create(id)
         with db.auto_commit_db(**kwargs) as s:

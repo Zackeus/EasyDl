@@ -55,12 +55,24 @@ def asr_nlp(id):
     # audio_lexers = AudioLexerNeModel().dao_get_by_codes(ne_list)
 
     # ***********************************
-    audio_lexers = []
+
+    items = []
     for asr_nlp_data in asr_nlp_datas:
         for item in asr_nlp_data.items:
-            audio_lexer = AudioLexerNeModel().dao_get_by_code(item.ne)
-            audio_lexer.id = item.id
-            audio_lexers.append(audio_lexer)
+            items.append(item)
+
+    audio_lexers = AudioLexerNeModel().dao_get_all()
+    for audio_lexer in audio_lexers:
+        audio_lexer.items = []
+        for item in items:
+            if audio_lexer.code == item.ne:
+                audio_lexer.items.append(item)
+
+    # 移除 item 为空的标签栏
+    for audio_lexer in audio_lexers.copy():
+        if is_empty(audio_lexer.items):
+            audio_lexers.remove(audio_lexer)
+
     return render_template(
         'audio/asr_nlp.html',
         audio_src=url_for('static', filename='songs/{id}.wav'.format(id=id)),
