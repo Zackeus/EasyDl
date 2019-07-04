@@ -711,11 +711,15 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 var browserMD5File = require('./browser-md5-file');
 
 (function (factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object') {
-    window.browserMD5File = factory();
-  }
+    if (window.layui && layui.define) {
+        layui.define('jquery', function (exports) { //layui加载
+            exports('fileMd5', factory());
+        });
+    } else if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object') {
+        window.browserMD5File = factory();
+    }
 })(function () {
 
   return browserMD5File;

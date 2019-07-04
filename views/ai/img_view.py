@@ -117,7 +117,7 @@ def img_source_files(img_data, id):
     for source_file in source_files:
         url = url_for('file.file_download', id=source_file.id, md5_id=source_file.md5_id)
         if source_file.file_format.upper() == FileFormat.PDF.value:
-            url = url + '/true'
+            url = url + '/' + source_file.id
         flow_info = FlowInfo(url, url, source_file.file_name, source_file.id, source_file.file_format)
         file_datas.append(flow_info)
 

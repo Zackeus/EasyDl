@@ -19,7 +19,8 @@ from utils.assert_util import Assert
 class PDFUtil(object):
 
     @staticmethod
-    def pdf_to_pic(path, pic_dir, format=FileFormat.JPG.value, loss=True, gamma=True, zoom=210, size_threshold=1.50):
+    def pdf_to_pic(path, pic_dir, format=FileFormat.JPG.value, loss=True, gamma=True, zoom=210,
+                   min_size=1.50, max_size=15.0):
         """
         从pdf中提取图片
         :param path: pdf的路径
@@ -28,7 +29,8 @@ class PDFUtil(object):
         :param bool loss: 是否压缩
         :param bool gamma: 是否 gamma 矫正
         :param int zoom: 保存图片分辨率
-        :param size_threshold: 文件大小阈值
+        :param min_size: 文件大小最小阈值
+        :param max_size: 文件大小最大阈值
         :return: {page_num, success_num, fail_num, msg}
         """
         Assert.is_true(os.path.isfile(path), '文件不存在, path: {0}'.format(path))
@@ -44,16 +46,26 @@ class PDFUtil(object):
             page_num = pdf.pageCount
 
             for pg in range(page_num):
+                pg_zoom = zoom
                 pm_dict = {'page_code': pg + 1}
                 try:
                     page = pdf[pg]  # type: Page
-                    trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(0)
+                    trans = fitz.Matrix(pg_zoom / 100.0, pg_zoom / 100.0).preRotate(0)
                     pm = page.getPixmap(matrix=trans, alpha=False)                                # 获得每一页的流对象
                     page_path = FileUtil.path_join(pic_dir, '{0}.{1}'.format((pg + 1), format))   # 图片路径
                     pm.writeImage(page_path)                                                      # 保存图片
 
-                    if FileUtil.get_file_size(page_path) <= size_threshold:
-                        trans = fitz.Matrix(zoom * 2 / 100.0, zoom * 2 / 100.0).preRotate(0)
+                    file_size = FileUtil.get_file_size(page_path)
+                    if file_size <= min_size:
+                        # 低于最小阀值
+                        pg_zoom = zoom * 2
+                        trans = fitz.Matrix(pg_zoom / 100.0, pg_zoom / 100.0).preRotate(0)
+                        pm = page.getPixmap(matrix=trans, alpha=False)
+                        pm.writeImage(page_path)
+                    elif file_size >= max_size:
+                        # 大于最大阀值
+                        pg_zoom = zoom * 2 / 3
+                        trans = fitz.Matrix(pg_zoom / 100.0, pg_zoom / 100.0).preRotate(0)
                         pm = page.getPixmap(matrix=trans, alpha=False)
                         pm.writeImage(page_path)
 
@@ -89,8 +101,8 @@ class PDFUtil(object):
 
 
 if __name__ == '__main__':
-    print(PDFUtil.pdf_to_pic('D:/FileData/1/11.pdf',
-                             'D:/FileData/1/jpg',
+    print(PDFUtil.pdf_to_pic('D:/FileData/3/11.pdf',
+                             'D:/FileData/3/jpg',
                              loss=True,
                              gamma=True,
                              size_threshold=1.50))

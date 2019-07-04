@@ -19,21 +19,12 @@
                         {% endfor %}
 					</select>
 				</div>
-{#	    		<div class="layui-input-inline">#}
-{#					<input id="description" name="description" type="text" class="layui-input" placeholder="字典描述">#}
-{#				</div>#}
 				<button class="layui-btn" lay-submit lay-filter="search"><i class="layui-icon layui-icon-search"></i></button>
 			</div>
 		</blockquote>
 	</form>
 
 	<table id="imgDataList" lay-filter="imgDataList" class="layui-hide"></table>
-
-{#	<script type="text/html" id=imgDataListToolBar>#}
-{# 		<div class="layui-btn-container">#}
-{#			<button class="layui-btn" type="button" lay-event="add"><i class="layui-icon">&#xe608;</i> 添加</button> -->#}
-{#  		</div>#}
-{#	</script>#}
 
     <!-- 处理进度 -->
     <script type="text/html" id="imgData-isHandle">
@@ -63,15 +54,6 @@
         <a title="图片查看" class="layui-btn layui-btn-xs" lay-event="browse" href="javascript:;">
             <i class="layui-icon layui-icon-search"></i>
         </a>
-{#		<a title="修改" class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit" href="javascript:;">#}
-{#            <i class="layui-icon">&#xe642;</i>#}
-{#        </a>#}
-{#		<a title="删除" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" href="javascript:;">#}
-{#            <i class="layui-icon">&#xe640;</i>#}
-{#        </a>#}
-{#		<a title="添加键值" class="layui-btn layui-btn-xs layui-btn-primary" lay-event="add" href="javascript:;">#}
-{#            <i class="layui-icon">&#xe654;</i>#}
-{#        </a>#}
 	</script>
 
 {% endblock body %}

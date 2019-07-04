@@ -47,3 +47,18 @@ def file_upload():
     if file.filename == '4.JPG':
         return render_json(MyResponse('上传成功', code='22'))
     return render_json(MyResponse('上传成功'))
+
+
+@file_bp.route('/md5/<string:md5_id>', methods=[Method.GET.value])
+def file_md5(md5_id):
+    """
+    文件md5查询
+    :param md5_id:
+    :return:
+    """
+    print(md5_id)
+    if md5_id == '80242e3495dcc1a5539047434dfbf5e6':
+        return render_json(MyResponse('查询成功'), 500)
+    if md5_id == '5d8d2a735876b2132fc4618dbf367c4c':
+        return render_json(MyResponse('查询成功'), 500)
+    return render_json(MyResponse('查询成功'))

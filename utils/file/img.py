@@ -249,10 +249,10 @@ if __name__ == '__main__':
     #     print("裁剪数量:", i)
 
     # *********** PNG 图片压缩, 需要配置pngquant.exe 环境变量
-    # pngquant = PngQuant(min_quality=80, max_quality=100)
-    # pngquant.quant_image('D:/FileData/b581429296fe11e9bab69032c5b02716/8.PNG')
+    pngquant = PngQuant(min_quality=80, max_quality=100)
+    pngquant.quant_image('D:/FileData/1.JPG')
 
     # *********** 图片增强
-    Enhancer().enhance('E:/FileData/1.png', False, False, False, False, True)
+    # Enhancer().enhance('E:/FileData/1.png', False, False, False, False, True)
 
 
