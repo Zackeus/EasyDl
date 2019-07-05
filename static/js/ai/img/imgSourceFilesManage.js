@@ -16,6 +16,7 @@ layui.use(['form', 'layer', 'fileflow'], function() {
         contentType: 'application/json',
         elem: '#files',
         imgNums: 50,
+        isAuto: true,
         done: function() {
             $("#files img").EZView();
         }

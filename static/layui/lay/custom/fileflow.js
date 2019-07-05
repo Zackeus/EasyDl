@@ -11,6 +11,7 @@ layui.define(['flow','form','layer'], function (exports) {
             $(param.elem).addClass('flow-img');
             flow.load({
                 elem: param.elem,                                           //流加载容器
+                isAuto: param.isAuto,
                 done: function(page, next) {
                     $.ajax({
                         method: $.isEmptyObject(param.method) ? param.method : 'GET',
@@ -77,6 +78,7 @@ layui.define(['flow','form','layer'], function (exports) {
             $(param.elem).addClass('flow-img');
             flow.load({
                 elem: param.elem,
+                isAuto: param.isAuto,
                 done: function(page, next) {
                     $.ajax({
                         method: $.isEmptyObject(param.method) ? 'GET' : param.method,

@@ -15,6 +15,7 @@ layui.use(['form', 'layer', 'fileflow'], function() {
         method: 'GET',
         contentType: 'application/json',
         elem: '#Images',                //流加载容器
+        isAuto: true,
         imgNums: 10
     });
 });
