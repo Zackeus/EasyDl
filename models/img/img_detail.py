@@ -126,6 +126,14 @@ class ImgDetailModel(BasicModel):
         """
         return self.query.filter(ImgDetailModel.img_data_id == img_data.id, ImgDetailModel.is_handle == False).all()
 
+    def dao_get_children(self, parent_file_id):
+        """
+        根据父级ID查询子集
+        :param parent_file_id:
+        :return:
+        """
+        return self.query.filter(ImgDetailModel.parent_file_id == parent_file_id).all()
+
     def dao_update_type(self, type_id):
         """
         更新图片文件类型

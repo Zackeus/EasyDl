@@ -9,7 +9,7 @@
 from flask import Blueprint, render_template, url_for
 
 from models import PageSchema, FlowInfo, FlowInfoSchema
-from models.img import ImgDataModel, ImgDataSchema
+from models.img import ImgDataModel, ImgDataSchema, ImgDetailModel
 
 from utils import Method, ContentType, render_info, validated, Locations, Assert, \
     is_empty, is_not_empty, codes, MyResponse
@@ -124,6 +124,56 @@ def img_source_files(img_data, id):
     file_datas_dict, errors = FlowInfoSchema().dump(file_datas, many=True)
     Assert.is_true(is_empty(errors), errors)
     return render_info(MyResponse('查询成功', data=file_datas_dict))
+
+
+# *************************************************
+
+@img_bp.route('/files_demo/manage/<string:id>', methods=[Method.GET.value])
+@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
+def files_demo_manage(img_data, id):
+    """
+    西安演示
+    :param img_data:
+    :param id: 图片流水号
+    :return:
+    """
+    source_files = img_data.dao_get_source_files(img_data.id)
+    Assert.is_true(is_not_empty(source_files), '查无此数据', codes.no_data)
+
+    for source_file in source_files:
+        children = ImgDetailModel().dao_get_children(source_file.id)
+        source_file.img_page = 0 if is_empty(children) else len(children)
+    return render_template('ai/img/files_demo_manage.html', img_data_id=img_data.id, source_files=source_files)
+
+
+@img_bp.route('/files_demo/<string:id>', methods=[Method.GET.value])
+@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ),
+           consumes=ContentType.JSON.value)
+def files_demo(img_data, id):
+    """
+    西安演示
+    :param img_data:
+    :param id:
+    :return:
+    """
+    img_data = ImgDataModel().dao_get(img_data.id)  # type: ImgDataModel
+    Assert.is_true(is_not_empty(img_data), '查无此数据', codes.no_data)
+
+    img_datas = []
+    for img_detail in img_data.img_details:
+        url = url_for('file.file_download', id=img_detail.file_id, md5_id=img_detail.file_md5)
+        if not img_detail.is_handle:
+            alt = '待处理'
+        elif is_not_empty(img_detail.img_type):
+            alt = img_detail.img_type.type_explain
+        else:
+            alt = img_detail.err_msg
+        flow_info = FlowInfo(url, url, alt, img_detail.parent_file_id)
+        img_datas.append(flow_info)
+
+    img_datas_dict, errors = FlowInfoSchema().dump(img_datas, many=True)
+    Assert.is_true(is_empty(errors), errors)
+    return render_info(MyResponse('查询成功', data=img_datas_dict))
 
 
 

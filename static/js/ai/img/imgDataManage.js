@@ -68,16 +68,6 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
     	return false;
     });
 
-    //头工具栏事件
-    // table.on('toolbar(imgDataList)', function(obj) {
-    //   switch(obj.event) {
-    //
-    //     case 'add':
-    //     	addDict();
-    //     break;
-    //   };
-    // });
-
     //列表操作
     table.on('tool(imgDataList)', function(obj){
 		switch (obj.event) {
@@ -94,8 +84,9 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 			break;
 
         case "browse":
-            browseImg(obj.data.id);
-            browseFiles(obj.data.id);
+            // browseImg(obj.data.id);
+            // browseFiles(obj.data.id);
+            browseDemo(obj.data.id);
             break;
 
 		default:
@@ -105,10 +96,10 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 
     // 浏览图片
     function browseImg(data) {
-    	var url = data === "" || data == null || data === undefined ?
+    	let url = data === "" || data == null || data === undefined ?
             (ctx + 'ai/img/img_files/manage') : (ctx + 'ai/img/img_files/manage/' + data);
 
-    	var browseImgIndex = layui.layer.open({
+    	layui.layer.open({
             type: 2,
             title: '图片管理', 		// 不显示标题栏
             area: ['25%','95%'],
@@ -136,10 +127,10 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 
 	// 浏览源文件
     function browseFiles(data) {
-    	var url = data === "" || data == null || data === undefined ?
+    	let url = data === "" || data == null || data === undefined ?
             (ctx + 'ai/img/img_source_files/manage') : (ctx + 'ai/img/img_source_files/manage/' + data);
 
-    	var browseFilesIndex = layui.layer.open({
+    	layui.layer.open({
             type: 2,
             title: '文件管理', 		// 不显示标题栏
             area: ['40%','95%'],
@@ -163,6 +154,47 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
             	imgDataListIns.reload();
            }
     	});
+	}
+
+	// 西安演示
+    function browseDemo(data) {
+    	let url = data === "" || data == null || data === undefined ?
+            (ctx + 'ai/img/files_demo/manage') : (ctx + 'ai/img/files_demo/manage/' + data);
+
+    	let filesDemoIndex = layui.layer.open({
+            type: 2,
+            title: '文件处理', 		// 不显示标题栏
+            closeBtn: 1,			// 关闭按钮
+            shade: 0, 				// 遮罩
+            shadeClose: false, 		// 是否点击遮罩关闭
+            anim: 0, 				// 弹出动画
+            isOutAnim: true, 		// 关闭动画
+            scrollbar: true, 		// 是否允许浏览器出现滚动条
+            maxmin: true, 			// 最大最小化
+            id: 'LAY_FILE_DEMO', 	// 用于控制弹层唯一标识
+            moveType: 1,
+            content: [url],
+            success : function(layero, index) {
+                setTimeout(function(){
+                    layui.layer.tips('点击此处返回菜单列表', '.layui-layer-setwin .layui-layer-close', {
+                        tips: 3
+                    });
+                },500)
+            },
+            cancel: function(index, layero) {
+            },
+            end:function(index) {
+                $(window).unbind("resize", filesDemoResize);
+            	imgDataListIns.reload();
+           }
+    	});
+
+    	layui.layer.full(filesDemoIndex);
+        window.sessionStorage.setItem("filesDemoIndex", filesDemoIndex);
+        //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
+        $(window).on("resize", filesDemoResize = function() {
+            layui.layer.full(window.sessionStorage.getItem("filesDemoIndex"));
+        });
 	}
 
     //控制表格编辑时文本的位置【跟随渲染时的位置】

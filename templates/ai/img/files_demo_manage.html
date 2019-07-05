@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}文件处理{% endblock %}
+
+{% block head %}
+    <meta name="img_data_id" content="{{ img_data_id }}">
+    <style>
+    .layui-flow-more >a {display: none;}
+    </style>
+{% endblock head %}
+
+{% block bodyClass %}"childrenBody"{% endblock bodyClass %}
+
+{% block body %}
+    <div style="position: fixed; top: 12px; padding: 10px; width: 30%; height: 45%; ">
+        <div class="layui-col-lg6 layui-col-md12" style="position: relative; width: 100%;">
+            <blockquote class="layui-elem-quote title">源文档</blockquote>
+            <table class="layui-table" lay-size="sm">
+                <thead>
+                    <tr>
+                        <th><div class="layui-table-cell laytable-cell-2-status" align="center"><span>文件名</span></div></th>
+                        <th><div class="layui-table-cell laytable-cell-2-status" align="center"><span>大小</span></div></th>
+                        <th><div class="layui-table-cell laytable-cell-2-status" align="center"><span>图片数</span></div></th>
+                        <th><div class="layui-table-cell laytable-cell-2-status" align="center"><span>处理进度</span></div></th>
+                    </tr>
+                </thead>
+                <tbody id="fileListView">
+                    {% for source_file in source_files %}
+                        <tr id="{{ source_file.id }}">
+                            <td align="center">
+                                <a class="upload-img-prev-link" href="javascript:;">{{ source_file.file_name }}.{{ source_file.file_format }}</a>
+                            </td>
+                            <td align="center">{{ source_file.file_size }} MB</td>
+                            <td class="img_page" align="center">{{ source_file.img_page }}</td>
+                            <td>
+                                <div class="layui-progress layui-progress-big layui-progress-radius-fix" lay-showpercent="true" lay-filter="file{{ source_file.id }}">
+                                <div class="layui-progress-bar" lay-percent="0%">
+                                <span class="layui-progress-text">0%</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="position: absolute; right: 10px; padding: 5px; width: 65%; height: 45%; float:right;">
+        <div class="layui-col-lg6 layui-col-md12" style="position: relative; top: 10px; width: 100%; height: 45%;">
+            <blockquote class="layui-elem-quote title">图片处理</blockquote>
+            <div class="layui-quote-nm">
+                <form class="layui-form">
+                    <ul id="Images" class="layer-photos-demo" style="min-height: 350px; height: 100%;"></ul>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block footer %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/ai/img/filesDemoManage.js') }}"></script>
+{% endblock footer %}

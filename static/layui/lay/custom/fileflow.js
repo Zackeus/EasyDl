@@ -41,6 +41,10 @@ layui.define(['flow','form','layer'], function (exports) {
                                     next(imgList.join(''), page < (imgData.length/param.imgNums));
                                     form.render();
                                     $(param.elem + " li img").height($(param.elem + " li img").width() * 1.3);
+
+                                    if (param.done && typeof param.done === 'function') {
+                                        param.done();
+                                    }
                                 }, 500);
                             } else {
                                 next('', false);
@@ -122,7 +126,7 @@ layui.define(['flow','form','layer'], function (exports) {
                                     form.render();
                                     $(param.elem + " li img").height($(param.elem + " li img").width() * 1.3);
 
-                                    if (param.done) {
+                                    if (param.done && typeof param.done === 'function') {
                                         param.done();
                                     }
                                 }, 500);
