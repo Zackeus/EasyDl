@@ -55,9 +55,9 @@ def file_md5_upload(file):
     :param file:
     :return:
     """
-    print(file.md5_id)
+    print(file)
     if file.md5_id == '5d8d2a735876b2132fc4618dbf367c4c':
-        return render_info(MyResponse('查询成功'), 500)
+        return render_info(MyResponse('查询成功'), status=500)
     if file.md5_id == '47a7af5260e7d8d50c9b66374a63264e':
         return render_info(MyResponse('查询失败', '22'))
     return render_info(MyResponse('查询成功'))

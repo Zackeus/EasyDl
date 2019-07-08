@@ -38,7 +38,6 @@ layui.extend({
     };
 
     var Class = function (options) {
-        console.log(options);
         let that = this;
         that.options = options;
         that.register();
@@ -61,7 +60,7 @@ layui.extend({
 
         layer.open({
             type: 1,
-            area: ['900px', '500px'], //宽高
+            area: ['70%','80%'],
             resize: true,
             maxmin: true,
             content:
@@ -191,6 +190,9 @@ layui.extend({
                         this.error(index, upload);
                     },
                     allDone: function(obj) {
+                        if(options.done && typeof options.done === 'function') {
+                            options.done();
+                        }
                         // 当文件全部被提交后，才触发
                         $('#fileAction').text("开始上传").attr("disabled", false).removeClass("layui-btn-disabled");
                     },
@@ -249,11 +251,15 @@ layui.extend({
                     // MD5 不为空，先进行MD5校验
                     ajaxArray.push(
                         new Promise(function (resolve, reject) {
+                            // 解析待上传文件名，文件扩展
+                            let fileInfo = that.fileParse(files[fileIndex].name);
                             $.ajax({
                                 method: 'POST',
                                 url : options.md5Url,
                                 data : JSON.stringify({
                                     md5Id: files[fileIndex].md5,
+                                    fileName: fileInfo[0],
+                                    fileFormat: fileInfo[1]
                                 }),
                                 headers:{'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
                                 contentType : 'application/json',
@@ -275,7 +281,9 @@ layui.extend({
                                     resolve(res);
                                 },
                                 error : function(event) {
-                                    resolve({code: '-1', msg: '请求失败'});
+                                    if (that.strIsNull(event.responseJSON))
+                                        return resolve({code: '-1', msg: '请求失败'});
+                                    return resolve(event.responseJSON);
                                 }
                             })
                         })
@@ -286,6 +294,9 @@ layui.extend({
             Promise.all(ajaxArray).then(function (resList) {
                 // 全部请求成功
                 if ($.isEmptyObject(files)) {
+                    if(options.done && typeof options.done === 'function') {
+                        options.done();
+                    }
                     return $uploadBtn.text("开始上传").attr("disabled", false).removeClass("layui-btn-disabled");
                 }
                 $('#hideFileAction').trigger('click');
@@ -306,6 +317,13 @@ layui.extend({
             fileSize = len.toFixed(2) + " KB";
         }
         return fileSize;
+    };
+
+    Class.prototype.fileParse = function(name) {
+        let point = name.lastIndexOf('.');
+        if (point === -1)
+            return [name, ''];
+        return [name.substr(0, point), name.substr(point + 1)]
     };
 
     Class.prototype.strIsNull=function (str) {

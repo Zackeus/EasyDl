@@ -113,7 +113,7 @@ class FileSchema(BaseSchema):
     )
 
     def only_md5_upload(self):
-        return super().only_create() + ('md5_id', )
+        return super().only_create() + ('md5_id', 'file_name', 'file_format')
 
 
 

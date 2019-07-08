@@ -30,8 +30,11 @@
                     acceptMime: 'image/jpeg, image/png',
                     exts: 'jpg|png',
                     number: 0,
-                    openEnd : function () {
+                    openEnd: function () {
                         console.log('销毁');
+                    },
+                    done: function () {
+                        console.log('上传完毕');
                     }
                 })
             });
