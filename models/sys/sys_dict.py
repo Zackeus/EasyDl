@@ -54,7 +54,7 @@ class SysDict(BasicModel):
         data_dict, errors = SysDictSchema().dump(page.data, many=True)
         Assert.is_true(is_empty(errors), errors)
         page.data = data_dict
-        return page, pagination.query
+        return page, pagination
 
     @cache.memoize()
     def dao_get(self, id):

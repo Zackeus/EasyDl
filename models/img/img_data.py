@@ -97,7 +97,7 @@ class ImgDataModel(BasicModel):
         img_data_dict, errors = ImgDataSchema(only=ImgDataSchema().dump_only_page()).dump(page.data, many=True)
         Assert.is_true(is_empty(errors), errors)
         page.data = img_data_dict
-        return page, pagination.query
+        return page, pagination
 
     def dao_get_todo(self, limit=10):
         """

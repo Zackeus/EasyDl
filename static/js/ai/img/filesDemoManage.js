@@ -29,37 +29,45 @@ layui.use(['form', 'layer', 'fileflow', 'flow', 'element'], function() {
         });
     };
 
-    var imgData,
+    var imgData = [],
         imgNums = 1;
     $('#Images').addClass('flow-img');
     flow.load({
         elem: '#Images',                                           //流加载容器
         isAuto: false,
         done: function(page, next) {
+            let dataJson = JSON.stringify({
+                page: page,
+                pageSize: imgNums,
+                imgDataId: $("meta[name=img_data_id]").attr("content")
+            });
+            let url = ctx + 'ai/img/files_demo/page?' + dataJson;
+
             $.ajax({
                 method: 'GET',
-                url : ctx + 'ai/img/files_demo/' + $("meta[name=img_data_id]").attr("content"),
+                url : url,
                 headers: {'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
                 contentType : 'application/json',
                 dataType : 'json',
                 beforeSend: function() {
                 },
                 success : function(res) {
+                    console.log(res);
                     if (res.code === "0") {
-                        var imgList = [];
-                            imgData = res.data;
-                        var maxPage = imgNums*page < imgData.length ? imgNums*page : imgData.length;
+                        let imgList = [];
+
                         setTimeout(function() {
-                            for(var i= imgNums*(page-1); i< maxPage; i++){
-                                imgList.push('<li class="'+ imgData[i].pid +'">' +
-                                    '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" ' +
-                                    'alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
+                            layui.each(res.data, function(index, item) {
+                                imgData.push(item);
+                                imgList.push('<li class="'+ item.pid +'">' +
+                                    '<img layer-src="'+ item.src +'" src="'+ item.thumb +'" ' +
+                                    'alt="'+ item.alt+'" data-sort="' + (Number(res.page) * Number(res.pageSize) + Number(index) - 1) + '">' +
                                     '<div class="operate"><div class="check">' +
                                     '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" ' +
-                                    'title="'+imgData[i].alt+'">' +
+                                    'title="'+ item.alt + '">' +
                                     '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
-                            }
-                            next(imgList.join(''), page < (imgData.length/imgNums));
+                            });
+                            next(imgList.join(''), page < res.totalPage);
                             form.render();
                             $("#Images li img").height($("#Images li img").width() * 1.3);
 
@@ -96,21 +104,4 @@ layui.use(['form', 'layer', 'fileflow', 'flow', 'element'], function() {
     $(window).resize(function() {
         $("#Images li img").height($("#Images li img").width() * 1.3);
     });
-
-    //流加载图片
-    // fileflow.img({
-    //     url: ctx + 'ai/img/files_demo/' + $("meta[name=img_data_id]").attr("content"),
-    //     headers: {'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
-    //     method: 'GET',
-    //     contentType: 'application/json',
-    //     elem: '#Images',                //流加载容器
-    //     isAuto: false,
-    //     imgNums: 1,
-    //     done: function () {
-    //         if (flowIerval == null || flowIerval === undefined || flowIerval === '') {
-    //             flowIerval = setInterval(doFlowIerval, 1500);
-    //         }
-    //         $('html, body').scrollTop($('#Images li').eq($('#Images li').length - 1).offset().top);
-    //     }
-    // });
 });

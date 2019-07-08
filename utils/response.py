@@ -12,7 +12,7 @@ from marshmallow import fields, Schema, post_load
 from flask import request, jsonify, render_template, redirect, url_for
 from jinja2.exceptions import TemplateNotFound
 
-from utils import codes, Headers, ContentType, validates as MyValidates
+from utils import codes, Headers, ContentType, validates as MyValidates, is_not_empty
 
 
 class MyResponse(object):
@@ -87,18 +87,21 @@ def render_info(info, template=None, status=codes.ok, **kwargs):
     :type kwargs: 模板参数对象
     :return:
     """
-    if codes.ok != status and hasattr(info, 'code'):
-        info.code = str(status)
+    if not isinstance(info, dict):
+        info = info.__dict__
+
+    if codes.ok != status and is_not_empty(info.get('code')):
+        info['code'] = str(status)
     if request.headers.get(Headers.CONTENT_TYPE.value) and \
             request.headers.get(Headers.CONTENT_TYPE.value) == ContentType.JSON.value:
         # 判断请求响应类型是否为 JSON
-        return jsonify(info.__dict__), status
+        return jsonify(info), status
     if template:
         # 判断模板路径是否存在
         try:
             return render_template(
                 template_name_or_list=template,
-                info=info.__dict__,
+                info=info,
                 **kwargs
             ), status
         except TemplateNotFound:
@@ -119,9 +122,12 @@ def render_json(info, status=codes.ok):
     :param info: 信息体(字典格式)
     :return:
     """
-    if codes.ok != status and hasattr(info, 'code'):
-        info.code = str(status)
-    return jsonify(info.__dict__), status
+    if not isinstance(info, dict):
+        info = info.__dict__
+
+    if codes.ok != status and is_not_empty(info.get('code')):
+        info['code'] = str(status)
+    return jsonify(info), status
 
 
 def is_safe_url(target):

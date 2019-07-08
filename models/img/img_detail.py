@@ -11,7 +11,7 @@ import os
 from extensions import db
 from models.basic import BasicModel, BaseSchema
 from models.img.img_type import ImgTypeSchema
-from utils import validates as MyValidates, is_not_empty
+from utils import validates as MyValidates, is_not_empty, is_empty, Assert
 from marshmallow import fields, validate
 
 
@@ -118,6 +118,30 @@ class ImgDetailModel(BasicModel):
         with db.auto_commit_db(**kwargs) as s:
             s.add(self)
 
+    def dao_find_page(self, page, error_out=False):
+        """
+        分页条件查询
+        :param page:
+        :param error_out:
+        :return:
+        """
+        # 条件查询
+        filter = []
+
+        if is_not_empty(self.img_data_id):
+            filter.append(ImgDetailModel.img_data_id == self.img_data_id)
+
+        pagination = self.query.filter(*filter).\
+            order_by(ImgDetailModel.create_date.desc()).\
+            paginate(page=page.page, per_page=page.page_size, error_out=error_out)
+        page.init_pagination(pagination)
+
+        # 数据序列化 json
+        img_detail_dict, errors = ImgDetailSchema(only=ImgDetailSchema().dump_only_page()).dump(page.data, many=True)
+        Assert.is_true(is_empty(errors), errors)
+        page.data = img_detail_dict
+        return page, pagination
+
     def dao_get_todo_by_img_data(self, img_data):
         """
         查询待处理图片明细
@@ -196,6 +220,9 @@ class ImgDetailSchema(BaseSchema):
 
     def only_patch_type(self):
         return super().only_update() + ('id', 'img_type_code', )
+
+    def only_page(self):
+        return super().only_page() + ('img_data_id', )
 
     def dump_only_page(self):
         return super().dump_only_page() + \

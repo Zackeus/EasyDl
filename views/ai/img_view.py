@@ -9,7 +9,7 @@
 from flask import Blueprint, render_template, url_for
 
 from models import PageSchema, FlowInfo, FlowInfoSchema
-from models.img import ImgDataModel, ImgDataSchema, ImgDetailModel
+from models.img import ImgDataModel, ImgDataSchema, ImgDetailModel, ImgDetailSchema
 
 from utils import Method, ContentType, render_info, validated, Locations, Assert, \
     is_empty, is_not_empty, codes, MyResponse
@@ -146,21 +146,22 @@ def files_demo_manage(img_data, id):
     return render_template('ai/img/files_demo_manage.html', img_data_id=img_data.id, source_files=source_files)
 
 
-@img_bp.route('/files_demo/<string:id>', methods=[Method.GET.value])
-@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ),
-           consumes=ContentType.JSON.value)
-def files_demo(img_data, id):
+@img_bp.route('/files_demo/page', methods=[Method.GET.value])
+@validated(PageSchema, only=PageSchema().only_create(),
+           locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
+@validated(ImgDetailSchema, only=ImgDetailSchema().only_page(), page=True,
+           locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
+def files_demo_page(page, img_detail):
     """
     西安演示
-    :param img_data:
-    :param id:
+    :param page:
+    :param img_detail:
     :return:
     """
-    img_data = ImgDataModel().dao_get(img_data.id)  # type: ImgDataModel
-    Assert.is_true(is_not_empty(img_data), '查无此数据', codes.no_data)
+    page, pagination = img_detail.dao_find_page(page)
 
-    img_datas = []
-    for img_detail in img_data.img_details:
+    flow_img_details = []
+    for img_detail in pagination.items:
         url = url_for('file.file_download', id=img_detail.file_id, md5_id=img_detail.file_md5)
         if not img_detail.is_handle:
             alt = '待处理'
@@ -169,11 +170,16 @@ def files_demo(img_data, id):
         else:
             alt = img_detail.err_msg
         flow_info = FlowInfo(url, url, alt, img_detail.parent_file_id)
-        img_datas.append(flow_info)
+        flow_img_details.append(flow_info)
 
-    img_datas_dict, errors = FlowInfoSchema().dump(img_datas, many=True)
+    flow_img_details_dict, errors = FlowInfoSchema().dump(flow_img_details, many=True)
     Assert.is_true(is_empty(errors), errors)
-    return render_info(MyResponse('查询成功', data=img_datas_dict))
+
+    page_dict, page_errors = PageSchema().dump(page)
+    Assert.is_true(is_empty(page_errors), page_errors)
+    page_dict['data'] = flow_img_details_dict
+
+    return render_info(page_dict)
 
 
 

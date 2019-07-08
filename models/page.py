@@ -7,6 +7,7 @@
 # @Time : 2019/6/12 17:06
 
 
+from datetime import datetime
 from marshmallow import fields
 
 from extensions import db
@@ -33,13 +34,15 @@ class Page(BasicModel):
         :param msg:
         :return:
         """
-        self.code = codes.success
+        self.code = str(codes.success)
         self.msg = msg
         self.page = pagination.page
         self.page_size = pagination.per_page
         self.total = pagination.total
         self.total_page = pagination.pages
         self.data = pagination.items
+        self.create_date = datetime.utcnow()
+        self.update_date = datetime.utcnow()
 
 
 class PageSchema(BaseSchema):
