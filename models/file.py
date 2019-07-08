@@ -89,6 +89,11 @@ class FileSchema(BaseSchema):
     """
     __model__ = FileModel
 
+    md5_id = fields.Str(
+        required=True,
+        validate=validates.MyLength(min=1, max=64, not_empty=False, encode_str=Unicode.UTF_8.value),
+        load_from='md5Id'
+    )
     file_name = fields.Str(
         required=True,
         validate=validates.MyLength(min=1, max=64, not_empty=False, encode_str=Unicode.UTF_8.value),
@@ -106,6 +111,11 @@ class FileSchema(BaseSchema):
         validate=validates.MyLength(min=1, not_empty=False),
         load_from='fileBase64'
     )
+
+    def only_md5_upload(self):
+        return super().only_create() + ('md5_id', )
+
+
 
 
 

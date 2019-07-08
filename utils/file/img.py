@@ -16,7 +16,6 @@ from enum import Enum, unique
 from pngquant.main import PngQuant as BasePngQuant
 
 from utils.assert_util import Assert
-from utils import encodes
 from utils.file import FileFormat
 
 
@@ -41,6 +40,7 @@ class ImgUtil(object):
         :param threshold:阀值大小(单位：M)
         :return:
         """
+        from utils.encodes import pil_to_base64
         # 阈值换算成比特
         _threshold = threshold * 1024 * 1024
         Assert.is_true(os.path.isfile(path), '图片不存在：{0}'.format(path))
@@ -51,8 +51,8 @@ class ImgUtil(object):
                 new_width = 1024
                 new_height = int(new_width * h * 1.0 / w)
                 resized_im = im.resize((new_width, new_height))
-                return encodes.pil_to_base64(resized_im)
-            return encodes.pil_to_base64(im)
+                return pil_to_base64(resized_im)
+            return pil_to_base64(im)
 
     @staticmethod
     def loss_less(in_path, out_path, format=FileFormat.JPEG.value):
@@ -203,7 +203,7 @@ class Enhancer:
         image_sharped = enh_sha.enhance(sharpness)
         return image_sharped
 
-    def gamma(self, image, gamma=1.25):
+    def gamma(self, image, gamma=1.35):
         """
         图像伽马矫正
         :param image:

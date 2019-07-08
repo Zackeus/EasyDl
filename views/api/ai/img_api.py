@@ -114,7 +114,7 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
-        'appId': 'test-67815551',
+        'appId': 'test-33',
         'fileData': [
             {
                 'fileName': 'pdf',
@@ -124,7 +124,7 @@ if __name__ == '__main__':
             {
                 'fileName': '图片',
                 'fileFormat': 'jpg',
-                'fileBase64': file_to_base64('D:/AIData/1.png')
+                'fileBase64': file_to_base64('D:/AIData/2.png')
             }
         ],
         'appSysCode': 'OP_LOAN_H',

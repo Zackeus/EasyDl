@@ -5,13 +5,18 @@ layui.extend({
         table=layui.table,
         form = layui.form,
         upload = layui.upload,
-        layer = parent.layer === undefined ? layui.layer : top.layer,
+        layer = layui.layer,
         element = layui.element,
         fileMd5 = layui.fileMd5,
+        fileMime = '*',
         fileSize = 100*1024*1024,
         fileExts = 'doc|docx|pdf|xls|xlsx|ppt|pptx|gif|jpg|jpeg|bmp|png|rar|zip',
+        fileNum = 0,
         fileListView,
         uploadListIns;
+
+    layui.link(ctxStatic + 'css/public.css');
+    layui.link(ctxStatic + 'layui/css/layui.css');
 
     //创建监听函数
     var xhrOnProgress = function(fun) {
@@ -33,11 +38,12 @@ layui.extend({
     };
 
     var Class = function (options) {
+        console.log(options);
         let that = this;
         that.options = options;
         that.register();
         that.init();
-        // that.events();
+        that.events();
     };
 
     Class.prototype.register = function () {
@@ -47,17 +53,17 @@ layui.extend({
     Class.prototype.init=function(){
         let that = this,
             options = that.options;
-        if(!that.strIsNull(options.size)){
-            fileSize = options.size
-        }
-        if(!that.strIsNull(that.options.exts)){
-            fileExts = that.options.exts;
-        }
+
+        fileSize = !that.strIsNull(options.size) ? options.size : fileSize;
+        fileExts = !that.strIsNull(options.exts) ? options.exts : fileExts;
+        fileMime = !that.strIsNull(options.acceptMime) ? options.acceptMime : fileMime;
+        fileNum = !that.strIsNull(options.number) ? options.number : fileNum;
 
         layer.open({
             type: 1,
-            area: ['850px', '500px'], //宽高
-            resize:false,
+            area: ['900px', '500px'], //宽高
+            resize: true,
+            maxmin: true,
             content:
                 '<div class="layui-upload">' +
                     '<button type="button" class="layui-btn layui-btn-normal" id="fileList" style="float: left;margin: 5px 5px 10px 5px;">添加附件</button>' +
@@ -81,15 +87,10 @@ layui.extend({
                     '</div>' +
                 '</div>',
             success: function(layero, index){
-                table.init('extend-uploader-form', {height: 380, unresize:true});
-
-                console.log(layero);
-                console.log($('#fileList').attr("id"));
                 fileListView = $('#fileListView');
-                console.log(fileListView);
                 uploadListIns = upload.render({
                     elem: '#fileList',
-                    url: ctx + 'sys/file',                                                  // 这里设置自己的上传接口
+                    url: options.url,                                                       // 这里设置自己的上传接口
                     headers:{                                                               // 接口的请求头, layui 2.2.6 开始新增
                         'X-CSRFToken': $("meta[name=csrf-token]").attr("content")
                     },
@@ -99,47 +100,48 @@ layui.extend({
                     },
                     field: 'file',                                                          // 设定文件域的字段名
                     accept: 'file',                                                         // 指定允许上传时校验的文件类型
-                    acceptMime: 'image/jpeg, image/png',                                    // 规定打开文件选择框时，筛选出的文件类型，值为用逗号隔开
+                    acceptMime: fileMime,                                                   // 规定打开文件选择框时，筛选出的文件类型，值为用逗号隔开
                     exts: fileExts,                                                         // 许上传的文件后缀。一般结合 accept 参数类设定
                     auto: false,                                                            // 是否选完文件后自动上传
                     multiple: true,
                     bindAction: '#hideFileAction',                                          // 指向一个按钮触发上传，一般配合 auto: false 来使用
                     size: fileSize,
-                    number: 0,
+                    number: fileNum,
                     drag: true,                                                             // 是否接受拖拽的文件上传，设置 false 可禁用。不支持ie8/9
                     choose: function(obj) {
-                        console.log('1111111');
-                        let that = this;
+                        var uploadThat = this;
                         obj.preview(function(index, file, result) {     //读取本地文件
-                            var files = that.files = obj.pushFile();    //将每次选择的文件追加到文件队列
+                            var files = uploadThat.files = obj.pushFile();    //将每次选择的文件追加到文件队列
 
-                            let tr = $(['<tr id="upload-'+ index +'">',
-                                '<td class="name" align="center"><a class="upload-img-prev-link" href="javascript:;">'+ file.name +'</a></td>',
-                                '<td align="center">'+ formatFileSize(file.size) + '</td>',
-                                '<td class="verify-state" align="center">等待验证</td>',
-                                '<td class="verify-progress">',
-                                '<div class="layui-progress layui-progress-big layui-progress-radius-fix" lay-showpercent="true" lay-filter="file-verify'+index+'">',
-                                '<div class="layui-progress-bar" lay-percent="0%">',
-                                '<span class="layui-progress-text">0%</span>',
-                                '</div>',
-                                '</div>',
-                                '</td>',
-                                '<td class="upload-state" align="center">等待上传</td>',
-                                '<td class="upload-progress">',
-                                '<div class="layui-progress layui-progress-big layui-progress-radius-fix" lay-showpercent="true" lay-filter="file'+index+'">',
-                                '<div class="layui-progress-bar" lay-percent="0%">',
-                                '<span class="layui-progress-text">0%</span>',
-                                '</div>',
-                                '</div>',
-                                '</td>',
-                                '<td class="operate" align="center">',
-                                '<button class="layui-btn layui-btn-sm file-reload layui-hide">重传</button>',
-                                '<button class="layui-btn layui-btn-sm layui-btn-danger file-delete">删除</button>',
-                                '</td>',
+                            let tr = $([
+                                '<tr id="upload-'+ index +'">',
+                                    '<td class="name" align="center"><a class="upload-img-prev-link" href="javascript:;">'+ file.name +'</a></td>',
+                                    '<td align="center">'+ that.formatFileSize(file.size) + '</td>',
+                                    '<td class="verify-state" align="center">等待验证</td>',
+                                    '<td class="verify-progress">',
+                                        '<div class="layui-progress layui-progress-big layui-progress-radius-fix" lay-showpercent="true" lay-filter="file-verify'+index+'">',
+                                        '<div class="layui-progress-bar" lay-percent="0%">',
+                                        '<span class="layui-progress-text">0%</span>',
+                                        '</div>',
+                                        '</div>',
+                                    '</td>',
+                                    '<td class="upload-state" align="center">等待上传</td>',
+                                    '<td class="upload-progress">',
+                                        '<div class="layui-progress layui-progress-big layui-progress-radius-fix" lay-showpercent="true" lay-filter="file'+index+'">',
+                                        '<div class="layui-progress-bar" lay-percent="0%">',
+                                        '<span class="layui-progress-text">0%</span>',
+                                        '</div>',
+                                        '</div>',
+                                    '</td>',
+                                    '<td class="operate" align="center">',
+                                        '<button class="layui-btn layui-btn-sm file-reload layui-hide">重传</button>',
+                                        '<button class="layui-btn layui-btn-sm layui-btn-danger file-delete">删除</button>',
+                                    '</td>',
                                 '</tr>'].join(''));
 
                             //单个重传
                             tr.find('.file-reload').on('click', function(){
+                                $(this).addClass("layui-btn-disabled").prop("disabled", true).text("重传中…");
                                 obj.upload(index, file);
                             });
 
@@ -157,6 +159,9 @@ layui.extend({
                                 if (!$.isEmptyObject(err)) {
                                     // 文件md5 计算失败
                                     tr.children('td.verify-state').html('<span style="color: #ff5722;">验证失败</span>');
+                                    setTimeout(function () {
+                                        element.progress('file-verify' + index, '0%');
+                                    }, 200);
                                     return;
                                 }
                                 // 添加 md5 属性
@@ -164,9 +169,7 @@ layui.extend({
                                 tr.children('td.verify-state').html('<span style="color: #5FB878;">验证成功</span>');
 
                             }, function (progress) {
-                                setTimeout(function () {
-                                    element.progress('file-verify' + index, progress+'%');
-                                }, 100);
+                                element.progress('file-verify' + index, progress+'%');
                             });
                         });
                     },
@@ -180,6 +183,8 @@ layui.extend({
                             tr.children('td.verify-progress').find('.layui-progress-bar').css('background-color','#86EAA1');
                             tr.children('td.upload-state').html('<span style="color: #5FB878;">上传成功</span>');
                             tr.children('td.upload-progress').find('.layui-progress-bar').css('background-color','#86EAA1');
+
+                            tr.children('td.operate').find('.file-reload').text("重传").attr("disabled", false).removeClass("layui-btn-disabled");
                             tr.children('td.operate').find('.file-reload').addClass('layui-hide');
                             return delete this.files[index]; //删除文件队列已经上传成功的文件
                         }
@@ -200,25 +205,91 @@ layui.extend({
                         }, 100);
 
                         // 显示重传
+                        tr.children('td.operate').find('.file-reload').text("重传").attr("disabled", false).removeClass("layui-btn-disabled");
                         tr.children('td.operate').find('.file-reload').removeClass('layui-hide');
                     }
                 });
             },
             end:function () {
                 // 可以自行添加按钮关闭,关闭请清空rowData
-                if(options.success) {
-                    if(typeof options.success==='function') {
-                        options.success();
-                    }
+                if(options.openEnd && typeof options.openEnd==='function') {
+                    options.openEnd();
                 }
             }
         });
     };
 
     Class.prototype.events=function () {
-        let that = this;
-        $("#fileList").click(function () {
-            console.log('222');
+        let that = this,
+            options = that.options;
+
+        $('#fileAction').click(function () {
+            let uoloadConfig = uploadListIns.config;
+            let files = uoloadConfig.files;
+            if ($.isEmptyObject(files)) {
+                // 待上传文件列表为空
+                return layer.msg('请选择上传文件', {icon: 5,time: 2000,shift: 6}, function(){});
+            }
+
+            let fileNum = Object.keys(uoloadConfig.files).length;
+            if (uoloadConfig.number && fileNum > uoloadConfig.number) {
+                // 上传文件数超过最大限制数
+                return layer.msg('同时最多只能上传的数量为：' + uoloadConfig.number,
+                    {icon: 5,time: 2000,shift: 6},
+                    function(){});
+            }
+
+            let $uploadBtn = $(this);
+            $uploadBtn.addClass("layui-btn-disabled").prop("disabled", true).text("上传中…");
+
+            let ajaxArray = [];
+            for (let fileIndex in files) {
+                if (!$.isEmptyObject(files[fileIndex].md5)) {
+                    let tr = fileListView.find('tr#upload-'+ fileIndex);
+                    // MD5 不为空，先进行MD5校验
+                    ajaxArray.push(
+                        new Promise(function (resolve, reject) {
+                            $.ajax({
+                                method: 'POST',
+                                url : options.md5Url,
+                                data : JSON.stringify({
+                                    md5Id: files[fileIndex].md5,
+                                }),
+                                headers:{'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
+                                contentType : 'application/json',
+                                dataType : 'json',
+                                beforeSend: function() {
+                                    element.progress('file' + fileIndex, '1%');
+                                },
+                                success : function(res) {
+                                    if(res.code === '0') {
+                                        tr.children('td.verify-progress').find('.layui-progress-bar').css('background-color','#86EAA1');
+                                        tr.children('td.upload-state').html('<span style="color: #5FB878;">上传成功</span>');
+                                        tr.children('td.upload-progress').find('.layui-progress-bar').css('background-color','#86EAA1');
+                                        tr.children('td.operate').find('.file-reload').addClass('layui-hide');
+                                        // 更新进度条
+                                        element.progress('file' + fileIndex, '100%');
+                                        // md5 查询成功，使用md5上传，删除要上传文件列表
+                                        delete files[fileIndex]
+                                    }
+                                    resolve(res);
+                                },
+                                error : function(event) {
+                                    resolve({code: '-1', msg: '请求失败'});
+                                }
+                            })
+                        })
+                    );
+                }
+            }
+
+            Promise.all(ajaxArray).then(function (resList) {
+                // 全部请求成功
+                if ($.isEmptyObject(files)) {
+                    return $uploadBtn.text("开始上传").attr("disabled", false).removeClass("layui-btn-disabled");
+                }
+                $('#hideFileAction').trigger('click');
+            });
         });
     };
 
@@ -226,13 +297,13 @@ layui.extend({
         let fileSize = 0;
         if(size/1024>1024){
             let len = size/1024/1024;
-            fileSize = len.toFixed(2) +"MB";
+            fileSize = len.toFixed(2) + " MB";
         }else if(size/1024/1024>1024){
             let len = size/1024/1024;
-            fileSize = len.toFixed(2)+"GB";
+            fileSize = len.toFixed(2) + " GB";
         }else{
             let len = size/1024;
-            fileSize = len.toFixed(2)+"KB";
+            fileSize = len.toFixed(2) + " KB";
         }
         return fileSize;
     };

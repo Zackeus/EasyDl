@@ -24,7 +24,15 @@
 
             $('#testDlg').click(function () {
                 md5Upload.render({
-
+                    url: ctx + 'sys/file',
+                    md5Url: ctx + 'sys/file/md5',
+                    size: 4*1024,
+                    acceptMime: 'image/jpeg, image/png',
+                    exts: 'jpg|png',
+                    number: 0,
+                    openEnd : function () {
+                        console.log('销毁');
+                    }
                 })
             });
         });

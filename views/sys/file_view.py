@@ -9,8 +9,8 @@
 
 from flask import Blueprint, request
 
-from models import FileModel
-from utils import Method, is_empty, render_json, MyResponse
+from models import FileModel, FileSchema
+from utils import Method, is_empty, render_json, render_info, MyResponse, ContentType, validated
 from utils.sys import download_file
 
 
@@ -41,24 +41,23 @@ def file_upload():
     :return:
     """
     file = request.files.get('file')
-    print(type(file))
     print(file.filename)
-
     if file.filename == '4.JPG':
         return render_json(MyResponse('上传成功', code='22'))
     return render_json(MyResponse('上传成功'))
 
 
-@file_bp.route('/md5/<string:md5_id>', methods=[Method.GET.value])
-def file_md5(md5_id):
+@file_bp.route('/md5', methods=[Method.POST.value])
+@validated(FileSchema, only=FileSchema().only_md5_upload(), consumes=ContentType.JSON.value)
+def file_md5_upload(file):
     """
-    文件md5查询
-    :param md5_id:
+    文件md5上传
+    :param file:
     :return:
     """
-    print(md5_id)
-    if md5_id == '80242e3495dcc1a5539047434dfbf5e6':
-        return render_json(MyResponse('查询成功'), 500)
-    if md5_id == '5d8d2a735876b2132fc4618dbf367c4c':
-        return render_json(MyResponse('查询成功'), 500)
-    return render_json(MyResponse('查询成功'))
+    print(file.md5_id)
+    if file.md5_id == '5d8d2a735876b2132fc4618dbf367c4c':
+        return render_info(MyResponse('查询成功'), 500)
+    if file.md5_id == '47a7af5260e7d8d50c9b66374a63264e':
+        return render_info(MyResponse('查询失败', '22'))
+    return render_info(MyResponse('查询成功'))
