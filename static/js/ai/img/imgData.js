@@ -84,9 +84,9 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 			break;
 
         case "browse":
-            // browseImg(obj.data.id);
-            // browseFiles(obj.data.id);
-            browseDemo(obj.data.id);
+            browseImg(obj.data.id);
+            browseFiles(obj.data.id);
+            // browseDemo(obj.data.id);
             break;
 
 		default:
@@ -96,8 +96,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 
     // 浏览图片
     function browseImg(data) {
-    	let url = data === "" || data == null || data === undefined ?
-            (ctx + 'ai/img/img_files/manage') : (ctx + 'ai/img/img_files/manage/' + data);
+    	let url = ctx + 'ai/img/img_files/flow_page/' + data + '.html';
 
     	layui.layer.open({
             type: 2,
@@ -127,8 +126,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 
 	// 浏览源文件
     function browseFiles(data) {
-    	let url = data === "" || data == null || data === undefined ?
-            (ctx + 'ai/img/img_source_files/manage') : (ctx + 'ai/img/img_source_files/manage/' + data);
+    	let url = ctx + 'ai/img/img_source_files/flow_page/' + data + '.html';
 
     	layui.layer.open({
             type: 2,

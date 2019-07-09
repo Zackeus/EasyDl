@@ -221,7 +221,7 @@ class ImgDetailSchema(BaseSchema):
     def only_patch_type(self):
         return super().only_update() + ('id', 'img_type_code', )
 
-    def only_page(self):
+    def only_flow_page(self):
         return super().only_page() + ('img_data_id', )
 
     def dump_only_page(self):

@@ -4,7 +4,7 @@ layui.define(['flow','form','layer'], function (exports) {
         layer = layui.layer,
         $ = layui.jquery;
 
-    var imgData;
+    var imgData = [];
     var fileflow = {
         // 加载数据
         img: function (param) {
@@ -13,45 +13,54 @@ layui.define(['flow','form','layer'], function (exports) {
                 elem: param.elem,                                           //流加载容器
                 isAuto: param.isAuto,
                 done: function(page, next) {
+                    // 拼接请求参数
+                    let dataJson = JSON.stringify(Object.assign({}, {
+                        page: page,
+                        pageSize: param.imgNums,
+                    }, param.data));
+
                     $.ajax({
                         method: $.isEmptyObject(param.method) ? param.method : 'GET',
-                        url : param.url,
-                        // data : typeof(data) === 'string' ? data : JSON.stringify(data),
+                        url : param.url + '?' + dataJson,
                         headers: $.isEmptyObject(param.headers) ? param.headers : '',
                         contentType : $.isEmptyObject(param.contentType) ? param.contentType : 'application/json',
                         dataType : 'json',
                         beforeSend: function() {
-                            // before && before();
                         },
                         success : function(res) {
-                            if (res.code === "0") {
-                                var imgList = [];
-                                    imgData = res.data;
-                                var maxPage = param.imgNums*page < imgData.length ? param.imgNums*page : imgData.length;
-                                setTimeout(function() {
-                                    for(var i= param.imgNums*(page-1); i< maxPage; i++){
-                                        imgList.push('<li>' +
-                                            '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" ' +
-                                            'alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
-                                            '<div class="operate"><div class="check">' +
-                                            '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" ' +
-                                            'title="'+imgData[i].alt+'">' +
-                                            '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
-                                    }
-                                    next(imgList.join(''), page < (imgData.length/param.imgNums));
-                                    form.render();
-                                    $(param.elem + " li img").height($(param.elem + " li img").width() * 1.3);
-
-                                    if (param.done && typeof param.done === 'function') {
-                                        param.done();
-                                    }
-                                }, 500);
+                            if (param.success && typeof param.success === 'function') {
+                                layui.each(res.data, function(index, item) {
+                                    imgData.push(item);
+                                });
+                                param.success(res, page, next);
+                            } else if (res.code === "0") {
+                                let imgList = [];
+                                layui.each(res.data, function(index, item) {
+                                    imgData.push(item);
+                                    imgList.push('<li>' +
+                                        '<img layer-src="'+ item.src +'" src="'+ item.thumb +'" ' +
+                                        'alt="'+ item.alt+'" data-sort="' + (Number(res.page - 1) * Number(res.pageSize) + Number(index)) + '">' +
+                                        '<div class="operate"><div class="check">' +
+                                        '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" ' +
+                                        'title="'+ item.alt + '">' +
+                                        '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
+                                });
+                                next(imgList.join(''), page < res.totalPage);
+                                form.render();
+                                $("#Images li img").height($("#Images li img").width() * 1.3);
                             } else {
                                 next('', false);
                                 layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
                             }
+
+                            if (param.done && typeof param.done === 'function') {
+                                param.done();
+                            }
                         },
                         error : function(event) {
+                            if (param.error && typeof param.error === 'function') {
+                                return param.error(event);
+                            }
                             layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
                         }
                     });
@@ -91,45 +100,44 @@ layui.define(['flow','form','layer'], function (exports) {
                         contentType : $.isEmptyObject(param.contentType) ? 'application/json' : param.contentType,
                         dataType : 'json',
                         beforeSend: function() {
-                            // before && before();
+
                         },
                         success : function(res) {
                             if (res.code === "0") {
                                 var imgList = [];
                                     imgData = res.data;
                                 var maxPage = param.imgNums*page < imgData.length ? param.imgNums*page : imgData.length;
-                                setTimeout(function() {
-                                    for(var i= param.imgNums*(page-1); i< maxPage; i++) {
-                                        switch (imgData[i].format.toUpperCase()) {
-                                            case 'PDF':
-                                                imgList.push('<li>' +
-                                                    '<img layer-src="'+ imgData[i].src +'" src="/static/images/pdf.jpg" ' +
-                                                    'href="'+ imgData[i].src +'" alt="'+ imgData[i].alt+'" ' +
-                                                    'data-sort="' + i + '">' +
-                                                    '<div class="operate"><div class="check">' +
-                                                    '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" ' +
-                                                    'title="'+imgData[i].alt+'">' +
-                                                    '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
-                                                break;
-                                            case 'JPG':
-                                                imgList.push('<li>' +
-                                                    '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" ' +
-                                                    'alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
-                                                    '<div class="operate"><div class="check">' +
-                                                    '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" ' +
-                                                    'title="'+imgData[i].alt+'">' +
-                                                    '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
-                                                break;
-                                        }
-                                    }
-                                    next(imgList.join(''), page < (imgData.length/param.imgNums));
-                                    form.render();
-                                    $(param.elem + " li img").height($(param.elem + " li img").width() * 1.3);
 
-                                    if (param.done && typeof param.done === 'function') {
-                                        param.done();
+                                for(var i= param.imgNums*(page-1); i< maxPage; i++) {
+                                    switch (imgData[i].format.toUpperCase()) {
+                                        case 'PDF':
+                                            imgList.push('<li>' +
+                                                '<img layer-src="'+ imgData[i].src +'" src="/static/images/pdf.jpg" ' +
+                                                'href="'+ imgData[i].src +'" alt="'+ imgData[i].alt+'" ' +
+                                                'data-sort="' + i + '">' +
+                                                '<div class="operate"><div class="check">' +
+                                                '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" ' +
+                                                'title="'+imgData[i].alt+'">' +
+                                                '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
+                                            break;
+                                        default:
+                                            imgList.push('<li>' +
+                                                '<img layer-src="'+ imgData[i].src +'" src="'+ imgData[i].thumb +'" ' +
+                                                'alt="'+ imgData[i].alt+'" data-sort="' + i + '">' +
+                                                '<div class="operate"><div class="check">' +
+                                                '<input type="checkbox" name="belle" lay-filter="choose" lay-skin="primary" ' +
+                                                'title="'+imgData[i].alt+'">' +
+                                                '</div><i class="layui-icon img_del">&#xe640;</i></div></li>');
+                                            break;
                                     }
-                                }, 500);
+                                }
+                                next(imgList.join(''), page < (imgData.length/param.imgNums));
+                                form.render();
+                                $(param.elem + " li img").height($(param.elem + " li img").width() * 1.3);
+
+                                if (param.done && typeof param.done === 'function') {
+                                    param.done();
+                                }
                             } else {
                                 next('', false);
                                 layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
