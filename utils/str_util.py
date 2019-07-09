@@ -158,48 +158,6 @@ class EncodingFormat(object):
         return res.lower()
 
 
-# def pep8_to_hump(s):
-#     """
-#     pep8 格式字符转驼峰
-#     :param s:
-#     :return:
-#     """
-#     if is_not_empty(s):
-#         res = ''
-#         arr = filter(None, s.lower().split(UNDER_LINE))
-#         for i in arr:
-#             res = res + i[0].upper() + i[1:]
-#         if is_not_empty(res):
-#             # 首字符小写
-#             s = res[0].lower()
-#             res = s + res.replace(res[0], '')
-#         return res
-#     return s
-#
-#
-# def hump_to_pep8(s):
-#     """
-#     驼峰字符转 pep8
-#     :param s:
-#     :return:
-#     """
-#     if is_empty(s):
-#         return s
-#     res = s[0]
-#     for i in range(1, len(s)):
-#         # s[i] 直接copy 或 先加'_'再copy
-#         if s[i].isupper() and not s[i - 1].isupper():  # 加'_',当前为大写，前一个字母为小写
-#             res += UNDER_LINE
-#             res += s[i]
-#         elif s[i].isupper() and s[i - 1].isupper() and s[i + 1].islower():
-#             # 加'_',当前为大写，前一个字母为小写
-#             res += UNDER_LINE
-#             res += s[i]
-#         else:
-#             res += s[i]
-#     return res.lower()
-
-
 if __name__ == '__main__':
     data = {'a': {'b': {'c': '你大爷'}}}
     print(get_dict_value(data, 'a.b.c'))

@@ -20,14 +20,31 @@ from utils.file import FileFormat
 img_bp = Blueprint('img', __name__)
 
 
-@img_bp.route('/img_data.html', methods=[Method.GET.value])
-def img_data_manage():
+@img_bp.route('/img_data/<string:id>', methods=[Method.GET.value])
+@validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
+def get_img_data(img_data, id):
+    """
+    图片流水查询
+    :param img_data:
+    :param id:
+    :return:
+    """
+    # 查询图片流水
+    img_data = ImgDataModel().dao_get(img_data.id)  # type: ImgDataModel
+    Assert.is_true(is_not_empty(img_data), '查无此数据', codes.no_data)
+    img_data_dict, errors = ImgDataSchema(only=ImgDataSchema().dump_only_get()).dump(img_data)
+    Assert.is_true(is_empty(errors), errors)
+    return render_info(MyResponse(msg='查询成功', imgData=img_data_dict))
+
+
+@img_bp.route('/img_datas.html', methods=[Method.GET.value])
+def img_data_html():
     """
     图像识别管理页面
     :return:
     """
     app_sys_types = get_app_sys_types()
-    return render_template('ai/img/img_data.html', app_sys_types=app_sys_types)
+    return render_template('ai/img/img_datas.html', app_sys_types=app_sys_types)
 
 
 @img_bp.route('/img_data/page', methods=[Method.GET.value])
@@ -132,13 +149,11 @@ def img_source_files_flow_page(img_data, id):
     return render_info(MyResponse('查询成功', data=file_datas_dict))
 
 
-# *************************************************
-
-@img_bp.route('/files_demo/manage/<string:id>', methods=[Method.GET.value])
+@img_bp.route('/files_handle/<string:id>.html', methods=[Method.GET.value])
 @validated(ImgDataSchema, only=('id', ), locations=(Locations.VIEW_ARGS.value, ))
-def files_demo_manage(img_data, id):
+def files_handle_html(img_data, id):
     """
-    西安演示
+    文件处理页面
     :param img_data:
     :param id: 图片流水号
     :return:
@@ -149,17 +164,17 @@ def files_demo_manage(img_data, id):
     for source_file in source_files:
         children = ImgDetailModel().dao_get_children(source_file.id)
         source_file.img_page = 0 if is_empty(children) else len(children)
-    return render_template('ai/img/files_demo_manage.html', img_data_id=img_data.id, source_files=source_files)
+    return render_template('ai/img/files_handle.html', img_data_id=img_data.id, source_files=source_files)
 
 
-@img_bp.route('/files_demo/page', methods=[Method.GET.value])
+@img_bp.route('/files_handle/flow_page', methods=[Method.GET.value])
 @validated(PageSchema, only=PageSchema().only_create(),
            locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
 @validated(ImgDetailSchema, only=ImgDetailSchema().only_flow_page(), page=True,
            locations=(Locations.PAGE.value, ), consumes=ContentType.JSON.value)
-def files_demo_page(page, img_detail):
+def files_handle_flow_page(page, img_detail):
     """
-    西安演示
+    文件处理流加载
     :param page:
     :param img_detail:
     :return:

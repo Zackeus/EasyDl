@@ -284,6 +284,11 @@ class ImgDataSchema(BaseSchema):
     def only_page(self):
         return super().only_page() + ('app_sys_id', )
 
+    def dump_only_get(self):
+        return super().dump_only_get() + \
+               ('app_id', 'app_sys_code', 'page_num', 'success_num', 'fail_num', 'is_handle', 'push_url',
+                'push_times', 'is_push')
+
     def dump_only_page(self):
         return super().dump_only_page() + \
                ('app_id', 'app_sys_code', 'page_num', 'success_num', 'fail_num', 'is_handle', 'push_url',

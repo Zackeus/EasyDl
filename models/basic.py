@@ -120,6 +120,9 @@ class BaseSchema(Schema):
     def only_page(self):
         return '',
 
+    def dump_only_get(self):
+        return 'id', 'create_by', 'update_by', 'create_date', 'update_date', 'remarks'
+
     def dump_only_page(self):
         return 'id', 'create_by', 'update_by', 'create_date', 'update_date', 'remarks'
 

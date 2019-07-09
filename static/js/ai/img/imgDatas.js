@@ -83,10 +83,27 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
 		    // delDict(obj.data);
 			break;
 
-        case "browse":
-            browseImg(obj.data.id);
-            browseFiles(obj.data.id);
-            // browseDemo(obj.data.id);
+            case "browse":
+                requests.doGetImgData(obj.data.id,
+                    function () {
+                        layer.load();
+                    },
+                    function (res) {
+                        layer.closeAll('loading');
+
+                        if (res.code === "0") {
+                            if (res.imgData.isHandle) {
+                                browseImg(obj.data.id);
+                                return browseFiles(obj.data.id);
+                            }
+                            return browseHandle(obj.data.id);
+                        }
+                        layer.msg(res.msg, {icon: 5,time: 2000,shift: 6}, function(){});
+                    },
+                    function (event) {
+                        layer.closeAll('loading');
+                        layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
+                    });
             break;
 
 		default:
@@ -154,12 +171,11 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
     	});
 	}
 
-	// 西安演示
-    function browseDemo(data) {
-    	let url = data === "" || data == null || data === undefined ?
-            (ctx + 'ai/img/files_demo/manage') : (ctx + 'ai/img/files_demo/manage/' + data);
+	// 处理中
+    function browseHandle(data) {
+    	let url = ctx + 'ai/img/files_handle/' + data + '.html';
 
-    	let filesDemoIndex = layui.layer.open({
+    	let filesHandleIndex = layui.layer.open({
             type: 2,
             title: '文件处理', 		// 不显示标题栏
             closeBtn: 1,			// 关闭按钮
@@ -169,7 +185,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
             isOutAnim: true, 		// 关闭动画
             scrollbar: true, 		// 是否允许浏览器出现滚动条
             maxmin: true, 			// 最大最小化
-            id: 'LAY_FILE_DEMO', 	// 用于控制弹层唯一标识
+            id: 'LAY_FILE_HANDLE', 	// 用于控制弹层唯一标识
             moveType: 1,
             content: [url],
             success : function(layero, index) {
@@ -182,16 +198,16 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
             cancel: function(index, layero) {
             },
             end:function(index) {
-                $(window).unbind("resize", filesDemoResize);
+                $(window).unbind("resize", filesHandleResize);
             	imgDataListIns.reload();
            }
     	});
 
-    	layui.layer.full(filesDemoIndex);
-        window.sessionStorage.setItem("filesDemoIndex", filesDemoIndex);
+    	layui.layer.full(filesHandleIndex);
+        window.sessionStorage.setItem("filesDemoIndex", filesHandleIndex);
         //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
-        $(window).on("resize", filesDemoResize = function() {
-            layui.layer.full(window.sessionStorage.getItem("filesDemoIndex"));
+        $(window).on("resize", filesHandleResize = function() {
+            layui.layer.full(window.sessionStorage.getItem("filesHandleIndex"));
         });
 	}
 

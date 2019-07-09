@@ -30,7 +30,7 @@ layui.use(['form', 'layer', 'fileflow', 'element'], function() {
 
     //流加载图片
     fileflow.img({
-        url: ctx + 'ai/img/files_demo/page',
+        url: ctx + 'ai/img/files_handle/flow_page',
         headers: {'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
         method: 'GET',
         data: {

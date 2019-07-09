@@ -67,7 +67,7 @@ def get_img(img_data, id):
     ImgDataSchema().filter_img_details(img_data_dict.get('imgDetails', []), ['fileData'])
     return render_info(MyResponse(
         msg='查询成功',
-        img_data=img_data_dict
+        imgData=img_data_dict
     ))
 
 
@@ -114,7 +114,7 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
-        'appId': 'test-33',
+        'appId': 'test-44',
         'fileData': [
             {
                 'fileName': 'pdf',

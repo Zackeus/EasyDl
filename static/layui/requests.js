@@ -172,7 +172,11 @@ layui.define(['jquery','layer'], function(exports) {
 					layer.closeAll('loading');
 					layer.msg('响应失败', {icon: 5,time: 2000,shift: 6}, function(){});
                 })
-        }
+        },
+		// 根据ID获取图片流水
+		doGetImgData: function (id, before, success, error) {
+			requests.doGetJson(ctx + 'ai/img/img_data/' + id, null, before, success, error);
+		},
 	};
 	exports('requests', requests);
 });
