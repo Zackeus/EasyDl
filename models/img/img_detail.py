@@ -130,6 +130,8 @@ class ImgDetailModel(BasicModel):
 
         if is_not_empty(self.img_data_id):
             filter.append(ImgDetailModel.img_data_id == self.img_data_id)
+        if is_not_empty(self.is_handle):
+            filter.append(ImgDetailModel.is_handle == self.is_handle)
 
         pagination = self.query.filter(*filter).\
             order_by(ImgDetailModel.create_date.desc()).\
@@ -222,7 +224,7 @@ class ImgDetailSchema(BaseSchema):
         return super().only_update() + ('id', 'img_type_code', )
 
     def only_flow_page(self):
-        return super().only_page() + ('img_data_id', )
+        return super().only_page() + ('img_data_id', 'is_handle', )
 
     def dump_only_page(self):
         return super().dump_only_page() + \

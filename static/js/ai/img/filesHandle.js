@@ -18,7 +18,10 @@ layui.use(['form', 'layer', 'fileflow', 'element'], function() {
         if (flowIerval == null || flowIerval === undefined || flowIerval === '') {
             flowIerval = setInterval(doFlowIerval, 1500);
         }
-        $('html, body').scrollTop($('#Images li').eq($('#Images li').length - 1).offset().top);
+
+        let liOff = $('#Images li').eq($('#Images li').length - 1).offset();
+        if (!(liOff == "undefined" || liOff == null || liOff === ""))
+            $('html, body').scrollTop(liOff.top);
 
         $('#fileListView').children('tr').each(function (ii, ee) {
             let id = $(ee).attr("id");
@@ -34,7 +37,8 @@ layui.use(['form', 'layer', 'fileflow', 'element'], function() {
         headers: {'X-CSRFToken': $("meta[name=csrf-token]").attr("content")},
         method: 'GET',
         data: {
-            imgDataId: $("meta[name=img_data_id]").attr("content")
+            imgDataId: $("meta[name=img_data_id]").attr("content"),
+            isHandle: true
         },
         contentType: 'application/json',
         elem: '#Images',                //流加载容器
