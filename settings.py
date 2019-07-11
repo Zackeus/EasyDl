@@ -160,10 +160,10 @@ class DevelopmentConfig(BaseConfig):
     # 输出sql语句
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL',
-                                        'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL_BACKUP')
+                                        'mssql+pymssql://sa:syr391592723*@127.0.0.1:1433/EASY_DL')
     SQLALCHEMY_BINDS = {
         'YFC_UCL_PRD': 'oracle://YFC_UCL_PRD:yulon2016@10.5.60.132:1521/credit',
-        'JEESITE-YFC': 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.80:1433/jeesite-yfc'
+        'JEESITE-YFC': 'mssql+pymssql://sa:syr391592723*@127.0.0.1:1433/jeesite-yfc'
     }
 
     # redis 度武器主机
