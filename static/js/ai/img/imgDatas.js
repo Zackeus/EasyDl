@@ -189,7 +189,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
             moveType: 1,
             content: [url],
             success : function(layero, index) {
-                setTimeout(function(){
+                setTimeout(function() {
                     layui.layer.tips('点击此处返回菜单列表', '.layui-layer-setwin .layui-layer-close', {
                         tips: 3
                     });
@@ -204,7 +204,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
     	});
 
     	layui.layer.full(filesHandleIndex);
-        window.sessionStorage.setItem("filesDemoIndex", filesHandleIndex);
+        window.sessionStorage.setItem("filesHandleIndex", filesHandleIndex);
         //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
         $(window).on("resize", filesHandleResize = function() {
             layui.layer.full(window.sessionStorage.getItem("filesHandleIndex"));

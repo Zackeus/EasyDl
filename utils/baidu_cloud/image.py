@@ -122,7 +122,7 @@ if __name__ == '__main__':
     print(image.token)
 
     base_str = ImgUtil.img_compress(
-        path='D:/FileData/c60d0388932211e9a11a5800e36a34d8/Img/c634fdec932211e994335800e36a34d8/1.jpg',
+        path='D:/FileData/11.JPG',
         threshold=0.5
     )
     print(base_str)

@@ -114,17 +114,17 @@ def push_info():
 if __name__ == '__main__':
 
     data = {
-        'appId': 'test-44',
+        'appId': '154141',
         'fileData': [
             {
-                'fileName': 'pdf',
+                'fileName': '154141-1',
                 'fileFormat': 'pdf',
-                'fileBase64': file_to_base64('D:/AIData/5.pdf')
+                'fileBase64': file_to_base64('D:/FileData/演示/154141-1.pdf')
             },
             {
-                'fileName': '图片',
-                'fileFormat': 'jpg',
-                'fileBase64': file_to_base64('D:/AIData/2.png')
+                'fileName': '154141-2',
+                'fileFormat': 'pdf',
+                'fileBase64': file_to_base64('D:/FileData/演示/154141-2.pdf')
             }
         ],
         'appSysCode': 'OP_LOAN_H',
