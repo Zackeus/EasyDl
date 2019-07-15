@@ -28,6 +28,11 @@ def upload_md5():
     return render_template('demo/upload_md5.html')
 
 
+@demo_bp.route('/context', methods=[Method.GET.value])
+def context():
+    return render_template('demo/context.html')
+
+
 @demo_bp.route('/data/<string:date>')
 def data(date):
     """

@@ -252,21 +252,23 @@ def register_template_filter(app):
         return ms_to_time_util(ms)
 
     @app.template_filter('lexer_label')
-    def lexer_label(text, items):
+    def lexer_label(text, asr_nlp_data):
         """
         语义标签过滤
         :param str text:
-        :param list items:
+        :param asr_nlp_data:
         :return:
         """
-        _item = '<font id="{id}" class="{ne} lexer_font_show" color="{color}" data-ne-title="{ne_title}">{item}</font>'
+        _item = '<font id="{id}" class="{ne} lexer_font_show" color="{color}" ' \
+                'data-ne-title="{ne_title}" data-bg="{bg}" data-ed="{ed}" ' \
+                'data-onebest="{onebest}" data-speaker="{speaker}">{item}</font>'
         _ne_key = 'ne_{0}'
 
-        if is_empty(items):
+        if is_empty(asr_nlp_data) or is_empty(asr_nlp_data.items):
             return text
 
         ne_dict = {}
-        for item in items:
+        for item in asr_nlp_data.items:
             lexer = AudioLexerNeModel().dao_get_by_code(item.ne)  # type: AudioLexerNeModel
 
             ne_key = '{' + _ne_key.format(str(item.byte_offset)) + '}'
@@ -277,7 +279,11 @@ def register_template_filter(app):
                     ne=item.ne,
                     color=lexer.color,
                     ne_title=lexer.title,
-                    item=item.item
+                    item=item.item,
+                    bg=asr_nlp_data.bg,
+                    ed=asr_nlp_data.ed,
+                    onebest=asr_nlp_data.onebest,
+                    speaker=asr_nlp_data.speaker
                 )}
             )
         return text.format_map(ne_dict)

@@ -59,6 +59,8 @@
             <path value="file://$PROJECT_DIR$/static/js/uploader" />
             <path value="file://$PROJECT_DIR$/static/js/browser-md5-file-1.0.0" />
             <path value="file://$PROJECT_DIR$/static/js/browser-md5-file-1.1.1" />
+            <path value="file://$PROJECT_DIR$/static/js/context" />
+            <path value="file://$PROJECT_DIR$/static/layui/lay/custom/context" />
           </resourceRoots>
         </entryData>
       </entry>

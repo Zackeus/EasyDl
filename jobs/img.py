@@ -53,7 +53,7 @@ def img_ocr(qps):
                 threads[i].start()
 
             for i in range(len(threads)):
-                threads[i].join(800)
+                threads[i].join(700)
                 if threads[i].exception:
                     raise threads[i].exception
 

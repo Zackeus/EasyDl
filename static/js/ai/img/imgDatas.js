@@ -178,6 +178,7 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
     	let filesHandleIndex = layui.layer.open({
             type: 2,
             title: '文件处理', 		// 不显示标题栏
+            area: ['100%','100%'],
             closeBtn: 1,			// 关闭按钮
             shade: 0, 				// 遮罩
             shadeClose: false, 		// 是否点击遮罩关闭
@@ -203,7 +204,6 @@ layui.use(['form', 'layer', 'table', 'requests'],function(){
            }
     	});
 
-    	layui.layer.full(filesHandleIndex);
         window.sessionStorage.setItem("filesHandleIndex", filesHandleIndex);
         //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
         $(window).on("resize", filesHandleResize = function() {

@@ -131,7 +131,7 @@
     </div>
 
     <div class="layui-col-lg6 layui-col-md12 layui-layim-chat"
-         style="z-index: 19891016; position: absolute; width: 48%; height: 90%;">
+         style="z-index: 19891016; position: fixed; width: 48%; height: 90%;">
 
         <div class="layui-layer-title" style="cursor: move;"></div>
 
@@ -160,7 +160,7 @@
                                         </cite>
                                     </div>
                                     <div class="layim-chat-text">
-                                        {{ asr_nlp_data.onebest|lexer_label(asr_nlp_data.items)|safe }}
+                                        {{ asr_nlp_data.onebest|lexer_label(asr_nlp_data)|safe }}
                                     </div>
                                 </li>
                             {% else %}
@@ -172,7 +172,7 @@
                                         </cite>
                                     </div>
                                     <div class="layim-chat-text">
-                                        {{ asr_nlp_data.onebest|lexer_label(asr_nlp_data.items)|safe }}
+                                        {{ asr_nlp_data.onebest|lexer_label(asr_nlp_data)|safe }}
                                     </div>
                                 </li>
                             {% endif %}
@@ -188,7 +188,7 @@
 {% block footer %}
     <script type="text/javascript"
             src="{{ url_for('static', filename='js/jquery/jquery-ui-1.8.17.custom.min.js') }}"></script>
-    <script type="text/javascript"
-            src="{{ url_for('static', filename='js/audio/script.js') }}"></script>
+{#    <script type="text/javascript"#}
+{#            src="{{ url_for('static', filename='js/audio/script.js') }}"></script>#}
     <script type="text/javascript" src="{{ url_for('static', filename='js/audio/asr_nlp.js') }}"></script>
 {% endblock footer %}
