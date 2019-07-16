@@ -137,6 +137,7 @@ def baidu_nlp(id):
     import os
     from utils.baidu_cloud import NLP, LexerRes
     from utils import Assert, is_empty
+    print(111111111111)
     ne_list = AudioLexerNeModel().dao_get_codes()
     result = []
 
@@ -151,6 +152,7 @@ def baidu_nlp(id):
 
             lexer_json, errors = LexerRes.LexerResSchema().dump(lexer_res)
             Assert.is_true(is_empty(errors), errors)
+            print(lexer_json)
             asr_json.update({'items': lexer_json.get('items', [])})
             result.append(asr_json)
 
@@ -163,9 +165,9 @@ def baidu_nlp(id):
 
 if __name__ == '__main__':
     data = {
-        'code': 'TEL',
-        'title': '电话号码',
-        'color': '#000066'
+        'code': 'MS',
+        'title': '婚姻状态',
+        'color': '#984B4B'
     }
     url = 'http://127.0.0.1:5000/audio/lexer_ne'
     res = requests.post(url=url, json=data, headers=ContentType.JSON_UTF8.value)
