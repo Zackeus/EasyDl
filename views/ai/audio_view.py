@@ -7,12 +7,16 @@
 # @Time : 2019/5/30 9:17
 
 
+import os
 import json
 import requests
 from flask import Blueprint, render_template, url_for
 
 from models.audio import AudioLexerNeModel, AudioLexerNeSchema
-from utils import Method, ContentType, render_info, MyResponse, validated
+from utils import Method, ContentType, render_info, MyResponse, validated, codes, Assert, is_empty
+from utils.file import AudioAsrNlp
+from utils.xunfei_cloud import Audio
+from utils.baidu_cloud import NLP, LexerRes
 
 audio_bp = Blueprint('audio', __name__)
 
@@ -36,9 +40,6 @@ def asr_nlp(id):
     :param id:
     :return:
     """
-    import os
-    from utils import Assert, is_empty, is_not_empty
-    from utils.file import AudioAsrNlp
     result = []
     with open(os.path.join('D:/AIData/音频转写', id, '{id}_lexer.txt'.format(id=id)), 'r') as f:
         for line in f.readlines():
@@ -88,8 +89,6 @@ def xunfei_asr(id):
     :param id:
     :return:
     """
-    import os
-    from utils.xunfei_cloud.audio import Audio
     audio = Audio()
     audio.asr(file_path=os.path.join('D:/AIData/音频转写', id, '{id}.wav'.format(id=id)))
     audio.get_asr_progress()
@@ -107,12 +106,10 @@ def xunfei_asr_progress(id, task_id, ts, signa):
     :param signa:
     :return:
     """
-    import os
-    from utils.xunfei_cloud.audio import Audio
-    from utils import codes, Assert
     audio = Audio()
     audio.init_asr(task_id, ts, signa)
     asr_progress = audio.get_asr_progress()
+    print(asr_progress)
 
     if asr_progress.ok == codes.success and asr_progress.data.status == codes.asr_success:
         asr_result = audio.get_asr_result()
@@ -134,9 +131,6 @@ def baidu_nlp(id):
     :param id:
     :return:
     """
-    import os
-    from utils.baidu_cloud import NLP, LexerRes
-    from utils import Assert, is_empty
     print(111111111111)
     ne_list = AudioLexerNeModel().dao_get_codes()
     result = []
