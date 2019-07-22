@@ -24,6 +24,7 @@
       <sourceFolder url="file://$MODULE_DIR$/views/ai" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/views/api" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/views/api/ai" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/utils/ali_cloud" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/migrations" />
     </content>
     <orderEntry type="inheritedJdk" />

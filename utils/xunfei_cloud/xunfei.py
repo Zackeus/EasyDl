@@ -12,7 +12,6 @@ import hashlib
 import hmac
 import base64
 
-from utils import encodes
 from utils.object_util import BaseObject
 
 
@@ -35,6 +34,7 @@ class Sign(BaseObject):
         app_id和当前时间戳ts拼接 base_string
         :return:
         """
+        from utils import encodes
         hl = hashlib.md5()
         hl.update((self.app_id + self.ts).encode(encodes.Unicode.UTF_8.value))
         base_string = hl.hexdigest()
@@ -46,6 +46,7 @@ class Sign(BaseObject):
         :param api_key: 讯飞开放平台应用秘钥
         :return:
         """
+        from utils import encodes
         signa = hmac.new(api_key.encode(encodes.Unicode.UTF_8.value), self.base_string, hashlib.sha1).digest()
         signa = base64.b64encode(signa).decode(encodes.Unicode.UTF_8.value)
         return signa
