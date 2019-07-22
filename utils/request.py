@@ -41,6 +41,10 @@ class ContentType(Enum):
         'Content-Type': 'application/json',
         'charset': 'UTF-8'
     }
+    FORM_UTF8 = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'charset': 'UTF-8'
+    }
     IMG = 'application/x-img'
     MP4 = 'video/mpeg4'
 

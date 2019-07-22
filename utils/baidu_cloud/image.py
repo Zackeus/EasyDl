@@ -118,22 +118,46 @@ if __name__ == '__main__':
 
     # image = Image(baidu_cloud=baidu)
 
-    image = Image('vqxa46w07EWb5UpMQuQ1pKLz', 'RPYI6LZnFSU8331umUcnA0G8bewrZjFX')
+    # 图片分类
+    # image = Image('vqxa46w07EWb5UpMQuQ1pKLz', 'RPYI6LZnFSU8331umUcnA0G8bewrZjFX')
+    # print(image.token)
+    #
+    # base_str = ImgUtil.img_compress(
+    #     path='D:/FileData/11.JPG',
+    #     threshold=0.5
+    # )
+    # print(base_str)
+    # print(len(base_str))
+    # info = image.to_class(
+    #     'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/classification/post_loan?access_token={access_token}',
+    #     base_str
+    # )
+    # if is_not_empty(info.error_code):
+    #     print(info.error_code)
+    # else:
+    #     for r in info.results:
+    #         print(r.name, r.score)
+
+    image = Image('h0ys8yChQt83QNxtG1UYcIfA', 'KWXy3nb75OGxP1ccIrOp7GU3gBO9rMXx')
     print(image.token)
 
     base_str = ImgUtil.img_compress(
-        path='D:/FileData/11.JPG',
+        path='D:/AIData/OCR/22.JPG',
         threshold=0.5
     )
+
     print(base_str)
     print(len(base_str))
-    info = image.to_class(
-        'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/classification/post_loan?access_token={access_token}',
-        base_str
-    )
-    if is_not_empty(info.error_code):
-        print(info.error_code)
-    else:
-        for r in info.results:
-            print(r.name, r.score)
+
+    url = 'https://aip.baidubce.com/rest/2.0/ocr/v1/vehicle_invoice?access_token={access_token}'.\
+        format(access_token=image.token)
+    params = {
+        'image': base_str
+    }
+
+    res = requests.post(url=url, data=params, headers=ContentType.FORM_UTF8.value)
+    res.encoding = encodes.Unicode.UTF_8.value
+
+    print(res.status_code)
+    print(json.dumps(res.json(), indent=4, ensure_ascii=False))
 
