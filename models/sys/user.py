@@ -120,7 +120,9 @@ class User(DataEntity, UserMixin):
             res = s.execute(sql,
                             params={'id': id, 'del_flag': self.del_flag},
                             bind=db.get_engine(current_app, bind='JEESITE-YFC'))
-            return res._metadata.keys, res.cursor.fetchone()
+            for user in res:
+                return user.keys(), user
+            # return res._metadata.keys, res.cursor.fetchone()
 
     @result_mapper(module_name='models.sys.user', schema_cls='UserSchema')
     def dao_get_by_login_name(self, login_name):
@@ -156,7 +158,10 @@ class User(DataEntity, UserMixin):
             res = s.execute(sql,
                             params={'login_name': login_name, 'del_flag': self.del_flag},
                             bind=db.get_engine(current_app, bind='JEESITE-YFC'))
-            return res._metadata.keys, res.cursor.fetchone()
+
+            for user in res:
+                return user.keys(), user
+            # return res._metadata.keys, res.cursor.fetchone()
 
 
 class UserSchema(DataEntitySchema):
