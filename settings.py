@@ -76,6 +76,8 @@ class BaseConfig(object):
     SQLALCHEMY_POOL_SIZE = 15
     # 数据库连接池的超时时间
     SQLALCHEMY_POOL_TIMEOUT = 30
+    # 自动循环连接的秒数, 定时重连接
+    SQLALCHEMY_POOL_RECYCLE = 1800
     # 控制在连接池达到最大值后可以创建的连接数。当这些额外的 连接回收到连接池后将会被断开和抛弃
     SQLALCHEMY_MAX_OVERFLOW = 20
 
