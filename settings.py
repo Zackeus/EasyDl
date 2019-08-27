@@ -149,6 +149,16 @@ class BaseConfig(object):
     #         'max_instances': 1,
     #         'coalesce': True,
     #         'misfire_grace_time': 1800
+    #     },
+    #     {
+    #         'id': 'huawei_cloud_token',
+    #         'func': 'jobs.sys:huawei_cloud_token',
+    #         'trigger': 'cron',
+    #         # 'second': '0/30',
+    #         'hour': '0/3',
+    #         'max_instances': 1,
+    #         'coalesce': True,
+    #         'misfire_grace_time': 1800
     #     }
     # ]
 

@@ -239,23 +239,6 @@ def init_log(project_name, lever, log_dir_name='logs'):
     file_handler.setFormatter(formatter)
     return file_handler
 
-    # ******************************************
-
-    # Assert.is_true(is_not_empty(project_name), '初始化日志。项目名不可为空.')
-    # log_file_name = 'logger-' + time.strftime('%Y-%m-%d', time.localtime(time.time())) + '.log'
-    # log_file_folder = os.path.abspath(
-    #     os.path.join(os.path.dirname(__file__), os.pardir, os.pardir)) + os.sep + log_dir_name + os.sep + project_name
-    # FileUtil.creat_dirs(log_file_folder)
-    # log_file_str = log_file_folder + os.sep + log_file_name
-    # print(log_file_folder, os.sep, log_file_name, log_file_str)
-    #
-    # handler = logging.FileHandler(log_file_str, encoding=Unicode.UTF_8.value)
-    # handler.setLevel(lever)
-    # logging_format = logging.Formatter(
-    #     '%(asctime)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)s - %(message)s')
-    # handler.setFormatter(logging_format)
-    # return handler
-
 
 class CSRFProtect(BaseCSRFProtect):
     """

@@ -8,12 +8,12 @@
 
 from flask import Blueprint, current_app
 
-from models import OcrFileSchema, Mvsi, MvsiSchema, FileModel
+from models import OcrFileSchema, Mvsi, MvsiSchema, FileModel, SysData
 from utils import Method, render_info, MyResponse, is_empty, is_not_empty, Assert, ContentType, validated, \
     codes, encodes
 from utils.file import img
 from utils.huawei_cloud import OCR, MvsiResultSchema
-from utils.sys import get_app_sys
+from utils.sys import get_app_sys, system
 
 ocr_api_bp = Blueprint('ocr_api', __name__)
 
@@ -41,7 +41,9 @@ def ocr(ocrFile):
         ocrFile.file_data.file_format)
 
     # OCR识别
-    mvsi_result = OCR().mvsi(image_bs64=img.ImgUtil.img_compress(path=file_path, threshold=10))
+    token = SysData().dao_get_key(system.SysKey.HUAWEI_CLOUD_TOKEN.value).value
+    mvsi_result = OCR(token=token)\
+        .mvsi(image_bs64=img.ImgUtil.img_compress(path=file_path, threshold=10))
     Assert.is_true(is_empty(mvsi_result.error_code),
                    'OCR FAILED: 【{0}】【{1}】'.format(mvsi_result.error_code, mvsi_result.error_msg))
     mvsi_result_json, errors = MvsiResultSchema(only=MvsiResultSchema().only_success()).dump(mvsi_result)
@@ -63,14 +65,14 @@ if __name__ == '__main__':
     from utils import ContentType
 
     url = 'http://127.0.0.1:5000/api/ocr/mvsi'
-    file_path = 'D:/AIData/11.jpg'
+    path = 'D:/AIData/11.jpg'
 
     data = {
-        'appId': '124',
+        'appId': '111111',
         'fileData': {
             'fileName': 'text',
             'fileFormat': 'jpg',
-            'fileBase64': img.ImgUtil.img_compress(path=file_path, threshold=10)
+            'fileBase64': img.ImgUtil.img_compress(path=path, threshold=10)
         },
         'appSysCode': 'OP_LOAN_H',
         'createBy': '17037',

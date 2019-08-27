@@ -8,6 +8,7 @@
 
 
 import html
+from enum import Enum, unique
 from utils.digests import get_salt, digest
 
 from models.sys import SysDict
@@ -61,6 +62,14 @@ def get_app_sys_types():
     :return:
     """
     return SysDict().dao_get_type_values(APP_SYS_TYPE)
+
+
+@unique
+class SysKey(Enum):
+    """
+    系统数据键值
+    """
+    HUAWEI_CLOUD_TOKEN = 'HUAWEI_CLOUD_TOKEN'  # 华为云token
 
 
 if __name__ == '__main__':

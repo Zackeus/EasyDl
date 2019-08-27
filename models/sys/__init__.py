@@ -10,3 +10,4 @@
 from .user import (User, UserSchema, )
 from .menu import (Menu, MenuSchema, )
 from .sys_dict import (SysDict, SysDictSchema, )
+from .sys_data import (SysData, )

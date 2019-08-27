@@ -19,7 +19,7 @@ from utils import BaseObject, encodes, MyError, is_empty, is_not_empty, auto_wir
 class OCR(BaseObject):
 
     @auto_wired('utils.hauwei_cloud.ocr.OCR')
-    def __init__(self, user_name=None, password=None, domain_name=None, huawei_cloud=None):
+    def __init__(self, user_name=None, password=None, domain_name=None, token=None, huawei_cloud=None):
         """
         华为云OCR识别
         :param user_name: 用户名称
@@ -27,15 +27,16 @@ class OCR(BaseObject):
         :param domain_name: 用户所属的账号名称
         :param huawei_cloud:
         """
-        self.token = None
-        if is_not_empty(user_name) and is_not_empty(password) and is_not_empty(domain_name):
+        if is_not_empty(token):
+            self.token = token
+        elif is_not_empty(user_name) and is_not_empty(password) and is_not_empty(domain_name):
             huawei_cloud = HuaweiCloud(user_name, password, domain_name)
             huawei_cloud.init_token()
+            self.token = huawei_cloud.token
         elif is_not_empty(huawei_cloud) and is_not_empty(huawei_cloud.token):
-            pass
+            self.token = huawei_cloud.token
         else:
             raise MyError('缺失鉴权 Token 参数.')
-        self.token = huawei_cloud.token
 
     @auto_wired('utils.hauwei_cloud.ocr.OCR.mvsi')
     def mvsi(self, url, image_bs64):
