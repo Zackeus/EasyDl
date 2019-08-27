@@ -67,7 +67,7 @@ _codes = {
     103: ('checkpoint',),
     122: ('uri_too_long', 'request_uri_too_long'),
     200: ('ok', 'okay', 'all_ok', 'all_okay', 'all_good', '\\o/', '✓'),
-    201: ('created',),
+    201: ('created', 'huawei_token_success'),
     202: ('accepted',),
     203: ('non_authoritative_info', 'non_authoritative_information'),
     204: ('no_content',),

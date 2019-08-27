@@ -7,10 +7,11 @@
 # @Time : 2019/3/27 9:22
 
 
+import decimal
 import json
 import datetime
 from addict import Dict as BasicDict
-from utils.object_util import is_empty
+from utils.object_util import is_empty, is_not_empty
 
 UNDER_LINE = '_'
 
@@ -66,6 +67,24 @@ def get_dict_value(date, keys, default=None):
             return dictionary
 
 
+# noinspection PyBroadException
+def amount_formatting(s, formats):
+    """
+    金额格式化
+    :param s:
+    :param formats:
+    :return:
+    """
+    try:
+        if is_not_empty(s):
+            for format in formats:
+                s = s.replace(format, '')
+            return float(s.strip())
+        return None
+    except:
+        return None
+
+
 class Dict(BasicDict):
     """
     dict 扩展, 支持 key1.key2.key3 的形式解析字典
@@ -104,6 +123,17 @@ class DateEncoder(json.JSONEncoder):
             return o.strftime('%Y-%m-%d %H:%M:%S')
         elif isinstance(o, datetime.date):
             return o.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, o)
+
+
+class DecimalEncoder(json.JSONEncoder):
+    """
+    重写构造json类，遇到日期特殊处理，其余的用内置
+    """
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
         else:
             return json.JSONEncoder.default(self, o)
 

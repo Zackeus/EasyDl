@@ -7,6 +7,7 @@
 # @Time : 2019/3/21 10:23
 
 import os
+import decimal
 import logging
 import re
 import datetime
@@ -23,6 +24,7 @@ from flask_caching import Cache as BaseCache
 from flask_wtf import CSRFProtect as BaseCSRFProtect
 from flask_login import LoginManager as BaseLoginManager, AnonymousUserMixin
 from flask_session import Session
+from flask.json import JSONEncoder as BaseJsonEncoder
 
 from utils import Assert, is_not_empty, Unicode, MyResponse, WXMsg
 from utils.file import FileUtil
@@ -95,6 +97,16 @@ class Cache(BaseCache):
                 return func(*args, **kwargs)
             return decorated_function
         return decorator
+
+
+class JSONEncoder(BaseJsonEncoder):
+    """
+    自定义JSON解析器
+    """
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        return BaseJsonEncoder.default(self, o)
 
 
 class MyLoggerHandler(logging.FileHandler):

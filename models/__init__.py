@@ -10,4 +10,4 @@ from .basic import (BasicModel, BaseSchema, )
 from .file import (FileModel, FileSchema)
 from .page import (Page, PageSchema, )
 from .flow_info import (FlowInfo, FlowInfoSchema, )
-
+from .ocr import (OcrFile, OcrFileSchema, Mvsi, MvsiSchema)

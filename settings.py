@@ -123,6 +123,8 @@ class BaseConfig(object):
     DATA_DIR = 'D:/FileData'
     # 图片资料文件夹
     DATA_DIR_IMG = 'Img'
+    # OCR 资料存放目录
+    OCR_FILE_DIR = 'D:/OcrFile'
 
     # JOBS = [
     #     {
@@ -161,6 +163,7 @@ class DevelopmentConfig(BaseConfig):
 
     # 输出sql语句
     SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mssql+pymssql://sa:m4bj/6fu4u,4@10.5.60.90:1433/EASY_DL')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL',
                                         'mssql+pymssql://sa:syr391592723*@127.0.0.1:1433/EASY_DL')
     SQLALCHEMY_BINDS = {

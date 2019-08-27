@@ -26,6 +26,7 @@
       <sourceFolder url="file://$MODULE_DIR$/views/api/ai" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/ali_cloud" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/huawei_cloud" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/models/ocr" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/migrations" />
     </content>
     <orderEntry type="inheritedJdk" />

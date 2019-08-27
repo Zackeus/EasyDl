@@ -47,7 +47,7 @@ class ImgUtil(object):
         w, h = ImgUtil.get_img_pixel(path)
 
         with Image.open(path) as im:
-            if w * h > threshold:
+            if w * h > _threshold:
                 new_width = 1024
                 new_height = int(new_width * h * 1.0 / w)
                 resized_im = im.resize((new_width, new_height))

@@ -12,7 +12,7 @@ from extensions import db
 from models.basic import BasicModel, BaseSchema
 
 from utils.file.file import FileUtil
-from utils import validates, AESUtil, Unicode
+from utils import validates, AESUtil, Unicode, is_not_empty
 from marshmallow import fields
 
 
@@ -63,11 +63,12 @@ class FileModel(BasicModel):
         """
         return self.query.filter(FileModel.id == id, FileModel.md5_id == md5_id).first()
 
-    def dao_init_file(self, file_path, id=None, subtransactions=False, nested=False):
+    def dao_init_file(self, file_path, id=None, file_name=None, subtransactions=False, nested=False):
         """
         根据路径解析入库
         :param nested:
         :param subtransactions:
+        :param file_name
         :param file_path: 文件路径
         :param id:
         :return:
@@ -79,6 +80,10 @@ class FileModel(BasicModel):
             # noinspection PyAttributeOutsideInit
             self.file_path = file_path
             _, self.file_name, self.file_format = FileUtil.get_path_name_ext(file_path)
+
+            if is_not_empty(file_name):
+                self.file_name = file_name
+
             self.file_size = FileUtil.get_file_size(file_path)
             s.add(self)
 

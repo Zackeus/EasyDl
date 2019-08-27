@@ -7,8 +7,8 @@ from utils import is_empty, render_info, MyResponse
 from views import demo_bp
 from views.ai import img_bp, audio_bp
 from views.sys import user_bp, area_bp, menu_bp, dict_bp, file_bp
-from views.api import img_api_bp
-from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf
+from views.api import img_api_bp, ocr_api_bp
+from extensions import db, moment, migrate, init_log, scheduler, cache, login_manager, session, csrf, JSONEncoder
 from utils.request import codes
 from models.audio import AudioLexerNeModel
 
@@ -37,6 +37,8 @@ def create_app(config_name=None):
 
     # 加载配置
     app.config.from_object(obj=config[config_name])
+    # 注册JSON解析器
+    app.json_encoder = JSONEncoder
     # 注册日志
     app.logger.addHandler(init_log(app.config.get('PROJECT_NAME', None), app.config.get('LOGGER_LEVER', None)))
 
@@ -75,6 +77,7 @@ def register_blueprints(app):
     app.register_blueprint(blueprint=demo_bp, url_prefix='/demo')
 
     app.register_blueprint(blueprint=img_api_bp, url_prefix='/api/img')
+    app.register_blueprint(blueprint=ocr_api_bp, url_prefix='/api/ocr')
 
 
 def register_extensions(app):
@@ -90,13 +93,13 @@ def register_extensions(app):
 
     login_manager.init_app(app)
     # 登录过滤保护
-    login_manager.exempt_views((user_bp, demo_bp, audio_bp, img_api_bp))
+    login_manager.exempt_views((user_bp, demo_bp, audio_bp, img_api_bp, ocr_api_bp))
 
     session.init_app(app)
 
     csrf.init_app(app)
     # csrf过滤保护
-    csrf.exempt_views((demo_bp, audio_bp, img_api_bp))
+    csrf.exempt_views((demo_bp, audio_bp, img_api_bp, ocr_api_bp))
 
     # 定时任务 解决FLASK DEBUG模式定时任务执行两次
     if os.environ.get('FLASK_DEBUG', '0') == '0':

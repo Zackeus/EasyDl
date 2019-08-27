@@ -53,6 +53,16 @@ def get_end_dawn(time_stamp=datetime.date.today()):
     return int(time.mktime(time.strptime(str(tomorrow.strftime('%Y-%m-%d')), '%Y-%m-%d'))) - 1
 
 
+def str_to_time(s, format=_TIME_FORMAT[0]):
+    """
+    时间字符转时间
+    :param s:
+    :param format:
+    :return:
+    """
+    return datetime.datetime.strptime(s, format)
+
+
 def s_to_time(s):
     """
     将秒转为时间格式

@@ -8,3 +8,4 @@
 
 
 from .ai.img_api import (img_api_bp, )
+from .ai.ocr_api import (ocr_api_bp, )
