@@ -47,8 +47,11 @@ class OCR(BaseObject):
         支持JPG/PNG/BMP/TIFF格式
         :return:
         """
-        headers = ContentType.JSON_UTF8.value
-        headers.update({'X-Auth-Token': self.token})
+        headers = {
+            'Content-Type': 'application/json',
+            'charset': 'UTF-8',
+            'X-Auth-Token': self.token
+        }
         res = requests.post(url=url, data=json.dumps(obj={'image': image_bs64}), headers=headers)
         res.encoding = encodes.Unicode.UTF_8.value
 

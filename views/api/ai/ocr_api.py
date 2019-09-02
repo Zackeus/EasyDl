@@ -56,7 +56,7 @@ def ocr(ocrFile):
     # json 序列化
     mvsi_json, errors = MvsiSchema().dump(mvsi)
     Assert.is_true(is_empty(errors), errors)
-    return render_info(MyResponse('OCR SUCCESS', results=mvsi_result_json))
+    return render_info(MyResponse('OCR SUCCESS', results=mvsi_json))
 
 
 if __name__ == '__main__':
@@ -64,11 +64,12 @@ if __name__ == '__main__':
     import requests
     from utils import ContentType
 
-    url = 'http://127.0.0.1:5000/api/ocr/mvsi'
+    # url = 'http://127.0.0.1:5000/api/ocr/mvsi'
+    url = 'http://10.5.60.77:8088/api/ocr/mvsi'
     path = 'D:/AIData/11.jpg'
 
     data = {
-        'appId': '111111',
+        'appId': '1111',
         'fileData': {
             'fileName': 'text',
             'fileFormat': 'jpg',
