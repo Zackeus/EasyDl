@@ -98,6 +98,7 @@ class WXMsgSchema(Schema):
 
 if __name__ == '__main__':
     # print(WXMsg(
+    #     url='http://10.5.60.80:8989/com.zz.SMS_Interfince/send/WX',
     #     request_sys='Error',
     #     msg_content='【裕隆汽车金融】测试',
     #     agent_id='1000029',
@@ -108,3 +109,4 @@ if __name__ == '__main__':
     # ).send_wx())
 
     pass
+
