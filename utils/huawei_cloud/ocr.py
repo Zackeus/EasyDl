@@ -55,6 +55,8 @@ class OCR(BaseObject):
         res = requests.post(url=url, data=json.dumps(obj={'image': image_bs64}), headers=headers)
         res.encoding = encodes.Unicode.UTF_8.value
 
+        print(json.dumps(res.json(), indent=4, ensure_ascii=False))
+
         if res is None or res.status_code != codes.ok:
             mvsi_error, errors = MvsiResultSchema(only=MvsiResultSchema().only_error()).load(res.json())
             Assert.is_true(is_empty(errors), errors)
@@ -78,13 +80,13 @@ class MvsiResult(BaseObject, db.Model):
     machine_number = db.Column(db.String(length=20), name='MACHINE_NUMBER', comment='机器编号')
     fiscal_code = db.Column(db.String(length=190), name='FISCAL_CODE', comment='税控码')
     buyer_name = db.Column(db.String(length=20), name='BUYER_NAME', comment='购买方名称')
-    buyer_organization_number = db.Column(db.String(length=18), name='BUYER_ORGANIZATION_NAMBER',
+    buyer_organization_number = db.Column(db.String(length=30), name='BUYER_ORGANIZATION_NAMBER',
                                           comment='购买方身份证号码/组织机构代码')
     buyer_id = db.Column(db.String(length=20), name='BUYER_ID', comment='购买方纳税人识别号')
     seller_name = db.Column(db.Text, name='SELLER_NAME', comment='销售方名称')
     seller_phone = db.Column(db.String(length=20), name='SELLER_PHONE', comment='销售方电话')
     seller_id = db.Column(db.String(length=20), name='SELLER_ID', comment='销售方纳税人识别号')
-    seller_account = db.Column(db.String(length=20), name='SELLER_ACCOUNT', comment='销售方账号')
+    seller_account = db.Column(db.String(length=64), name='SELLER_ACCOUNT', comment='销售方账号')
     seller_address = db.Column(db.Text, name='SELLER_ADDRESS', comment='销售方地址')
     seller_bank = db.Column(db.Text, name='SELLER_BANK', comment='销售方开户行')
     vehicle_type = db.Column(db.Text, name='VEHICLE_TYPE', comment='多用途乘用车')
@@ -92,14 +94,14 @@ class MvsiResult(BaseObject, db.Model):
     manufacturing_location = db.Column(db.String(length=225), name='MANUFACTURING_LOCATION', comment='产地')
     quality_certificate = db.Column(db.String(length=20), name='QUALITY_CERTIFICATE', comment='合格证号')
     import_certificate = db.Column(db.String(length=18), name='IMPORT_CERTIFICATE', comment='进口证明书号')
-    inspection_number = db.Column(db.String(length=10), name='INSPECTION_NUMBER', comment='商检单号')
-    engine_number = db.Column(db.String(length=8), name='ENGINE_NUMBER', comment='发动机号码')
-    vehicle_identification_number = db.Column(db.String(length=17), name='VEHICLE_IDENTIFICATION_NUMBER',
+    inspection_number = db.Column(db.String(length=20), name='INSPECTION_NUMBER', comment='商检单号')
+    engine_number = db.Column(db.String(length=20), name='ENGINE_NUMBER', comment='发动机号码')
+    vehicle_identification_number = db.Column(db.String(length=20), name='VEHICLE_IDENTIFICATION_NUMBER',
                                               comment='车架号码')
     tonnage = db.Column(db.String(length=10), name='TONNAGE', comment='吨位')
     seating_capacity = db.Column(db.String(length=10), name='SEATING_CAPACITY', comment='限乘人数')
     tax_authority = db.Column(db.Text, name='TAX_AUTHORITY', comment='主管税务机关')
-    tax_authority_code = db.Column(db.String(length=9), name='TAX_AUTHORITY_CODE', comment='主管税务机关代码')
+    tax_authority_code = db.Column(db.String(length=20), name='TAX_AUTHORITY_CODE', comment='主管税务机关代码')
     tax_payment_receipt = db.Column(db.String(length=18), name='TAX_PAYMENT_RECEIPT', comment='完税凭证号码')
     tax_rate = db.Column(db.String(length=6), name='TAX_RATE', comment='增值税税率或征收率')
     tax = db.Column(db.Numeric(precision=20, scale=2, asdecimal=False), name='TAX', nullable=False,
@@ -143,7 +145,7 @@ class MvsiResultSchema(Schema):
         load_from='buyerName'
     )
     buyer_organization_number = fields.Str(
-        validate=MyValidates.MyLength(max=18, encode_str=Unicode.UTF_8.value),
+        validate=MyValidates.MyLength(max=30, encode_str=Unicode.UTF_8.value),
         load_from='buyerOrganizationNumber'
     )
     buyer_id = fields.Str(validate=MyValidates.MyLength(max=20, encode_str=Unicode.UTF_8.value), load_from='buyerId')
@@ -154,7 +156,7 @@ class MvsiResultSchema(Schema):
     )
     seller_id = fields.Str(validate=MyValidates.MyLength(max=20, encode_str=Unicode.UTF_8.value), load_from='sellerId')
     seller_account = fields.Str(
-        validate=MyValidates.MyLength(max=20, encode_str=Unicode.UTF_8.value),
+        validate=MyValidates.MyLength(max=64, encode_str=Unicode.UTF_8.value),
         load_from='sellerAccount'
     )
     seller_address = fields.Str(load_from='sellerAddress')
@@ -174,15 +176,15 @@ class MvsiResultSchema(Schema):
         load_from='importCertificate'
     )
     inspection_number = fields.Str(
-        validate=MyValidates.MyLength(max=10, encode_str=Unicode.UTF_8.value),
+        validate=MyValidates.MyLength(max=20, encode_str=Unicode.UTF_8.value),
         load_from='inspectionNumber'
     )
     engine_number = fields.Str(
-        validate=MyValidates.MyLength(max=8, encode_str=Unicode.UTF_8.value),
+        validate=MyValidates.MyLength(max=20, encode_str=Unicode.UTF_8.value),
         load_from='engineNumber'
     )
     vehicle_identification_number = fields.Str(
-        validate=MyValidates.MyLength(max=17, encode_str=Unicode.UTF_8.value),
+        validate=MyValidates.MyLength(max=20, encode_str=Unicode.UTF_8.value),
         load_from='vehicleIdentificationNumber'
     )
     tonnage = fields.Str(
@@ -194,7 +196,7 @@ class MvsiResultSchema(Schema):
     )
     tax_authority = fields.Str(load_from='taxAuthority')
     tax_authority_code = fields.Str(
-        validate=MyValidates.MyLength(max=9, encode_str=Unicode.UTF_8.value),
+        validate=MyValidates.MyLength(max=20, encode_str=Unicode.UTF_8.value),
         load_from='taxAuthorityCode'
     )
     tax_payment_receipt = fields.Str(
@@ -254,11 +256,11 @@ class MvsiResultSchema(Schema):
 if __name__ == '__main__':
     pass
     # from utils.file import img
-    # img_path = 'D:/AIData/11.jpg'
+    # img_path = 'D:/AIData/12.jpg'
     #
     # ocr = OCR('Zackeus', 'syr391592723*', 'Zackeus')
     # mvsi = ocr.mvsi('https://ocr.cn-north-1.myhuaweicloud.com/v1.0/ocr/mvs-invoice',
-    #                 img.ImgUtil.img_compress(path=img_path, threshold=10))
+    #                 img.ImgUtil.img_compress(path=img_path, threshold=5))
     # print(mvsi)
 
 

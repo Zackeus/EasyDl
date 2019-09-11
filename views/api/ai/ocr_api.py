@@ -43,7 +43,7 @@ def ocr(ocrFile):
     # OCR识别
     token = SysData().dao_get_key(system.SysKey.HUAWEI_CLOUD_TOKEN.value).value
     mvsi_result = OCR(token=token)\
-        .mvsi(image_bs64=img.ImgUtil.img_compress(path=file_path, threshold=10))
+        .mvsi(image_bs64=img.ImgUtil.img_compress(path=file_path, threshold=5))
     Assert.is_true(is_empty(mvsi_result.error_code),
                    'OCR FAILED: 【{0}】【{1}】'.format(mvsi_result.error_code, mvsi_result.error_msg))
     mvsi_result_json, errors = MvsiResultSchema(only=MvsiResultSchema().only_success()).dump(mvsi_result)
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     path = 'D:/AIData/11.jpg'
 
     data = {
-        'appId': '1111',
+        'appId': '333',
         'fileData': {
             'fileName': 'text',
             'fileFormat': 'jpg',
